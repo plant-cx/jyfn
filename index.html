@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discussion Board</title>
+    <title>Discussion Board with Random Usernames, Edit & Delete</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -80,7 +81,7 @@
         .message-actions button:hover {
             background-color: rgba(0, 0, 0, 0.1);
         }
-        .loading-indicator, .error-message, .info-message {
+        .loading-indicator, .error-message {
             text-align: center;
             padding: 20px;
             font-size: 1.1rem;
@@ -90,13 +91,6 @@
             color: #dc2626;
             background-color: #fee2e2;
             border: 1px solid #ef4444;
-            border-radius: 0.5rem;
-            margin: 1rem;
-        }
-        .info-message {
-            color: #2563eb;
-            background-color: #dbeafe;
-            border: 1px solid #3b82f6;
             border-radius: 0.5rem;
             margin: 1rem;
         }
@@ -141,26 +135,21 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-center flex-grow">Discussion Board</h1>
-        <div class="flex items-center space-x-2">
-            <p id="user-id-display" class="text-sm"></p>
-            <!-- Logout button removed as we are using anonymous auth -->
-        </div>
+    <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg">
+        <h1 class="text-3xl font-bold text-center">Discussion Board</h1>
+        <p id="user-id-display" class="text-sm text-center mt-1"></p>
     </header>
 
-    <!-- Auth Forms Container (Removed) -->
     <!-- Messages Container -->
     <main id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
         <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
         <div id="error-message" class="error-message hidden"></div>
-        <div id="info-message" class="info-message hidden"></div>
         <div id="no-messages-indicator" class="text-center text-gray-500 mt-10 hidden">No messages yet. Be the first to start the discussion!</div>
         <!-- Messages will be appended here by JavaScript -->
     </main>
 
     <!-- Message Input Form -->
-    <footer id="message-input-footer" class="bg-white p-4 shadow-lg rounded-t-lg">
+    <footer class="bg-white p-4 shadow-lg rounded-t-lg">
         <form id="message-form" class="flex space-x-3">
             <input
                 type="text"
@@ -184,24 +173,9 @@
     <script type="module">
         // Import Firebase modules from CDN
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { 
-            getAuth, 
-            signInAnonymously, // Reverted to anonymous sign-in
-            onAuthStateChanged
-            // Removed createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            query, 
-            orderBy, 
-            onSnapshot, 
-            serverTimestamp, 
-            doc, 
-            updateDoc, 
-            deleteDoc 
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        // Import updateDoc and deleteDoc for edit/delete functionality
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // YOUR FIREBASE CONFIGURATION - This is critical for your app to connect to Firebase
         const firebaseConfig = {
@@ -249,46 +223,22 @@
             const userIdDisplay = document.getElementById('user-id-display');
             const loadingIndicator = document.getElementById('loading-indicator');
             const errorMessageDiv = document.getElementById('error-message');
-            const infoMessageDiv = document.getElementById('info-message'); 
             const noMessagesIndicator = document.getElementById('no-messages-indicator');
-            // Removed auth-related DOM elements
-            // const authContainer = document.getElementById('auth-container');
-            // const authForm = document.getElementById('auth-form');
-            // const emailInput = document.getElementById('email-input');
-            // const passwordInput = document.getElementById('password-input');
-            // const authSubmitButton = document.getElementById('auth-submit-button');
-            // const authFormTitle = document.getElementById('auth-form-title');
-            // const toggleAuthModeButton = document.getElementById('toggle-auth-mode');
-            // const authErrorMessage = document.getElementById('auth-error-message');
-            // const logoutButton = document.getElementById('logout-button');
-            const messageInputFooter = document.getElementById('message-input-footer');
-
 
             let currentUserId = null; // To store the authenticated user's ID
             let currentUsername = getOrCreateUsername(); // Get or create the random username
-            // Removed isLoginMode
 
-            // Function to display errors (general app errors)
+            // Function to display errors
             function displayError(message) {
                 errorMessageDiv.textContent = `Error: ${message}`;
                 errorMessageDiv.classList.remove('hidden');
                 loadingIndicator.classList.add('hidden');
-                infoMessageDiv.classList.add('hidden'); // Hide info if error occurs
                 console.error("App Error:", message); // Log to console for debugging
             }
 
-            // Function to display info messages
-            function displayInfo(message) {
-                infoMessageDiv.textContent = `Info: ${message}`;
-                infoMessageDiv.classList.remove('hidden');
-                errorMessageDiv.classList.add('hidden'); // Hide error if info occurs
-                loadingIndicator.classList.add('hidden');
-            }
-
-            // Function to hide all general messages (error, info, loading)
+            // Function to hide all messages (error, loading)
             function hideAllMessages() {
                 errorMessageDiv.classList.add('hidden');
-                infoMessageDiv.classList.add('hidden');
                 loadingIndicator.classList.add('hidden');
             }
 
@@ -299,6 +249,7 @@
 
             // Function to handle message deletion
             async function handleDeleteMessage(messageId) {
+                // IMPORTANT: Using window.confirm for simplicity, replace with custom modal in production for better UX.
                 if (!window.confirm('Are you sure you want to delete this message?')) {
                     return; // User cancelled
                 }
@@ -306,6 +257,7 @@
                     const messageRef = doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId);
                     await deleteDoc(messageRef);
                     console.log(`Message ${messageId} deleted successfully.`);
+                    // The onSnapshot listener will automatically re-render the messages
                 } catch (e) {
                     console.error("Error deleting message: ", e);
                     displayError(`Failed to delete message: ${e.message}`);
@@ -317,20 +269,26 @@
                 const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
                 if (!messageElement) return;
 
+                // Find the original text paragraph
                 const originalTextP = messageElement.querySelector('p');
+                // Find the actions div (contains edit/delete buttons)
                 const actionsDiv = messageElement.querySelector('.message-actions');
 
+                // Hide the original text and buttons
                 if (originalTextP) originalTextP.style.display = 'none';
                 if (actionsDiv) actionsDiv.style.display = 'none';
 
+                // Create an input field for editing
                 const editInput = document.createElement('input');
                 editInput.type = 'text';
                 editInput.value = currentText;
                 editInput.classList.add('edit-input');
+                // Insert the input field right after the original text paragraph
                 originalTextP.parentNode.insertBefore(editInput, originalTextP.nextSibling);
-                editInput.focus();
-                editInput.select();
+                editInput.focus(); // Focus on the input field
+                editInput.select(); // Select all text in the input
 
+                // Create Save and Cancel buttons
                 const editButtonsDiv = document.createElement('div');
                 editButtonsDiv.classList.add('edit-buttons');
 
@@ -347,9 +305,11 @@
                         const messageRef = doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId);
                         await updateDoc(messageRef, {
                             text: newText,
-                            timestamp: serverTimestamp()
+                            timestamp: serverTimestamp() // Update timestamp on edit
                         });
                         console.log(`Message ${messageId} updated.`);
+                        // The onSnapshot listener will automatically re-render the messages,
+                        // which will remove the edit controls and show the updated text.
                     } catch (e) {
                         console.error("Error updating message: ", e);
                         displayError(`Failed to update message: ${e.message}`);
@@ -360,6 +320,7 @@
                 cancelButton.textContent = 'Cancel';
                 cancelButton.classList.add('cancel-button');
                 cancelButton.onclick = () => {
+                    // Remove edit controls and show original text/buttons
                     if (originalTextP) originalTextP.style.display = '';
                     if (actionsDiv) actionsDiv.style.display = '';
                     editInput.remove();
@@ -368,8 +329,9 @@
 
                 editButtonsDiv.appendChild(saveButton);
                 editButtonsDiv.appendChild(cancelButton);
-                messageElement.appendChild(editButtonsDiv);
+                messageElement.appendChild(editButtonsDiv); // Append buttons to the message bubble
             }
+
 
             // Function to render a single message
             function renderMessage(msg) {
@@ -380,11 +342,12 @@
                 const messageBubble = document.createElement('div');
                 messageBubble.classList.add('message-bubble');
                 messageBubble.classList.add(msg.userId === currentUserId ? 'sent' : 'received');
-                messageBubble.setAttribute('data-message-id', msg.id);
+                messageBubble.setAttribute('data-message-id', msg.id); // Add data-id for targeting
 
                 const userInfo = document.createElement('div');
                 userInfo.classList.add('message-info');
-                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.username || 'Unknown User'}`;
+                // Display the stored username, or the truncated Firebase UID if username is missing
+                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.username || 'Unknown User'}`; // Use 'Unknown User' if username is missing or for older messages
                 messageBubble.appendChild(userInfo);
 
                 const messageText = document.createElement('p');
@@ -393,24 +356,25 @@
 
                 const timestampDiv = document.createElement('div');
                 timestampDiv.classList.add('timestamp');
-                if (msg.timestamp && typeof msg.timestamp.toDate === 'function') {
+                if (msg.timestamp && typeof msg.timestamp.toDate === 'function') { // Check if toDate() method exists
                     timestampDiv.textContent = msg.timestamp.toDate().toLocaleString();
                 } else {
-                    timestampDiv.textContent = 'Sending...';
+                    timestampDiv.textContent = 'Sending...'; // Or handle cases where timestamp is not a Firestore Timestamp
                 }
                 messageBubble.appendChild(timestampDiv);
 
+                // Add Edit and Delete buttons if the message belongs to the current user
                 if (msg.userId === currentUserId) {
                     const actionsDiv = document.createElement('div');
                     actionsDiv.classList.add('message-actions');
 
                     const editButton = document.createElement('button');
-                    editButton.textContent = '✏️';
+                    editButton.textContent = '✏️'; // Pencil emoji for edit
                     editButton.title = 'Edit Message';
                     editButton.onclick = () => handleEditMessage(msg.id, msg.text);
 
                     const deleteButton = document.createElement('button');
-                    deleteButton.textContent = '🗑️';
+                    deleteButton.textContent = '🗑️'; // Trash can emoji for delete
                     deleteButton.title = 'Delete Message';
                     deleteButton.onclick = () => handleDeleteMessage(msg.id);
 
@@ -423,20 +387,18 @@
                 messagesContainer.appendChild(messageWrapper);
             }
 
-            // --- Authentication Logic (Reverted to Anonymous) ---
+            // Initialize Firebase Authentication and listen for state changes
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUserId = user.uid;
+                    // Display the random username in the header
                     userIdDisplay.textContent = `Your Username: ${currentUsername}`;
-                    // Removed logoutButton.classList.remove('hidden');
-                    // Removed authContainer.classList.add('hidden'); 
-                    messagesContainer.classList.remove('hidden'); // Always show chat
-                    messageInputFooter.classList.remove('hidden'); // Always show input
                     messageInput.disabled = false;
                     sendButton.disabled = false;
-                    startMessageListener(); // Start listening for messages
-                    console.log("User signed in anonymously:", user.uid);
+                    console.log("User signed in:", currentUserId);
                     console.log("Assigned Username:", currentUsername);
+                    // Start listening for messages only after user is authenticated
+                    startMessageListener();
                 } else {
                     // If no user, try anonymous sign-in
                     try {
@@ -450,41 +412,56 @@
                 }
             });
 
-            // Removed Toggle between Sign Up and Log In forms
-            // Removed Handle Sign Up / Log In form submission
-            // Removed Handle Logout
+            // Function to start real-time message listener
+            function startMessageListener() {
+                // Listen to the 'messages' collection
+                const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
+                const q = query(messagesCollectionRef, orderBy('timestamp'));
+
+                onSnapshot(q, (snapshot) => {
+                    hideAllMessages(); // Hide any previous messages
+                    messagesContainer.innerHTML = ''; // Clear existing messages before rendering new ones
+
+                    if (snapshot.empty) {
+                        noMessagesIndicator.classList.remove('hidden');
+                    } else {
+                        noMessagesIndicator.classList.add('hidden');
+                        snapshot.forEach((doc) => {
+                            renderMessage({ id: doc.id, ...doc.data() });
+                        });
+                        scrollToBottom();
+                    }
+                }, (error) => {
+                    console.error("Error fetching messages:", error);
+                    displayError(`Failed to load messages: ${error.message}`);
+                });
+            }
 
             // Event listener for sending messages
             messageForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const messageText = messageInput.value.trim();
 
-                // No email verification check needed for anonymous auth
-                // if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                //     displayError("You must verify your email to send messages.");
-                //     return;
-                // }
-
-                if (messageText === '' || !currentUserId) { // Ensure currentUserId is available
+                if (messageText === '' || !currentUserId) {
                     return; // Don't send empty messages or if not authenticated
                 }
 
                 try {
+                    // Send message directly to 'messages' collection, including the generated username
                     await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages`), {
                         text: messageText,
                         timestamp: serverTimestamp(),
-                        userId: auth.currentUser.uid, // Use authenticated user's UID
+                        userId: currentUserId,
                         username: currentUsername // Include the random username
                     });
                     messageInput.value = ''; // Clear input
-                    hideAllMessages();
+                    hideAllMessages(); // Hide any previous warnings/errors
                     scrollToBottom();
                 } catch (e) {
                     console.error("Error adding document: ", e);
                     displayError(`Failed to send message: ${e.message}`);
                 }
             });
-
         }); // End of DOMContentLoaded
     </script>
 </body>
