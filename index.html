@@ -533,10 +533,10 @@
                     <div class="home__shape"></div>
                     <div class="home_image12"></div>
                 </div>
-                <div class="home__data">
+                <div class="home__data hero-data">
                     <h1 class="home__title">Topic Trail</h1>
                     <p class="home__description">Insightful, Simplified, Educational</p>
-                    <a href="chat_room.html" class="button">Got Any Question?</a>
+                    <a href="https://docs.topictrail.info" class="button">About Us</a>
                 </div>
             </div>
         </section>
@@ -544,21 +544,21 @@
         <section class="featured section" id="Science">
             <h2 class="section-title">Science</h2>
             <div class="featured__container grid">
-                <article class="sneaker">
+                <article class="sneaker category-item">
                     <a href="Physics.html">
                         <img src="https://cdn-icons-png.flaticon.com/512/1940/1940630.png" alt="" class="sneaker__img">
                     </a>
                     <span class="sneaker__name">Physics</span>
                     <a href="Physics.html" class="button-light">See Now</a>
                 </article>
-                <article class="sneaker">
+                <article class="sneaker category-item">
                     <a href="Chemistry.html">
                         <img src="https://cdn-icons-png.flaticon.com/512/8824/8824136.png" alt="" class="sneaker__img">
                     </a>
                     <span class="sneaker__name">Chemistry</span>
                     <a href="Chemistry.html" class="button-light">See Now</a>
                 </article>
-                <article class="sneaker">
+                <article class="sneaker category-item">
                     <a href="Biology.html">
                         <img src="https://cdn-icons-png.flaticon.com/512/2784/2784428.png" alt="" class="sneaker__img">
                     </a>
@@ -571,7 +571,7 @@
         <section class="collection section" id="Engineering">
             <h2 class="section-title">Engineering</h2>
             <div class="collection__container grid">
-                <div class="collection__card">
+                <div class="collection__card category-item">
                     <div class="collection__data">
                         <h3 class="collection__name">Mechanical</h3>
                         <p class="collection__description">Dynamics</p>
@@ -581,7 +581,7 @@
                         <img src="https://cdn-icons-png.flaticon.com/512/1054/1054127.png" alt="" class="collection__img">
                     </a>
                 </div>
-                <div class="collection__card">
+                <div class="collection__card category-item">
                     <div class="collection__data">
                         <h3 class="collection__name">Systems</h3>
                         <p class="collection__description">Frameworks</p>
@@ -597,7 +597,7 @@
         <section class="featured section" id="Maths">
             <h2 class="section-title">Maths</h2>
             <div class="featured__container grid">
-                <article class="sneaker">
+                <article class="sneaker category-item">
                     <a href="Pure__Maths.html">
                         <img src="https://cdn-icons-png.flaticon.com/512/2106/2106584.png" alt="" class="sneaker__img">
                     </a>
@@ -605,7 +605,7 @@
                     <span class="collection__description">Abstract concepts</span>
                     <a href="Pure__Maths.html" class="button-light">See Now</a>
                 </article>
-                <article class="sneaker">
+                <article class="sneaker category-item">
                     <a href="Applied__Maths.html">
                         <img src="https://cdn-icons-png.flaticon.com/512/7211/7211797.png" alt="" class="sneaker__img">
                     </a>
@@ -613,7 +613,7 @@
                     <span class="collection__description">Practical problem-solving</span>
                     <a href="Applied__Maths.html" class="button-light">See Now</a>
                 </article>
-                <article class="sneaker">
+                <article class="sneaker category-item">
                     <a href="Computational__Maths.html">
                         <img src="https://cdn-icons-png.flaticon.com/512/3696/3696502.png" alt="" class="sneaker__img">
                     </a>
@@ -629,11 +629,46 @@
         <p class="footer__copy">&#169; 2024 Topic Trail. All right reserved</p>
     </footer>
 
+    <script src="https://unpkg.com/scrollreveal"></script>
     <script>
         window.onscroll = () => {
             const nav = document.getElementById('header');
             if(this.scrollY >= 200) nav.classList.add('scroll-header'); else nav.classList.remove('scroll-header');
         };
+
+        const revealEffect = ScrollReveal({
+            origin: 'top',
+            distance: '62px',
+            duration: 1050,
+            delay: 210,
+            reset: false
+        });
+
+        revealEffect.reveal(`.home__data`, {
+            opacity: 0,
+            blur: '11px',
+            scale: 0.91
+        });
+
+        revealEffect.reveal(`.section-title`, {
+            opacity: 0,
+            blur: '6px',
+            scale: 0.96
+        });
+
+        revealEffect.reveal(`.sneaker`, {
+            interval: 105,
+            opacity: 0,
+            blur: '6px',
+            scale: 0.96
+        });
+
+        revealEffect.reveal(`.collection__card`, {
+            interval: 105,
+            opacity: 0,
+            blur: '6px',
+            scale: 0.96
+        });
     </script>
 </body>
 </html>
