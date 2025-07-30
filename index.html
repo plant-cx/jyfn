@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Discussion Board</title>
+    <title>Discussion Board with Random Usernames</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -78,7 +78,7 @@
 <body>
     <!-- Header -->
     <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg">
-        <h1 class="text-3xl font-bold text-center">Simple Discussion Board</h1>
+        <h1 class="text-3xl font-bold text-center">Discussion Board</h1>
         <p id="user-id-display" class="text-sm text-center mt-1"></p>
     </header>
 
@@ -119,8 +119,6 @@
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // YOUR FIREBASE CONFIGURATION - This is critical for your app to connect to Firebase
-        // This is taken directly from your Firebase project settings (chat-d312d)
-        // Ensure these values are correct for your project!
         const firebaseConfig = {
             apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0", // From your last correct config
             authDomain: "chat-d312d.firebaseapp.com",
@@ -130,6 +128,26 @@
             appId: "1:153824285530:web:d918e824233704842fd963",
             measurementId: "G-CJKMEBMWD2"
         };
+
+        // --- Random Username Generation ---
+        const ADJECTIVES = ["Happy", "Brave", "Clever", "Shiny", "Quiet", "Loud", "Swift", "Bright", "Calm", "Witty", "Gentle", "Fierce", "Lucky", "Wise", "Bold", "Kind", "Silly", "Graceful", "Curious", "Vivid"];
+        const NOUNS = ["Panda", "Tiger", "Eagle", "Star", "River", "Cloud", "Stone", "Whisper", "Echo", "Blossom", "Shadow", "Spirit", "Comet", "Voyager", "Pixel", "Gizmo", "Spark", "Bolt", "Dreamer", "Nomad"];
+
+        function generateRandomUsername() {
+            const randomAdjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+            const randomNoun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+            return `${randomAdjective}${randomNoun}`; // e.g., "HappyPanda"
+        }
+
+        function getOrCreateUsername() {
+            let username = sessionStorage.getItem('chatUsername');
+            if (!username) {
+                username = generateRandomUsername();
+                sessionStorage.setItem('chatUsername', username);
+            }
+            return username;
+        }
+        // --- End Random Username Generation ---
 
         // Wait for the DOM to be fully loaded before running JavaScript
         document.addEventListener('DOMContentLoaded', () => {
@@ -149,6 +167,7 @@
             const noMessagesIndicator = document.getElementById('no-messages-indicator');
 
             let currentUserId = null; // To store the authenticated user's ID
+            let currentUsername = getOrCreateUsername(); // Get or create the random username
 
             // Function to display errors
             function displayError(message) {
@@ -173,6 +192,7 @@
             function renderMessage(msg) {
                 const messageWrapper = document.createElement('div');
                 messageWrapper.classList.add('message-container');
+                // Check if the message was sent by the current user's Firebase UID
                 messageWrapper.classList.add(msg.userId === currentUserId ? 'justify-end' : 'justify-start');
 
                 const messageBubble = document.createElement('div');
@@ -181,7 +201,8 @@
 
                 const userInfo = document.createElement('div');
                 userInfo.classList.add('message-info');
-                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.userId ? msg.userId.substring(0, 8) + '...' : 'Unknown'}`;
+                // Display the stored username, or the truncated Firebase UID if username is missing
+                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.username || (msg.userId ? msg.userId.substring(0, 8) + '...' : 'Unknown')}`;
                 messageBubble.appendChild(userInfo);
 
                 const messageText = document.createElement('p');
@@ -205,10 +226,12 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUserId = user.uid;
-                    userIdDisplay.textContent = `Your User ID: ${currentUserId}`;
+                    // Display the random username in the header
+                    userIdDisplay.textContent = `Your Username: ${currentUsername}`;
                     messageInput.disabled = false;
                     sendButton.disabled = false;
                     console.log("User signed in:", currentUserId);
+                    console.log("Assigned Username:", currentUsername);
                     // Start listening for messages only after user is authenticated
                     startMessageListener();
                 } else {
@@ -226,7 +249,7 @@
 
             // Function to start real-time message listener
             function startMessageListener() {
-                // Listen to the 'messages' collection, as this is where messages will now be written directly
+                // Listen to the 'messages' collection
                 const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
                 const q = query(messagesCollectionRef, orderBy('timestamp'));
 
@@ -259,11 +282,12 @@
                 }
 
                 try {
-                    // Send message directly to 'messages' collection (no pending collection for moderation)
+                    // Send message directly to 'messages' collection, including the generated username
                     await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages`), {
                         text: messageText,
                         timestamp: serverTimestamp(),
                         userId: currentUserId,
+                        username: currentUsername // Include the random username
                     });
                     messageInput.value = ''; // Clear input
                     hideAllMessages(); // Hide any previous warnings/errors
