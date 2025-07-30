@@ -1,1 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>Fun Stuff</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
 
+        :root {
+            --big-space: 3.5rem;
+            --light-gray: hsl(220, 18%, 78%);
+            --lighter-gray: hsl(220, 18%, 86%);
+            --dark-words: hsl(220, 8%, 10%);
+            --some-words: hsl(220, 4%, 32%);
+            --light-words: hsl(220, 4%, 55%);
+            --white-ish: hsl(220, 18%, 99%);
+            --light-box: hsl(220, 18%, 97%);
+            --fancy-font: 'Lora', serif;
+            --huge-text: 2.25rem;
+            --big-text: 1.5rem;
+            --medium-text: 1.25rem;
+            --small-text: 1rem;
+            --tiny-text: .938rem;
+            --extra-tiny-text: .813rem;
+            --super-tiny-text: .75rem;
+            --thin-line: 400;
+            --medium-line: 500;
+            --thick-line: 600;
+            --layer-one: 10;
+            --layer-two: 100;
+        }
+
+        @media screen and (min-width: 1124px) {
+            :root {
+                --huge-text: 4.5rem;
+                --big-text: 2.25rem;
+                --medium-text: 1.5rem;
+                --small-text: 1.25rem;
+                --tiny-text: 1rem;
+                --extra-tiny-text: .875rem;
+                --super-tiny-text: .813rem;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--fancy-font);
+            font-size: var(--tiny-text);
+            background-color: var(--white-ish);
+            color: var(--some-words);
+            transition: .4s;
+        }
+
+        h1, h2, h3 {
+            color: var(--dark-words);
+            font-weight: var(--medium-line);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .my-box {
+            max-width: 1024px;
+            margin-right: 1.5rem;
+            margin-left: 1.5rem;
+        }
+
+        .many-boxes {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .big-part {
+            padding: 4.5rem 0 2rem;
+        }
+
+        .part-name {
+            font-size: var(--big-text);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .main-stuff {
+            overflow: hidden;
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: transparent;
+            z-index: var(--layer-two);
+            transition: .4s;
+        }
+
+        .bar-nav {
+            height: var(--big-space);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bar-logo {
+            color: var(--dark-words);
+            font-weight: var(--medium-line);
+        }
+
+        .bar-change {
+            background-color: var(--white-ish);
+            box-shadow: 0 1px 4px hsla(220, 4%, 15%, .1);
+        }
+
+        .active-thing {
+            color: var(--dark-words);
+        }
+
+        .front-page {
+            background-color: var(--light-gray);
+            overflow: hidden;
+            transition: .4s;
+        }
+
+        .front-box {
+            padding: 4rem 0 1rem;
+            row-gap: 8.5rem;
+        }
+
+        .front-title {
+            font-size: var(--huge-text);
+            font-weight: 400;
+        }
+
+        .front-words {
+            color: var(--dark-words);
+            margin: 1rem 0 2rem;
+        }
+
+        .front-title, .front-words {
+            line-height: 140%;
+        }
+
+        .front-pics {
+            position: relative;
+            width: 310px;
+            justify-self: center;
+        }
+
+        .front-pics img:nth-child(1) {
+            width: 224px;
+            position: absolute;
+            right: -1.5rem;
+            top: -9.5rem;
+        }
+
+        .cool-link {
+            color: var(--dark-words);
+            font-weight: var(--medium-line);
+            display: inline-flex;
+            align-items: center;
+            column-gap: .5rem;
+        }
+
+        .cool-link i {
+            font-size: 1rem;
+            transition: .3s;
+        }
+
+        .cool-link:hover i {
+            transform: translateX(.25rem);
+        }
+
+        .new-stuff-box {
+            row-gap: 2.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .new-item-card {
+            justify-self: center;
+        }
+
+        .new-pic {
+            width: 270px;
+            margin-bottom: 1rem;
+        }
+
+        .item-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--dark-words);
+            padding-right: .75rem;
+        }
+
+        .item-link i {
+            font-size: 1.25rem;
+            transition: .3s;
+        }
+
+        .item-name {
+            font-size: var(--medium-text);
+            margin-bottom: .5rem;
+        }
+
+        .item-info {
+            font-size: var(--super-tiny-text);
+            color: var(--some-words);
+        }
+
+        .item-link:hover i {
+            transform: translateX(.25rem);
+        }
+
+        .brand-box {
+            grid-template-columns: repeat(2, max-content);
+            justify-content: center;
+            column-gap: 1.25rem;
+        }
+
+        .brand-pic {
+            width: 120px;
+        }
+
+        .brand-pic:nth-child(even) {
+            margin-top: 2rem;
+        }
+
+        .copy-info {
+            font-size: var(--super-tiny-text);
+            color: var(--light-words);
+        }
+
+        ::-webkit-scrollbar {
+            width: .6rem;
+            border-radius: .5rem;
+            background-color: hsl(220, 8%, 76%);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: hsl(220, 8%, 64%);
+            border-radius: .5rem;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: hsl(220, 8%, 54%);
+        }
+
+        @media screen and (max-width: 340px) {
+            .my-box {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+
+            .front-box {
+                padding: 2rem 0 1rem;
+                row-gap: 6rem;
+            }
+
+            .front-words {
+                font-size: var(--extra-tiny-text);
+            }
+
+            .front-pics {
+                width: 248px;
+            }
+
+            .front-pics img:nth-child(1) {
+                width: 180px;
+                top: -7rem;
+            }
+
+            .new-pic {
+                width: 230px;
+            }
+
+            .item-link {
+                padding-right: 0;
+            }
+
+            .brand-box {
+                grid-template-columns: repeat(2, 100px);
+                row-gap: .5rem;
+            }
+        }
+
+        @media screen and (min-width: 767px) {
+            .front-box, .new-stuff-box {
+                grid-template-columns: repeat(2, max-content);
+                justify-content: center;
+            }
+
+            .front-pics {
+                margin-top: 6rem;
+            }
+
+            .brand-box {
+                grid-template-columns: repeat(4, max-content);
+            }
+        }
+
+        @media screen and (min-width: 1023px) {
+            .big-part {
+                padding: 7rem 0 1rem;
+            }
+
+            .part-name {
+                margin-bottom: 4rem;
+            }
+
+            .bar-nav {
+                height: calc(var(--big-space) + 1.5rem);
+            }
+
+            .active-thing {
+                color: var(--dark-words);
+                text-decoration: line-through;
+            }
+        }
+
+        @media screen and (min-width: 1054px) {
+            .my-box {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media screen and (min-width: 1124px) {
+            .front-box {
+                padding: 10rem 0 3rem;
+                column-gap: 0;
+            }
+
+            .front-pics {
+                width: 500px;
+                margin-top: 8rem;
+                transform: translate(-1rem);
+            }
+
+            .front-pics img:nth-child(1) {
+                width: 345px;
+                top: -14.5rem;
+            }
+
+            .new-stuff-box {
+                grid-template-columns: repeat(3, max-content);
+                padding-bottom: 4.5rem;
+                gap: 4.5rem;
+            }
+
+            .new-pic {
+                margin-bottom: 1.25rem;
+            }
+
+            .item-name {
+                font-size: var(--small-text);
+            }
+
+            .brand-box {
+                column-gap: 5.5rem;
+            }
+
+            .brand-pic {
+                width: 140px;
+            }
+        }
+
+        @media screen and (min-width: 2048px) {
+            body {
+                zoom: 1.3;
+            }
+        }
+
+        @media screen and (min-width: 3840px) {
+            body {
+                zoom: 2.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar" id="header">
+        <nav class="bar-nav my-box">
+        </nav>
+    </header>
+    <main class="main-stuff">
+        <section class="front-page big-part" id="home">
+            <div class="front-box my-box many-boxes">
+                <div class="home__data hero-info-text">
+                    <h1 class="front-title">
+                        Life Stuff
+                    </h1>
+                    <br>
+                    <p class="front-words">
+                        Big ideas about life, made easy and fun.
+                    </p>
+                    <a href="about__silver" class="cool-link">
+                        Read More<i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+                <div class="front-pics">
+                    <img src="https://cdn-icons-png.flaticon.com/512/8716/8716846.png" alt="home image">
+                </div>
+            </div>
+        </section>
+
+        <section class="new big-part" id="Categories">
+            <h2 class="part-name section-head">
+                Cool Topics
+            </h2>
+            <div class="new-stuff-box my-box many-boxes">
+                <article class="new-item-card topic-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2201/2201544.png" alt="new image" class="new-pic">
+                    <a href="Neurobiology.html" class="item-link">
+                        <div class="new__data">
+                            <h2 class="item-name">
+                                Brains
+                            </h2>
+                            <span class="item-info">
+                                See More
+                            </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="new-item-card topic-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2201/2201470.png" alt="new image" class="new-pic">
+                    <a href="Molecular_Genetics.html" class="item-link">
+                        <div class="new__data">
+                            <h2 class="item-name">
+                                DNA Stuff
+                            </h2>
+                            <span class="item-info">
+                                See More
+                            </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="new-item-card topic-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2201/2201531.png" alt="new image" class="new-pic">
+                    <a href="Evolutionary_Biology.html" class="item-link">
+                        <div class="new__data">
+                            <h2 class="item-name">
+                                How Things Change
+                            </h2>
+                            <span class="item-info">
+                                See More
+                            </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section class="new big-part" id="new">
+            <div class="new-stuff-box my-box many-boxes">
+                <article class="new-item-card topic-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5369/5369466.png" alt="new image" class="new-pic">
+                    <a href="Imunology.html" class="item-link">
+                        <div class="new__data">
+                            <h2 class="item-name">
+                                Body Defenders
+                            </h2>
+                            <span class="item-info">
+                                See More
+                            </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="new-item-card topic-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6502/6502964.png" alt="new image" class="new-pic">
+                    <a href="Biophysics.html" class="item-link">
+                        <div class="new__data">
+                            <h2 class="item-name">
+                                Life Physics
+                            </h2>
+                            <span class="item-info">
+                                See More
+                            </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="new-item-card topic-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1730/1730586.png" alt="new image" class="new-pic">
+                    <a href="Microbiology.html" class="item-link">
+                        <div class="new__data">
+                            <h2 class="item-name">
+                                Tiny Life
+                            </h2>
+                            <span class="item-info">
+                                See More
+                            </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section class="brand big-part" id="Fundamentals">
+            <h2 class="part-name section-head">
+                Basic Ideas
+            </h2>
+            <div class="brand-box my-box many-boxes">
+                <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="logo image" class="brand-pic category-item-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="logo image" class="brand-pic category-item-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="logo image" class="brand-pic category-item-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="logo image" class="brand-pic category-item-card">
+            </div>
+        </section>
+    </main>
+
+    <div class="footer__info my-box">
+        <span class="copy-info">
+            <p class="copy-info">&#169; Fun Stuff. All rights kept</p>
+        </span>
+    </div>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        window.onscroll = () => {
+            const topBarElement = document.getElementById('header');
+            if (window.scrollY >= 200) {
+                topBarElement.classList.add('bar-change');
+            } else {
+                topBarElement.classList.remove('bar-change');
+            }
+        };
+
+        const awesomeReveal = ScrollReveal({
+            origin: 'top',
+            distance: '60px',
+            duration: 1500,
+            delay: 1,
+            opacity: 0,
+            blur: '10px',
+            scale: 1,
+            reset: false
+        });
+
+        awesomeReveal.reveal(`.hero-info-text`);
+        awesomeReveal.reveal(`.section-head`);
+        awesomeReveal.reveal(`.topic-card, .category-item-card`, { interval: 50 });
+    </script>
+</body>
+</html>
