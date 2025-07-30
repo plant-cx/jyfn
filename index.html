@@ -1,183 +1,468 @@
-/**
- * Cloud Function to moderate chat messages for profanity and controversial words.
- * Messages are sent to a 'messages_pending' collection.
- * This function checks them and, if clean, moves them to the 'messages' collection.
- * If flagged, they are deleted from 'messages_pending'.
- */
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp();
-const db = admin.firestore();
-
-// Import the Language client library
-const { LanguageServiceClient } = require('@google-cloud/language');
-const languageClient = new LanguageServiceClient();
-
-// --- Comprehensive Banned Word List ---
-// This list is extensive and includes common profanity, slurs, and controversial terms.
-// It's designed to catch variations and common bypasses.
-// This list can be further expanded or loaded from a separate file/database for very large sets.
-const BANNED_WORDS = [
-    // General Profanity
-    'fuck', 'shit', 'cunt', 'asshole', 'bitch', 'bastard', 'damn', 'hell', 'piss', 'dick', 'cock', 'tits', 'whore', 'slut', 'motherfucker', 'sonofabitch',
-    'bollocks', 'bugger', 'arse', 'wanker', 'bloody', 'crap', 'twat', 'prick', 'minge', 'gobshite', 'bellend', 'choad', 'knobhead', 'spunk', 'cum', 'ejaculate', 'jizz',
-    // Slurs/Hate Speech (examples - this list should be carefully curated and expanded as needed)
-    'nigger', 'nigga', 'faggot', 'dyke', 'kike', 'gook', 'chink', 'paki', 'retard', 'spastic', 'cripple', 'tranny', 'shemale', 'wetback', 'beaner', 'cracker', 'white trash',
-    'gypsy', 'jew', 'muslim', 'christian', 'hindu', 'buddhist', 'atheist', // Added for controversial religious terms if used as slurs
-    // Controversial/Harmful Ideologies (examples)
-    'nazi', 'hitler', 'kkk', 'supremacist', 'fascist', 'communist', 'terrorist', 'jihad', 'isis', 'al-qaeda', 'taliban', 'antifa', 'zionist', // Added for balance
-    'genocide', 'holocaust', 'massacre', 'rape', 'pedophile', 'child molester', 'incest', 'bestiality', 'suicide', 'self-harm', 'kill yourself',
-    // Drug-related (examples)
-    'cocaine', 'heroin', 'meth', 'weed', 'pot', 'marijuana', 'ecstasy', 'mdma', 'lsd', 'opioid', 'fentanyl', 'crack', 'dope',
-    // Sexual terms (if used offensively)
-    'sex', 'porn', 'rape', 'orgasm', 'masturbate', 'threesome', 'gangbang', 'blowjob', 'handjob', 'rimjob', 'anal', 'vagina', 'penis', 'clitoris', 'scrotum',
-    // More general strong language/insults
-    'idiot', 'moron', 'stupid', 'loser', 'ugly', 'fat', 'dumb', 'crazy', 'insane', 'psycho', 'freak', 'weirdo', 'degenerate', 'scum', 'filth', 'vermin',
-    'bastard', 'cretin', 'imbecile', 'nitwit', 'numbskull', 'dunce', 'bozo', 'clown', 'jerk', 'schmuck', 'punk', 'goon', 'thug', 'creep', 'pervert',
-    'ass', 'butt', 'boob', 'turd', 'fart', 'smelly', 'gross', 'nasty', 'disgusting', 'vomit', 'barf', 'puke', 'suck', 'screw', 'screw you', 'sucks',
-    // Expanded list for more coverage
-    'abuser', 'addict', 'alcoholic', 'anarchist', 'antichrist', 'bigot', 'blasphemy', 'bomb', 'cannibal', 'chauvinist', 'cult', 'demon', 'devil',
-    'discriminator', 'extremist', 'fanatic', 'gangster', 'hooligan', 'heretic', 'hypocrite', 'infidel', 'insurrection', 'jerkoff', 'liar', 'lunatic',
-    'misogynist', 'molest', 'murder', 'obscene', 'oppressor', 'pervert', 'pig', 'prejudice', 'profane', 'racist', 'rebel', 'revolt', 'sadist', 'satan',
-    'scam', 'sectarian', 'sinner', 'smut', 'snitch', 'sodomite', 'stalker', 'subversive', 'terror', 'torture', 'traitor', 'tyrant', 'unbeliever',
-    'untermensch', 'useless', 'vandal', 'venom', 'villain', 'violence', 'vulgar', 'witch', 'xenophobe', 'zealot', 'zombie',
-    // Common misspellings and leetspeak variations (simplified for regex, but effective)
-    // This part is tricky. Instead of explicit leetspeak, we'll normalize the input.
-    // The `normalizeText` function below will help catch many common bypasses.
-];
-
-// Create a regex for each banned word to catch variations with non-alphanumeric characters
-// e.g., f.u.c.k, f-u-c-k, f_u_c_k, etc.
-const BANNED_WORD_REGEXES = BANNED_WORDS.map(word => {
-    // Escape special regex characters in the word, then allow any non-alphanumeric char
-    // or space between letters.
-    const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regexPattern = escapedWord.split('').join('[^a-zA-Z0-9]*');
-    return new RegExp(regexPattern, 'i'); // 'i' for case-insensitive
-});
-
-
-/**
- * Normalizes text for profanity detection by converting to lowercase
- * and removing non-alphanumeric characters (except spaces for now, might remove all later).
- * Also handles common leetspeak substitutions.
- * @param {string} text - The input text.
- * @returns {string} The normalized text.
- */
-function normalizeText(text) {
-    let normalized = text.toLowerCase();
-    // Replace common leetspeak characters
-    normalized = normalized.replace(/@/g, 'a');
-    normalized = normalized.replace(/3/g, 'e');
-    normalized = normalized.replace(/1/g, 'i');
-    normalized = normalized.replace(/0/g, 'o');
-    normalized = normalized.replace(/5/g, 's');
-    normalized = normalized.replace(/7/g, 't');
-    normalized = normalized.replace(/\$/g, 's'); // For dollar sign as 's'
-    // Remove all non-alphanumeric characters (including spaces, to catch f u c k)
-    normalized = normalized.replace(/[^a-z0-9]/g, '');
-    return normalized;
-}
-
-/**
- * Checks if a given text contains any profanity from the banned list.
- * @param {string} text The message text to check.
- * @returns {boolean} True if profanity is found, false otherwise.
- */
-function containsProfanity(text) {
-    const normalizedText = normalizeText(text);
-    functions.logger.log(`[Moderation] Normalized text: ${normalizedText}`);
-
-    // Check against direct matches and regex patterns
-    for (const bannedWord of BANNED_WORDS) {
-        if (normalizedText.includes(bannedWord.replace(/[^a-z0-9]/g, ''))) {
-            functions.logger.warn(`[Moderation] Direct match found: "${bannedWord}" in "${text}"`);
-            return true;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Board with Random Usernames, Edit & Delete</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6; /* Light gray background */
+            display: flex; /* Use flexbox for full page layout */
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
         }
-    }
-
-    for (const regex of BANNED_WORD_REGEXES) {
-        if (regex.test(text)) { // Test original text for regex patterns to catch spacing/punctuation bypasses
-            functions.logger.warn(`[Moderation] Regex match found: "${regex.source}" in "${text}"`);
-            return true;
+        .message-container {
+            display: flex;
+            margin-bottom: 1rem;
+            align-items: flex-start; /* Align items to the top */
         }
-    }
+        .message-bubble {
+            max-width: 70%; /* Limit bubble width */
+            padding: 0.75rem 1rem;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            word-wrap: break-word; /* Ensure long words break */
+            position: relative; /* For positioning edit/delete buttons */
+            display: flex; /* Use flex to arrange text and buttons */
+            flex-direction: column; /* Stack text and buttons */
+            flex-grow: 1; /* Allow bubble to grow */
+        }
+        .sent {
+            background-color: #3b82f6; /* Blue for sent messages */
+            color: white;
+            align-self: flex-end; /* Align to the right */
+            border-bottom-right-radius: 0.5rem; /* Pointy corner for sent */
+        }
+        .received {
+            background-color: #ffffff; /* White for received messages */
+            color: #374151; /* Dark gray text */
+            align-self: flex-start; /* Align to the left */
+            border-bottom-left-radius: 0.5rem; /* Pointy corner for received */
+        }
+        .message-info {
+            font-size: 0.75rem; /* Smaller font for info */
+            opacity: 0.8;
+            margin-bottom: 0.25rem;
+        }
+        .timestamp {
+            font-size: 0.65rem; /* Even smaller for timestamp */
+            opacity: 0.7;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+        .message-actions {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            z-index: 10; /* Ensure buttons are above other content */
+        }
+        .message-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7); /* For sent messages */
+            padding: 0.2rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        .received .message-actions button {
+            color: rgba(0, 0, 0, 0.5); /* For received messages */
+        }
+        .message-actions button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        .loading-indicator, .error-message {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+        .error-message {
+            color: #dc2626;
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            border-radius: 0.5rem;
+            margin: 1rem;
+        }
+        /* Styling for the edit input field */
+        .edit-input {
+            width: 95%; /* Adjust width to fit within bubble */
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            box-sizing: border-box; /* Include padding in width */
+            color: #374151; /* Ensure text color is visible */
+        }
+        .edit-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            justify-content: flex-end;
+        }
+        .edit-buttons button {
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .edit-buttons .save-button {
+            background-color: #22c55e; /* Green */
+            color: white;
+        }
+        .edit-buttons .save-button:hover {
+            background-color: #16a34a;
+        }
+        .edit-buttons .cancel-button {
+            background-color: #ef4444; /* Red */
+            color: white;
+        }
+        .edit-buttons .cancel-button:hover {
+            background-color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg">
+        <h1 class="text-3xl font-bold text-center">Discussion Board</h1>
+        <p id="user-id-display" class="text-sm text-center mt-1"></p>
+    </header>
 
-    return false;
-}
+    <!-- Messages Container -->
+    <main id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
+        <div id="error-message" class="error-message hidden"></div>
+        <div id="no-messages-indicator" class="text-center text-gray-500 mt-10 hidden">No messages yet. Be the first to start the discussion!</div>
+        <!-- Messages will be appended here by JavaScript -->
+    </main>
 
-/**
- * Cloud Function triggered on new messages in 'messages_pending'.
- * Performs profanity moderation and moves clean messages to 'messages'.
- */
-exports.moderateChatMessage = functions.firestore
-    .document('apps/{projectId}/messages_pending/{messageId}')
-    .onCreate(async (snap, context) => {
-        const message = snap.data();
-        const messageId = context.params.messageId;
-        const projectId = context.params.projectId;
-        const messageText = message.text;
+    <!-- Message Input Form -->
+    <footer class="bg-white p-4 shadow-lg rounded-t-lg">
+        <form id="message-form" class="flex space-x-3">
+            <input
+                type="text"
+                id="message-input"
+                placeholder="Type your message here..."
+                class="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
+            />
+            <button
+                type="submit"
+                id="send-button"
+                class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled
+            >
+                Send
+            </button>
+        </form>
+    </footer>
 
-        functions.logger.info(`[Moderation] New message received in pending: ${messageText} (ID: ${messageId})`);
+    <!-- Firebase SDKs and Application Logic -->
+    <script type="module">
+        // Import Firebase modules from CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        // Import updateDoc and deleteDoc for edit/delete functionality
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        let isFlagged = false;
+        // YOUR FIREBASE CONFIGURATION - This is critical for your app to connect to Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0", // From your last correct config
+            authDomain: "chat-d312d.firebaseapp.com",
+            projectId: "chat-d312d",
+            storageBucket: "chat-d312d.firebasestorage.app",
+            messagingSenderId: "153824285530",
+            appId: "1:153824285530:web:d918e824233704842fd963",
+            measurementId: "G-CJKMEBMWD2"
+        };
 
-        // --- Profanity Detection ---
-        if (containsProfanity(messageText)) {
-            isFlagged = true;
-            functions.logger.warn(`[Moderation] Message flagged by custom profanity filter: "${messageText}"`);
-        } else {
-            // Optional: Use Google Cloud Natural Language API for additional content moderation
-            // This provides a more advanced, AI-driven moderation.
-            // Uncomment this section if you want to use the Natural Language API.
-            /*
-            try {
-                const document = {
-                    content: messageText,
-                    type: 'PLAIN_TEXT',
-                };
-                const [result] = await languageClient.analyzeSentiment({ document: document });
-                const sentiment = result.documentSentiment;
-                functions.logger.info(`[Moderation] Sentiment score: ${sentiment.score}, magnitude: ${sentiment.magnitude}`);
+        // --- Random Username Generation ---
+        const ADJECTIVES = ["Happy", "Brave", "Clever", "Shiny", "Quiet", "Loud", "Swift", "Bright", "Calm", "Witty", "Gentle", "Fierce", "Lucky", "Wise", "Bold", "Kind", "Silly", "Graceful", "Curious", "Vivid"];
+        const NOUNS = ["Panda", "Tiger", "Eagle", "Star", "River", "Cloud", "Stone", "Whisper", "Echo", "Blossom", "Shadow", "Spirit", "Comet", "Voyager", "Pixel", "Gizmo", "Spark", "Bolt", "Dreamer", "Nomad"];
 
-                // Example: Flag messages with very negative sentiment
-                if (sentiment.score < -0.5 && sentiment.magnitude > 1.0) {
-                    isFlagged = true;
-                    functions.logger.warn(`[Moderation] Message flagged by sentiment analysis: "${messageText}" (Score: ${sentiment.score})`);
-                }
+        function generateRandomUsername() {
+            const randomAdjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+            const randomNoun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+            return `${randomAdjective}${randomNoun}`; // e.g., "HappyPanda"
+        }
 
-                // You can also use analyzeContent for more detailed safety attributes
-                const [classifyResult] = await languageClient.classifyText({ document: document });
-                const categories = classifyResult.categories;
-                if (categories && categories.length > 0) {
-                    functions.logger.info(`[Moderation] Categories: ${JSON.stringify(categories)}`);
-                    // Add logic to flag based on categories if needed
-                }
-
-            } catch (error) {
-                functions.logger.error(`[Moderation] Error with Natural Language API: ${error.message}`);
-                // Decide if API errors should lead to flagging or just logging
-                // For robustness, you might consider flagging if API fails, or just proceed without NL analysis.
+        function getOrCreateUsername() {
+            let username = sessionStorage.getItem('chatUsername');
+            if (!username) {
+                username = generateRandomUsername();
+                sessionStorage.setItem('chatUsername', username);
             }
-            */
+            return username;
         }
+        // --- End Random Username Generation ---
 
-        // --- Action based on Flagging ---
-        if (isFlagged) {
-            // Delete the message from messages_pending if it's flagged
-            await snap.ref.delete();
-            functions.logger.info(`[Moderation] Flagged message deleted from pending: ${messageId}`);
-        } else {
-            // If clean, move the message to the 'messages' collection
-            const cleanMessageRef = db.collection(`apps/${projectId}/messages`).doc(messageId);
-            await cleanMessageRef.set({
-                ...message,
-                status: 'approved', // Add a status field for clarity
-                moderatedAt: admin.firestore.FieldValue.serverTimestamp()
+        // Wait for the DOM to be fully loaded before running JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+
+            // DOM elements
+            const messagesContainer = document.getElementById('messages-container');
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const userIdDisplay = document.getElementById('user-id-display');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessageDiv = document.getElementById('error-message');
+            const noMessagesIndicator = document.getElementById('no-messages-indicator');
+
+            let currentUserId = null; // To store the authenticated user's ID
+            let currentUsername = getOrCreateUsername(); // Get or create the random username
+
+            // Function to display errors
+            function displayError(message) {
+                errorMessageDiv.textContent = `Error: ${message}`;
+                errorMessageDiv.classList.remove('hidden');
+                loadingIndicator.classList.add('hidden');
+                console.error("App Error:", message); // Log to console for debugging
+            }
+
+            // Function to hide all messages (error, loading)
+            function hideAllMessages() {
+                errorMessageDiv.classList.add('hidden');
+                loadingIndicator.classList.add('hidden');
+            }
+
+            // Function to scroll to the bottom of the messages container
+            function scrollToBottom() {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // Function to handle message deletion
+            async function handleDeleteMessage(messageId) {
+                // IMPORTANT: Using window.confirm for simplicity, replace with custom modal in production for better UX.
+                if (!window.confirm('Are you sure you want to delete this message?')) {
+                    return; // User cancelled
+                }
+                try {
+                    const messageRef = doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId);
+                    await deleteDoc(messageRef);
+                    console.log(`Message ${messageId} deleted successfully.`);
+                    // The onSnapshot listener will automatically re-render the messages
+                } catch (e) {
+                    console.error("Error deleting message: ", e);
+                    displayError(`Failed to delete message: ${e.message}`);
+                }
+            }
+
+            // Function to handle message editing
+            function handleEditMessage(messageId, currentText) {
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (!messageElement) return;
+
+                // Find the original text paragraph
+                const originalTextP = messageElement.querySelector('p');
+                // Find the actions div (contains edit/delete buttons)
+                const actionsDiv = messageElement.querySelector('.message-actions');
+
+                // Hide the original text and buttons
+                if (originalTextP) originalTextP.style.display = 'none';
+                if (actionsDiv) actionsDiv.style.display = 'none';
+
+                // Create an input field for editing
+                const editInput = document.createElement('input');
+                editInput.type = 'text';
+                editInput.value = currentText;
+                editInput.classList.add('edit-input');
+                // Insert the input field right after the original text paragraph
+                originalTextP.parentNode.insertBefore(editInput, originalTextP.nextSibling);
+                editInput.focus(); // Focus on the input field
+                editInput.select(); // Select all text in the input
+
+                // Create Save and Cancel buttons
+                const editButtonsDiv = document.createElement('div');
+                editButtonsDiv.classList.add('edit-buttons');
+
+                const saveButton = document.createElement('button');
+                saveButton.textContent = 'Save';
+                saveButton.classList.add('save-button');
+                saveButton.onclick = async () => {
+                    const newText = editInput.value.trim();
+                    if (newText === '') {
+                        displayError("Message cannot be empty.");
+                        return;
+                    }
+                    try {
+                        const messageRef = doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId);
+                        await updateDoc(messageRef, {
+                            text: newText,
+                            timestamp: serverTimestamp() // Update timestamp on edit
+                        });
+                        console.log(`Message ${messageId} updated.`);
+                        // The onSnapshot listener will automatically re-render the messages,
+                        // which will remove the edit controls and show the updated text.
+                    } catch (e) {
+                        console.error("Error updating message: ", e);
+                        displayError(`Failed to update message: ${e.message}`);
+                    }
+                };
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.classList.add('cancel-button');
+                cancelButton.onclick = () => {
+                    // Remove edit controls and show original text/buttons
+                    if (originalTextP) originalTextP.style.display = '';
+                    if (actionsDiv) actionsDiv.style.display = '';
+                    editInput.remove();
+                    editButtonsDiv.remove();
+                };
+
+                editButtonsDiv.appendChild(saveButton);
+                editButtonsDiv.appendChild(cancelButton);
+                messageElement.appendChild(editButtonsDiv); // Append buttons to the message bubble
+            }
+
+
+            // Function to render a single message
+            function renderMessage(msg) {
+                const messageWrapper = document.createElement('div');
+                messageWrapper.classList.add('message-container');
+                messageWrapper.classList.add(msg.userId === currentUserId ? 'justify-end' : 'justify-start');
+
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('message-bubble');
+                messageBubble.classList.add(msg.userId === currentUserId ? 'sent' : 'received');
+                messageBubble.setAttribute('data-message-id', msg.id); // Add data-id for targeting
+
+                const userInfo = document.createElement('div');
+                userInfo.classList.add('message-info');
+                // Display the stored username, or the truncated Firebase UID if username is missing
+                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.username || 'Unknown User'}`; // Use 'Unknown User' if username is missing or for older messages
+                messageBubble.appendChild(userInfo);
+
+                const messageText = document.createElement('p');
+                messageText.textContent = msg.text;
+                messageBubble.appendChild(messageText);
+
+                const timestampDiv = document.createElement('div');
+                timestampDiv.classList.add('timestamp');
+                if (msg.timestamp && typeof msg.timestamp.toDate === 'function') { // Check if toDate() method exists
+                    timestampDiv.textContent = msg.timestamp.toDate().toLocaleString();
+                } else {
+                    timestampDiv.textContent = 'Sending...'; // Or handle cases where timestamp is not a Firestore Timestamp
+                }
+                messageBubble.appendChild(timestampDiv);
+
+                // Add Edit and Delete buttons if the message belongs to the current user
+                if (msg.userId === currentUserId) {
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.classList.add('message-actions');
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = '✏️'; // Pencil emoji for edit
+                    editButton.title = 'Edit Message';
+                    editButton.onclick = () => handleEditMessage(msg.id, msg.text);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '🗑️'; // Trash can emoji for delete
+                    deleteButton.title = 'Delete Message';
+                    deleteButton.onclick = () => handleDeleteMessage(msg.id);
+
+                    actionsDiv.appendChild(editButton);
+                    actionsDiv.appendChild(deleteButton);
+                    messageBubble.appendChild(actionsDiv);
+                }
+
+                messageWrapper.appendChild(messageBubble);
+                messagesContainer.appendChild(messageWrapper);
+            }
+
+            // Initialize Firebase Authentication and listen for state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    // Display the random username in the header
+                    userIdDisplay.textContent = `Your Username: ${currentUsername}`;
+                    messageInput.disabled = false;
+                    sendButton.disabled = false;
+                    console.log("User signed in:", currentUserId);
+                    console.log("Assigned Username:", currentUsername);
+                    // Start listening for messages only after user is authenticated
+                    startMessageListener();
+                } else {
+                    // If no user, try anonymous sign-in
+                    try {
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously.");
+                    } catch (error) {
+                        console.error("Error signing in anonymously:", error);
+                        displayError(`Authentication failed: ${error.message}`);
+                        loadingIndicator.classList.add('hidden');
+                    }
+                }
             });
-            // Delete from pending after successfully moving
-            await snap.ref.delete();
-            functions.logger.info(`[Moderation] Message approved and moved to messages: ${messageId}`);
-        }
-    });
+
+            // Function to start real-time message listener
+            function startMessageListener() {
+                // Listen to the 'messages' collection
+                const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
+                const q = query(messagesCollectionRef, orderBy('timestamp'));
+
+                onSnapshot(q, (snapshot) => {
+                    hideAllMessages(); // Hide any previous messages
+                    messagesContainer.innerHTML = ''; // Clear existing messages before rendering new ones
+
+                    if (snapshot.empty) {
+                        noMessagesIndicator.classList.remove('hidden');
+                    } else {
+                        noMessagesIndicator.classList.add('hidden');
+                        snapshot.forEach((doc) => {
+                            renderMessage({ id: doc.id, ...doc.data() });
+                        });
+                        scrollToBottom();
+                    }
+                }, (error) => {
+                    console.error("Error fetching messages:", error);
+                    displayError(`Failed to load messages: ${error.message}`);
+                });
+            }
+
+            // Event listener for sending messages
+            messageForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageText = messageInput.value.trim();
+
+                if (messageText === '' || !currentUserId) {
+                    return; // Don't send empty messages or if not authenticated
+                }
+
+                try {
+                    // Send message directly to 'messages' collection, including the generated username
+                    await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages`), {
+                        text: messageText,
+                        timestamp: serverTimestamp(),
+                        userId: currentUserId,
+                        username: currentUsername // Include the random username
+                    });
+                    messageInput.value = ''; // Clear input
+                    hideAllMessages(); // Hide any previous warnings/errors
+                    scrollToBottom();
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    displayError(`Failed to send message: ${e.message}`);
+                }
+            });
+        }); // End of DOMContentLoaded
+    </script>
+</body>
+</html>
