@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
+    <title>Concepts Journey</title>
+
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
+
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            font-size: 0.945rem;
+            background-color: hsl(205, 15%, 95%);
+            color: hsl(225, 5%, 33%);
+        }
+
+        h1, h2, h3 {
+            color: hsl(215, 10%, 12%);
+            font-weight: 510;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .main-wrapper {
+            max-width: 1030px;
+            margin-right: 1.6rem;
+            margin-left: 1.6rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            gap: 1.6rem;
+        }
+
+        .content-block {
+            padding: 4.6rem 0 2.1rem;
+        }
+
+        .block-title {
+            font-size: 1.6rem;
+            text-align: center;
+            margin-bottom: 3.1rem;
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: transparent;
+            z-index: 101;
+        }
+
+        .nav-menu {
+            height: 3.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-list {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: hsl(225, 5%, 33%);
+            font-weight: 510;
+            display: inline-flex;
+            align-items: center;
+            column-gap: .6rem;
+        }
+
+        .hero-section {
+            background-color: hsl(218, 20%, 78%);
+            overflow: hidden;
+        }
+
+        .hero-layout {
+            padding: 4.1rem 0 1.1rem;
+            row-gap: 8.6rem;
+        }
+
+        .hero-heading {
+            font-size: 2.3rem;
+            font-weight: 410;
+            line-height: 142%;
+        }
+
+        .hero-text {
+            color: hsl(215, 10%, 12%);
+            margin: 1.1rem 0 2.1rem;
+            line-height: 142%;
+        }
+
+        .hero-images {
+            position: relative;
+            width: 315px;
+            justify-self: center;
+        }
+
+        .hero-images img:nth-child(1) {
+            width: 228px;
+            position: absolute;
+            right: -1.6rem;
+            top: -9.6rem;
+        }
+
+        .read-more-link {
+            color: hsl(215, 10%, 12%);
+            font-weight: 510;
+            display: inline-flex;
+            align-items: center;
+            column-gap: .6rem;
+        }
+
+        .category-container {
+            row-gap: 2.6rem;
+            padding-bottom: 1.6rem;
+        }
+
+        .category-item {
+            justify-self: center;
+        }
+
+        .category-img {
+            width: 275px;
+            margin-bottom: 1.1rem;
+        }
+
+        .category-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: hsl(215, 10%, 12%);
+            padding-right: .76rem;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            margin-bottom: .6rem;
+        }
+
+        .category-subtitle {
+            font-size: 0.76rem;
+            color: hsl(225, 5%, 33%);
+        }
+
+        .fundamentals-container {
+            grid-template-columns: repeat(2, max-content);
+            justify-content: center;
+            column-gap: 1.3rem;
+        }
+
+        .fundamentals-logo {
+            width: 122px;
+        }
+
+        .fundamentals-logo:nth-child(even) {
+            margin-top: 2.1rem;
+        }
+
+        .site-info {
+            padding-top: 6.1rem;
+            padding-bottom: 6.1rem;
+            text-align: center;
+            font-size: 0.76rem;
+        }
+
+        @media screen and (min-width: 770px) {
+            .hero-layout,
+            .category-container {
+                grid-template-columns: repeat(2, max-content);
+                justify-content: center;
+            }
+            .hero-images {
+                margin-top: 6.1rem;
+            }
+            .fundamentals-container {
+                grid-template-columns: repeat(4, max-content);
+            }
+        }
+
+        @media screen and (min-width: 1025px) {
+            .content-block {
+                padding: 7.1rem 0 1.1rem;
+            }
+            .block-title {
+                margin-bottom: 4.1rem;
+            }
+            .nav-menu {
+                height: calc(3.6rem + 1.6rem);
+            }
+            .category-container {
+                width: 960px;
+            }
+        }
+
+        @media screen and (min-width: 1060px) {
+            .main-wrapper {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media screen and (min-width: 1130px) {
+            .hero-layout {
+                padding: 10.1rem 0 3.1rem;
+                column-gap: 0;
+            }
+            .hero-images {
+                width: 505px;
+                margin-top: 8.1rem;
+                transform: translate(-1.1rem);
+            }
+            .hero-images img:nth-child(1) {
+                width: 350px;
+                top: -14.6rem;
+            }
+            .category-container {
+                grid-template-columns: repeat(3, max-content);
+                padding-bottom: 4.6rem;
+                gap: 4.6rem;
+            }
+            .category-img {
+                margin-bottom: 1.3rem;
+            }
+            .category-title {
+                font-size: 1.1rem;
+            }
+            .fundamentals-container {
+                column-gap: 5.6rem;
+            }
+            .fundamentals-logo {
+                width: 142px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar" id="topbar">
+        <nav class="nav-menu main-wrapper">
+            <div class="nav-links-wrapper">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <span>Return Home</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="hero-section content-block" id="home-start">
+            <div class="hero-layout main-wrapper grid-layout">
+                <div class="hero-data">
+                    <h1 class="hero-heading">Chemistry</h1>
+                    <br>
+                    <p class="hero-text">Complex physics made simple and engaging.</p>
+                    <a href="about__silver" class="read-more-link">Explore Further</a>
+                </div>
+                <div class="hero-images">
+                    <img src="https://cdn-icons-png.flaticon.com/512/8716/8716846.png" alt="main illustration">
+                </div>
+            </div>
+        </section>
+
+        <section class="new-concepts content-block" id="SubjectArea">
+            <h2 class="block-title">Subject Areas</h2>
+            <div class="category-container main-wrapper grid-layout">
+                <article class="category-item">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3055/3055644.png" alt="Quantum Chemistry illustration" class="category-img">
+                    <a href="Quantum_Chemistry.html" class="category-link">
+                        <div class="category-details">
+                            <h2 class="category-title">Quantum Chemistry</h2>
+                            <span class="category-subtitle">Dive In</span>
+                        </div>
+                    </a>
+                </article>
+                <article class="category-item">
+                    <img src="https://cdn-icons-png.flaticon.com/256/9385/9385987.png" alt="Organic Chemistry illustration" class="category-img">
+                    <a href="Organic_Chemistry.html" class="category-link">
+                        <div class="category-details">
+                            <h2 class="category-title">Organic Chemistry</h2>
+                            <span class="category-subtitle">Dive In</span>
+                        </div>
+                    </a>
+                </article>
+                <article class="category-item">
+                    <img src="https://cdn-icons-png.flaticon.com/512/11651/11651739.png" alt="Supramolecular Chemistry illustration" class="category-img">
+                    <a href="Supermolecular_Chemistry.html" class="category-link">
+                        <div class="category-details">
+                            <h2 class="category-title">Supramolecular Chemistry</h2>
+                            <span class="category-subtitle">Dive In</span>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section class="new-concepts content-block">
+            <div class="category-container main-wrapper grid-layout">
+                <article class="category-item">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSIB6c3qQ6fAOj5J3_HWjGehgZTSnDcUFJKoCfIHtoDoa8XahFhAE4ZmF35-zUPY4xhU0&usqp=CAU" alt="Chemical Kinetics and Dynamics illustration" class="category-img">
+                    <a href="Chemical_Kinetics_Dynamics.html" class="category-link">
+                        <div class="category-details">
+                            <h2 class="category-title">Chemical Kinetics and Dynamics</h2>
+                            <span class="category-subtitle">Dive In</span>
+                        </div>
+                    </a>
+                </article>
+                <article class="category-item">
+                    <img src="https://cdn-icons-png.flaticon.com/512/9028/9028611.png" alt="Polymer Chemistry illustration" class="category-img">
+                    <a href="Polymer_Chemistry.html" class="category-link">
+                        <div class="category-details">
+                            <h2 class="category-title">Polymer Chemistry</h2>
+                            <span class="category-subtitle">Dive In</span>
+                        </div>
+                    </a>
+                </article>
+                <article class="category-item">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM90frAQK3suDwW_LoinoO-90uN6sqcABEh4_D9qwcx15Y5ujTD_Lx2EDbmOKzI3p5EFo&usqp=CAU" alt="Photochemistry illustration" class="category-img">
+                    <a href="Photochemistry.html" class="category-link">
+                        <div class="category-details">
+                            <h2 class="category-title">Photochemistry</h2>
+                            <span class="category-subtitle">Dive In</span>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section class="brand-showcase content-block" id="CorePrinciples">
+            <h2 class="block-title">Core Principles</h2>
+            <div class="fundamentals-container main-wrapper grid-layout">
+                <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="principle logo" class="fundamentals-logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="principle logo" class="fundamentals-logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="principle logo" class="fundamentals-logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="principle logo" class="fundamentals-logo">
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-info main-wrapper">
+            <p class="site-copyright">&#169; Concepts Journey. All rights reserved</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        const revealEffect = ScrollReveal({
+            origin: 'top',
+            distance: '62px',
+            duration: 1050,
+            delay: 210,
+            reset: false
+        });
+
+        revealEffect.reveal(`.hero-data, .hero-images`, {
+            opacity: 0,
+            blur: '11px',
+            scale: 0.91
+        });
+
+        revealEffect.reveal(`.category-item`, {
+            interval: 105,
+            opacity: 0,
+            blur: '6px',
+            scale: 0.96
+        });
+
+        revealEffect.reveal(`.fundamentals-logo`, {
+            interval: 105,
+            opacity: 0,
+            blur: '4px',
+            scale: 0.99
+        });
+    </script>
+</body>
+</html>
