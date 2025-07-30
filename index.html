@@ -1,280 +1,279 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Secure Discussion Board</title>
-        <!-- Tailwind CSS CDN for easy styling -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-            /* Custom styles for better aesthetics and font */
-            body {
-                font-family: 'Inter', sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #f3f4f6; /* Light gray background */
-                display: flex; /* Use flexbox for full page layout */
-                flex-direction: column;
-                height: 100vh; /* Full viewport height */
-            }
-            .message-container {
-                display: flex;
-                margin-bottom: 1rem;
-            }
-            .message-bubble {
-                max-width: 70%; /* Limit bubble width */
-                padding: 0.75rem 1rem;
-                border-radius: 1.5rem; /* More rounded corners */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-                word-wrap: break-word; /* Ensure long words break */
-            }
-            .sent {
-                background-color: #3b82f6; /* Blue for sent messages */
-                color: white;
-                align-self: flex-end; /* Align to the right */
-                border-bottom-right-radius: 0.5rem; /* Pointy corner for sent */
-            }
-            .received {
-                background-color: #ffffff; /* White for received messages */
-                color: #374151; /* Dark gray text */
-                align-self: flex-start; /* Align to the left */
-                border-bottom-left-radius: 0.5rem; /* Pointy corner for received */
-            }
-            .message-info {
-                font-size: 0.75rem; /* Smaller font for info */
-                opacity: 0.8;
-                margin-bottom: 0.25rem;
-            }
-            .timestamp {
-                font-size: 0.65rem; /* Even smaller for timestamp */
-                opacity: 0.7;
-                margin-top: 0.25rem;
-                text-align: right;
-            }
-            /* Flex container for messages to push content to bottom */
-            #messages-container {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                overflow-y: auto;
-                padding: 1rem;
-                scroll-behavior: smooth; /* Smooth scrolling */
-            }
-            .loading-indicator, .error-message {
-                text-align: center;
-                padding: 20px;
-                font-size: 1.1rem;
-                color: #6b7280;
-            }
-            .error-message {
-                color: #dc2626;
-                background-color: #fee2e2;
-                border: 1px solid #ef4444;
-                border-radius: 0.5rem;
-                margin: 1rem;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Header -->
-        <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg">
-            <h1 class="text-3xl font-bold text-center">Secure Discussion Board</h1>
-            <p id="user-id-display" class="text-sm text-center mt-1"></p>
-        </header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Discussion Board</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6; /* Light gray background */
+            display: flex; /* Use flexbox for full page layout */
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+        }
+        .message-container {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .message-bubble {
+            max-width: 70%; /* Limit bubble width */
+            padding: 0.75rem 1rem;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            word-wrap: break-word; /* Ensure long words break */
+        }
+        .sent {
+            background-color: #3b82f6; /* Blue for sent messages */
+            color: white;
+            align-self: flex-end; /* Align to the right */
+            border-bottom-right-radius: 0.5rem; /* Pointy corner for sent */
+        }
+        .received {
+            background-color: #ffffff; /* White for received messages */
+            color: #374151; /* Dark gray text */
+            align-self: flex-start; /* Align to the left */
+            border-bottom-left-radius: 0.5rem; /* Pointy corner for received */
+        }
+        .message-info {
+            font-size: 0.75rem; /* Smaller font for info */
+            opacity: 0.8;
+            margin-bottom: 0.25rem;
+        }
+        .timestamp {
+            font-size: 0.65rem; /* Even smaller for timestamp */
+            opacity: 0.7;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+        /* Flex container for messages to push content to bottom */
+        #messages-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            scroll-behavior: smooth; /* Smooth scrolling */
+        }
+        .loading-indicator, .error-message {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+        .error-message {
+            color: #dc2626;
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            border-radius: 0.5rem;
+            margin: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg">
+        <h1 class="text-3xl font-bold text-center">Simple Discussion Board</h1>
+        <p id="user-id-display" class="text-sm text-center mt-1"></p>
+    </header>
 
-        <!-- Messages Container -->
-        <main id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
-            <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
-            <div id="error-message" class="error-message hidden"></div>
-            <div id="no-messages-indicator" class="text-center text-gray-500 mt-10 hidden">No messages yet. Be the first to start the discussion!</div>
-            <!-- Messages will be appended here by JavaScript -->
-        </main>
+    <!-- Messages Container -->
+    <main id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
+        <div id="error-message" class="error-message hidden"></div>
+        <div id="no-messages-indicator" class="text-center text-gray-500 mt-10 hidden">No messages yet. Be the first to start the discussion!</div>
+        <!-- Messages will be appended here by JavaScript -->
+    </main>
 
-        <!-- Message Input Form -->
-        <footer class="bg-white p-4 shadow-lg rounded-t-lg">
-            <form id="message-form" class="flex space-x-3">
-                <input
-                    type="text"
-                    id="message-input"
-                    placeholder="Type your message here..."
-                    class="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    disabled
-                />
-                <button
-                    type="submit"
-                    id="send-button"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled
-                >
-                    Send
-                </button>
-            </form>
-        </footer>
+    <!-- Message Input Form -->
+    <footer class="bg-white p-4 shadow-lg rounded-t-lg">
+        <form id="message-form" class="flex space-x-3">
+            <input
+                type="text"
+                id="message-input"
+                placeholder="Type your message here..."
+                class="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
+            />
+            <button
+                type="submit"
+                id="send-button"
+                class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled
+            >
+                Send
+            </button>
+        </form>
+    </footer>
 
-        <!-- Firebase SDKs and Application Logic -->
-        <script type="module">
-            // Import Firebase modules from CDN
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-            import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-            import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <!-- Firebase SDKs and Application Logic -->
+    <script type="module">
+        // Import Firebase modules from CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-            // YOUR FIREBASE CONFIGURATION - This is critical for your app to connect to Firebase
-            // This is taken directly from your Firebase project settings (chat-d312d)
-            // Ensure these values are correct for your project!
-            const firebaseConfig = {
-                apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0", // From your last correct config
-                authDomain: "chat-d312d.firebaseapp.com",
-                projectId: "chat-d312d",
-                storageBucket: "chat-d312d.firebasestorage.app",
-                messagingSenderId: "153824285530",
-                appId: "1:153824285530:web:d918e824233704842fd963",
-                measurementId: "G-CJKMEBMWD2"
-            };
+        // YOUR FIREBASE CONFIGURATION - This is critical for your app to connect to Firebase
+        // This is taken directly from your Firebase project settings (chat-d312d)
+        // Ensure these values are correct for your project!
+        const firebaseConfig = {
+            apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0", // From your last correct config
+            authDomain: "chat-d312d.firebaseapp.com",
+            projectId: "chat-d312d",
+            storageBucket: "chat-d312d.firebasestorage.app",
+            messagingSenderId: "153824285530",
+            appId: "1:153824285530:web:d918e824233704842fd963",
+            measurementId: "G-CJKMEBMWD2"
+        };
 
-            // Wait for the DOM to be fully loaded before running JavaScript
-            document.addEventListener('DOMContentLoaded', () => {
-                // Initialize Firebase
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                const db = getFirestore(app);
+        // Wait for the DOM to be fully loaded before running JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
 
-                // DOM elements
-                const messagesContainer = document.getElementById('messages-container');
-                const messageForm = document.getElementById('message-form');
-                const messageInput = document.getElementById('message-input');
-                const sendButton = document.getElementById('send-button');
-                const userIdDisplay = document.getElementById('user-id-display');
-                const loadingIndicator = document.getElementById('loading-indicator');
-                const errorMessageDiv = document.getElementById('error-message');
-                const noMessagesIndicator = document.getElementById('no-messages-indicator');
+            // DOM elements
+            const messagesContainer = document.getElementById('messages-container');
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const userIdDisplay = document.getElementById('user-id-display');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessageDiv = document.getElementById('error-message');
+            const noMessagesIndicator = document.getElementById('no-messages-indicator');
 
-                let currentUserId = null; // To store the authenticated user's ID
+            let currentUserId = null; // To store the authenticated user's ID
 
-                // Function to display errors
-                function displayError(message) {
-                    errorMessageDiv.textContent = `Error: ${message}`;
-                    errorMessageDiv.classList.remove('hidden');
-                    loadingIndicator.classList.add('hidden');
-                    console.error("App Error:", message); // Log to console for debugging
+            // Function to display errors
+            function displayError(message) {
+                errorMessageDiv.textContent = `Error: ${message}`;
+                errorMessageDiv.classList.remove('hidden');
+                loadingIndicator.classList.add('hidden');
+                console.error("App Error:", message); // Log to console for debugging
+            }
+
+            // Function to hide all messages (error, loading)
+            function hideAllMessages() {
+                errorMessageDiv.classList.add('hidden');
+                loadingIndicator.classList.add('hidden');
+            }
+
+            // Function to scroll to the bottom of the messages container
+            function scrollToBottom() {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // Function to render a single message
+            function renderMessage(msg) {
+                const messageWrapper = document.createElement('div');
+                messageWrapper.classList.add('message-container');
+                messageWrapper.classList.add(msg.userId === currentUserId ? 'justify-end' : 'justify-start');
+
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('message-bubble');
+                messageBubble.classList.add(msg.userId === currentUserId ? 'sent' : 'received');
+
+                const userInfo = document.createElement('div');
+                userInfo.classList.add('message-info');
+                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.userId ? msg.userId.substring(0, 8) + '...' : 'Unknown'}`;
+                messageBubble.appendChild(userInfo);
+
+                const messageText = document.createElement('p');
+                messageText.textContent = msg.text;
+                messageBubble.appendChild(messageText);
+
+                const timestampDiv = document.createElement('div');
+                timestampDiv.classList.add('timestamp');
+                if (msg.timestamp && typeof msg.timestamp.toDate === 'function') { // Check if toDate() method exists
+                    timestampDiv.textContent = msg.timestamp.toDate().toLocaleString();
+                } else {
+                    timestampDiv.textContent = 'Sending...'; // Or handle cases where timestamp is not a Firestore Timestamp
                 }
+                messageBubble.appendChild(timestampDiv);
 
-                // Function to hide all messages (error, loading)
-                function hideAllMessages() {
-                    errorMessageDiv.classList.add('hidden');
-                    loadingIndicator.classList.add('hidden');
-                }
+                messageWrapper.appendChild(messageBubble);
+                messagesContainer.appendChild(messageWrapper);
+            }
 
-                // Function to scroll to the bottom of the messages container
-                function scrollToBottom() {
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
-
-                // Function to render a single message
-                function renderMessage(msg) {
-                    const messageWrapper = document.createElement('div');
-                    messageWrapper.classList.add('message-container');
-                    messageWrapper.classList.add(msg.userId === currentUserId ? 'justify-end' : 'justify-start');
-
-                    const messageBubble = document.createElement('div');
-                    messageBubble.classList.add('message-bubble');
-                    messageBubble.classList.add(msg.userId === currentUserId ? 'sent' : 'received');
-
-                    const userInfo = document.createElement('div');
-                    userInfo.classList.add('message-info');
-                    userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.userId ? msg.userId.substring(0, 8) + '...' : 'Unknown'}`;
-                    messageBubble.appendChild(userInfo);
-
-                    const messageText = document.createElement('p');
-                    messageText.textContent = msg.text;
-                    messageBubble.appendChild(messageText);
-
-                    const timestampDiv = document.createElement('div');
-                    timestampDiv.classList.add('timestamp');
-                    if (msg.timestamp && typeof msg.timestamp.toDate === 'function') { // Check if toDate() method exists
-                        timestampDiv.textContent = msg.timestamp.toDate().toLocaleString();
-                    } else {
-                        timestampDiv.textContent = 'Sending...'; // Or handle cases where timestamp is not a Firestore Timestamp
-                    }
-                    messageBubble.appendChild(timestampDiv);
-
-                    messageWrapper.appendChild(messageBubble);
-                    messagesContainer.appendChild(messageWrapper);
-                }
-
-                // Initialize Firebase Authentication and listen for state changes
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        userIdDisplay.textContent = `Your User ID: ${currentUserId}`;
-                        messageInput.disabled = false;
-                        sendButton.disabled = false;
-                        console.log("User signed in:", currentUserId);
-                        // Start listening for messages only after user is authenticated
-                        startMessageListener();
-                    } else {
-                        // If no user, try anonymous sign-in
-                        try {
-                            await signInAnonymously(auth);
-                            console.log("Signed in anonymously.");
-                        } catch (error) {
-                            console.error("Error signing in anonymously:", error);
-                            displayError(`Authentication failed: ${error.message}`);
-                            loadingIndicator.classList.add('hidden');
-                        }
-                    }
-                });
-
-                // Function to start real-time message listener
-                function startMessageListener() {
-                    // Listen to the 'messages' collection, as the function will move clean messages here
-                    const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
-                    const q = query(messagesCollectionRef, orderBy('timestamp'));
-
-                    onSnapshot(q, (snapshot) => {
-                        hideAllMessages(); // Hide any previous messages
-                        messagesContainer.innerHTML = ''; // Clear existing messages before rendering new ones
-
-                        if (snapshot.empty) {
-                            noMessagesIndicator.classList.remove('hidden');
-                        } else {
-                            noMessagesIndicator.classList.add('hidden');
-                            snapshot.forEach((doc) => {
-                                renderMessage({ id: doc.id, ...doc.data() });
-                            });
-                            scrollToBottom();
-                        }
-                    }, (error) => {
-                        console.error("Error fetching messages:", error);
-                        displayError(`Failed to load messages: ${error.message}`);
-                    });
-                }
-
-                // Event listener for sending messages
-                messageForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const messageText = messageInput.value.trim();
-
-                    if (messageText === '' || !currentUserId) {
-                        return; // Don't send empty messages or if not authenticated
-                    }
-
+            // Initialize Firebase Authentication and listen for state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    userIdDisplay.textContent = `Your User ID: ${currentUserId}`;
+                    messageInput.disabled = false;
+                    sendButton.disabled = false;
+                    console.log("User signed in:", currentUserId);
+                    // Start listening for messages only after user is authenticated
+                    startMessageListener();
+                } else {
+                    // If no user, try anonymous sign-in
                     try {
-                        // Send message to 'messages_pending' collection for moderation by Firebase Function
-                        await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages_pending`), {
-                            text: messageText,
-                            timestamp: serverTimestamp(),
-                            userId: currentUserId,
-                        });
-                        messageInput.value = ''; // Clear input
-                        hideAllMessages(); // Hide any previous warnings/errors
-                        scrollToBottom();
-                    } catch (e) {
-                        console.error("Error adding document: ", e);
-                        displayError(`Failed to send message: ${e.message}`);
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously.");
+                    } catch (error) {
+                        console.error("Error signing in anonymously:", error);
+                        displayError(`Authentication failed: ${error.message}`);
+                        loadingIndicator.classList.add('hidden');
                     }
+                }
+            });
+
+            // Function to start real-time message listener
+            function startMessageListener() {
+                // Listen to the 'messages' collection, as this is where messages will now be written directly
+                const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
+                const q = query(messagesCollectionRef, orderBy('timestamp'));
+
+                onSnapshot(q, (snapshot) => {
+                    hideAllMessages(); // Hide any previous messages
+                    messagesContainer.innerHTML = ''; // Clear existing messages before rendering new ones
+
+                    if (snapshot.empty) {
+                        noMessagesIndicator.classList.remove('hidden');
+                    } else {
+                        noMessagesIndicator.classList.add('hidden');
+                        snapshot.forEach((doc) => {
+                            renderMessage({ id: doc.id, ...doc.data() });
+                        });
+                        scrollToBottom();
+                    }
+                }, (error) => {
+                    console.error("Error fetching messages:", error);
+                    displayError(`Failed to load messages: ${error.message}`);
                 });
-            }); // End of DOMContentLoaded
-        </script>
-    </body>
-    </html>
-    
+            }
+
+            // Event listener for sending messages
+            messageForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageText = messageInput.value.trim();
+
+                if (messageText === '' || !currentUserId) {
+                    return; // Don't send empty messages or if not authenticated
+                }
+
+                try {
+                    // Send message directly to 'messages' collection (no pending collection for moderation)
+                    await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages`), {
+                        text: messageText,
+                        timestamp: serverTimestamp(),
+                        userId: currentUserId,
+                    });
+                    messageInput.value = ''; // Clear input
+                    hideAllMessages(); // Hide any previous warnings/errors
+                    scrollToBottom();
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    displayError(`Failed to send message: ${e.message}`);
+                }
+            });
+        }); // End of DOMContentLoaded
+    </script>
+</body>
+</html>
