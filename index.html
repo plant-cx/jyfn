@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discussion Board with Email Verification</title>
+    <title>Discussion Board</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -145,34 +145,13 @@
         <h1 class="text-3xl font-bold text-center flex-grow">Discussion Board</h1>
         <div class="flex items-center space-x-2">
             <p id="user-id-display" class="text-sm"></p>
-            <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded-full hidden">Logout</button>
+            <!-- Logout button removed as we are using anonymous auth -->
         </div>
     </header>
 
-    <!-- Auth Forms Container (Hidden by default) -->
-    <div id="auth-container" class="flex flex-col items-center justify-center flex-grow p-4 bg-gray-50 hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h2 id="auth-form-title" class="text-2xl font-bold text-center mb-6 text-gray-800">Sign Up</h2>
-            <form id="auth-form" class="space-y-4">
-                <div>
-                    <label for="email-input" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="email-input" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-                </div>
-                <div>
-                    <label for="password-input" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password-input" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-                </div>
-                <button type="submit" id="auth-submit-button" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-blue-700 transition duration-300">Sign Up</button>
-            </form>
-            <p class="mt-4 text-center text-sm text-gray-600">
-                Already have an account? <button id="toggle-auth-mode" class="text-blue-600 hover:underline">Log In</button>
-            </p>
-            <div id="auth-error-message" class="text-red-600 text-sm text-center mt-4 hidden"></div>
-        </div>
-    </div>
-
+    <!-- Auth Forms Container (Removed) -->
     <!-- Messages Container -->
-    <main id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+    <main id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
         <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
         <div id="error-message" class="error-message hidden"></div>
         <div id="info-message" class="info-message hidden"></div>
@@ -181,7 +160,7 @@
     </main>
 
     <!-- Message Input Form -->
-    <footer id="message-input-footer" class="bg-white p-4 shadow-lg rounded-t-lg hidden">
+    <footer id="message-input-footer" class="bg-white p-4 shadow-lg rounded-t-lg">
         <form id="message-form" class="flex space-x-3">
             <input
                 type="text"
@@ -207,11 +186,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { 
             getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            onAuthStateChanged, 
-            sendEmailVerification,
-            signOut // Import signOut
+            signInAnonymously, // Reverted to anonymous sign-in
+            onAuthStateChanged
+            // Removed createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { 
             getFirestore, 
@@ -272,23 +249,24 @@
             const userIdDisplay = document.getElementById('user-id-display');
             const loadingIndicator = document.getElementById('loading-indicator');
             const errorMessageDiv = document.getElementById('error-message');
-            const infoMessageDiv = document.getElementById('info-message'); // New info message div
+            const infoMessageDiv = document.getElementById('info-message'); 
             const noMessagesIndicator = document.getElementById('no-messages-indicator');
-            const authContainer = document.getElementById('auth-container');
-            const authForm = document.getElementById('auth-form');
-            const emailInput = document.getElementById('email-input');
-            const passwordInput = document.getElementById('password-input');
-            const authSubmitButton = document.getElementById('auth-submit-button');
-            const authFormTitle = document.getElementById('auth-form-title');
-            const toggleAuthModeButton = document.getElementById('toggle-auth-mode');
-            const authErrorMessage = document.getElementById('auth-error-message');
-            const logoutButton = document.getElementById('logout-button');
+            // Removed auth-related DOM elements
+            // const authContainer = document.getElementById('auth-container');
+            // const authForm = document.getElementById('auth-form');
+            // const emailInput = document.getElementById('email-input');
+            // const passwordInput = document.getElementById('password-input');
+            // const authSubmitButton = document.getElementById('auth-submit-button');
+            // const authFormTitle = document.getElementById('auth-form-title');
+            // const toggleAuthModeButton = document.getElementById('toggle-auth-mode');
+            // const authErrorMessage = document.getElementById('auth-error-message');
+            // const logoutButton = document.getElementById('logout-button');
             const messageInputFooter = document.getElementById('message-input-footer');
 
 
             let currentUserId = null; // To store the authenticated user's ID
             let currentUsername = getOrCreateUsername(); // Get or create the random username
-            let isLoginMode = false; // To toggle between login and signup
+            // Removed isLoginMode
 
             // Function to display errors (general app errors)
             function displayError(message) {
@@ -445,47 +423,50 @@
                 messagesContainer.appendChild(messageWrapper);
             }
 
-            // Function to start real-time message listener
-            function startMessageListener() {
-                if (!db) {
-                    displayError("Firestore not initialized.");
-                    return;
-                }
-                const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
-                const q = query(messagesCollectionRef, orderBy('timestamp'));
-
-                onSnapshot(q, (snapshot) => {
-                    hideAllMessages();
-                    messagesContainer.innerHTML = '';
-
-                    if (snapshot.empty) {
-                        noMessagesIndicator.classList.remove('hidden');
-                    } else {
-                        noMessagesIndicator.classList.add('hidden');
-                        snapshot.forEach((doc) => {
-                            renderMessage({ id: doc.id, ...doc.data() });
-                        });
-                        scrollToBottom();
+            // --- Authentication Logic (Reverted to Anonymous) ---
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    userIdDisplay.textContent = `Your Username: ${currentUsername}`;
+                    // Removed logoutButton.classList.remove('hidden');
+                    // Removed authContainer.classList.add('hidden'); 
+                    messagesContainer.classList.remove('hidden'); // Always show chat
+                    messageInputFooter.classList.remove('hidden'); // Always show input
+                    messageInput.disabled = false;
+                    sendButton.disabled = false;
+                    startMessageListener(); // Start listening for messages
+                    console.log("User signed in anonymously:", user.uid);
+                    console.log("Assigned Username:", currentUsername);
+                } else {
+                    // If no user, try anonymous sign-in
+                    try {
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously.");
+                    } catch (error) {
+                        console.error("Error signing in anonymously:", error);
+                        displayError(`Authentication failed: ${error.message}`);
+                        loadingIndicator.classList.add('hidden');
                     }
-                }, (error) => {
-                    console.error("Error fetching messages:", error);
-                    displayError(`Failed to load messages: ${error.message}`);
-                });
-            }
+                }
+            });
+
+            // Removed Toggle between Sign Up and Log In forms
+            // Removed Handle Sign Up / Log In form submission
+            // Removed Handle Logout
 
             // Event listener for sending messages
             messageForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const messageText = messageInput.value.trim();
 
-                // Check if user is authenticated and email is verified
-                if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                    displayError("You must verify your email to send messages.");
-                    return;
-                }
+                // No email verification check needed for anonymous auth
+                // if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                //     displayError("You must verify your email to send messages.");
+                //     return;
+                // }
 
-                if (messageText === '') {
-                    return; // Don't send empty messages
+                if (messageText === '' || !currentUserId) { // Ensure currentUserId is available
+                    return; // Don't send empty messages or if not authenticated
                 }
 
                 try {
@@ -501,121 +482,6 @@
                 } catch (e) {
                     console.error("Error adding document: ", e);
                     displayError(`Failed to send message: ${e.message}`);
-                }
-            });
-
-            // --- Authentication Logic ---
-            let unsubscribeAuth = null; // To store the auth listener unsubscribe function
-
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    currentUserId = user.uid;
-                    userIdDisplay.textContent = `Your Username: ${currentUsername}`;
-                    logoutButton.classList.remove('hidden');
-                    authContainer.classList.add('hidden'); // Hide auth forms
-
-                    if (user.emailVerified) {
-                        displayInfo("Email verified. You can now send messages!");
-                        messagesContainer.classList.remove('hidden'); // Show chat
-                        messageInputFooter.classList.remove('hidden'); // Show input
-                        messageInput.disabled = false;
-                        sendButton.disabled = false;
-                        startMessageListener(); // Start listening for messages
-                    } else {
-                        displayInfo("Please verify your email. Check your inbox for a verification link.");
-                        messagesContainer.classList.add('hidden'); // Hide chat
-                        messageInputFooter.classList.add('hidden'); // Hide input
-                        messageInput.disabled = true;
-                        sendButton.disabled = true;
-                        // Offer to resend verification email
-                        const resendButton = document.createElement('button');
-                        resendButton.textContent = 'Resend Verification Email';
-                        resendButton.className = 'mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md';
-                        resendButton.onclick = async () => {
-                            try {
-                                await sendEmailVerification(user);
-                                displayInfo("Verification email sent! Please check your inbox.");
-                            } catch (error) {
-                                console.error("Error resending verification email:", error);
-                                displayError(`Failed to resend verification email: ${error.message}`);
-                            }
-                        };
-                        infoMessageDiv.appendChild(resendButton); // Append resend button to info message
-                    }
-                    console.log("User signed in:", user.uid, "Email Verified:", user.emailVerified);
-                } else {
-                    currentUserId = null;
-                    userIdDisplay.textContent = '';
-                    logoutButton.classList.add('hidden');
-                    authContainer.classList.remove('hidden'); // Show auth forms
-                    messagesContainer.classList.add('hidden'); // Hide chat
-                    messageInputFooter.classList.add('hidden'); // Hide input
-                    messageInput.disabled = true;
-                    sendButton.disabled = true;
-                    hideAllMessages(); // Clear any previous messages
-                    console.log("User signed out.");
-                }
-            });
-
-            // Toggle between Sign Up and Log In forms
-            toggleAuthModeButton.addEventListener('click', () => {
-                isLoginMode = !isLoginMode;
-                authFormTitle.textContent = isLoginMode ? 'Log In' : 'Sign Up';
-                authSubmitButton.textContent = isLoginMode ? 'Log In' : 'Sign Up';
-                toggleAuthModeButton.textContent = isLoginMode ? 'Create an account' : 'Log In';
-                authErrorMessage.classList.add('hidden'); // Clear previous errors
-            });
-
-            // Handle Sign Up / Log In form submission
-            authForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = emailInput.value.trim();
-                const password = passwordInput.value.trim();
-                authErrorMessage.classList.add('hidden'); // Hide previous errors
-
-                if (email === '' || password === '') {
-                    authErrorMessage.textContent = 'Email and password cannot be empty.';
-                    authErrorMessage.classList.remove('hidden');
-                    return;
-                }
-
-                try {
-                    if (isLoginMode) {
-                        await signInWithEmailAndPassword(auth, email, password);
-                        displayInfo("Logged in successfully!");
-                    } else {
-                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                        await sendEmailVerification(userCredential.user);
-                        displayInfo("Account created! Please check your email to verify your account.");
-                    }
-                    emailInput.value = '';
-                    passwordInput.value = '';
-                } catch (error) {
-                    console.error("Auth error:", error);
-                    let errorMessage = "Authentication failed.";
-                    if (error.code === 'auth/email-already-in-use') {
-                        errorMessage = 'Email already in use. Try logging in or use a different email.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'Invalid email address.';
-                    } else if (error.code === 'auth/weak-password') {
-                        errorMessage = 'Password should be at least 6 characters.';
-                    } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                        errorMessage = 'Invalid email or password.';
-                    }
-                    authErrorMessage.textContent = errorMessage;
-                    authErrorMessage.classList.remove('hidden');
-                }
-            });
-
-            // Handle Logout
-            logoutButton.addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    sessionStorage.removeItem('chatUsername'); // Clear username on logout
-                    displayInfo("You have been logged out.");
-                } catch (error) {
-                    console.error("Error logging out:", error);
-                    displayError(`Failed to log out: ${error.message}`);
                 }
             });
 
