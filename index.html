@@ -3,61 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Discussion Board</title>
-    <!-- Tailwind CSS CDN for basic styling -->
+    <title>Chat Board</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Dark Beige Color Scheme */
         body {
             font-family: sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #3e3831; /* Darker Beige Background */
+            background-color: #3e3831;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            color: #e0d9d0; /* Light Beige Text */
+            color: #e0d9d0;
         }
         .header-bg {
-            background-color: #5a524a; /* Header Beige */
+            background-color: #5a524a;
         }
         .message-input-bg {
-            background-color: #6d645b; /* Input/Footer Beige */
+            background-color: #6d645b;
         }
         .send-button-bg {
-            background-color: #8c7e73; /* Button Beige */
+            background-color: #8c7e73;
         }
         .send-button-bg:hover {
-            background-color: #a39486; /* Button Hover Beige */
+            background-color: #a39486;
         }
 
-        /* Message Bubbles */
         .message-container {
             display: flex;
             margin-bottom: 0.75rem;
             align-items: flex-start;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
         }
         .message-bubble {
-            max-width: 75%; /* Simpler width */
+            max-width: 75%;
             padding: 0.6rem 0.9rem;
-            border-radius: 1rem; /* Simple rounded corners */
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Basic shadow */
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             word-wrap: break-word;
             position: relative;
             display: flex;
             flex-direction: column;
         }
         .sent {
-            background-color: #8c7e73; /* Your Message Beige */
+            background-color: #8c7e73;
             color: white;
             align-self: flex-end;
-            border-bottom-right-radius: 0.5rem; /* Tail effect */
+            border-bottom-right-radius: 0.5rem;
         }
         .received {
-            background-color: #e0d9d0; /* Other Message Light Beige */
-            color: #3e3831; /* Dark text for received */
+            background-color: #e0d9d0;
+            color: #3e3831;
             align-self: flex-start;
-            border-bottom-left-radius: 0.5rem; /* Tail effect */
+            border-bottom-left-radius: 0.5rem;
         }
         .message-info {
             font-size: 0.7rem;
@@ -70,18 +69,17 @@
             opacity: 0.7;
             margin-top: 0.15rem;
             text-align: right;
-            color: rgba(255, 255, 255, 0.8); /* For sent messages */
+            color: rgba(255, 255, 255, 0.8);
         }
         .received .timestamp {
-            color: rgba(0, 0, 0, 0.6); /* For received messages */
+            color: rgba(0, 0, 0, 0.6);
         }
 
-        /* Loading and Error messages */
         .loading-indicator, .error-message, .no-messages-indicator {
             text-align: center;
             padding: 1rem;
             font-size: 0.9rem;
-            color: #b0a79d; /* Lighter beige for info */
+            color: #b0a79d;
         }
         .error-message {
             color: #dc2626;
@@ -90,7 +88,6 @@
             margin: 0.5rem;
         }
 
-        /* Edit/Delete Buttons (simplified) */
         .message-actions {
             position: absolute;
             top: 0.2rem;
@@ -100,11 +97,11 @@
             z-index: 10;
         }
         .message-actions button {
-            background: none; /* No background */
+            background: none;
             border: none;
             cursor: pointer;
-            font-size: 0.7rem; /* Smaller icons */
-            color: rgba(255, 255, 255, 0.6); /* Lighter color */
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
             padding: 0.1rem;
             border-radius: 0.2rem;
         }
@@ -112,10 +109,9 @@
             color: rgba(0, 0, 0, 0.4);
         }
         .message-actions button:hover {
-            background-color: rgba(0, 0, 0, 0.1); /* Subtle hover */
+            background-color: rgba(0, 0, 0, 0.1);
         }
 
-        /* Edit Input */
         .edit-input {
             width: 90%;
             padding: 0.3rem;
@@ -123,7 +119,7 @@
             border-radius: 0.3rem;
             margin-top: 0.3rem;
             box-sizing: border-box;
-            color: #3e3831; /* Dark text on light input */
+            color: #3e3831;
         }
         .edit-buttons {
             display: flex;
@@ -137,28 +133,30 @@
             font-size: 0.7rem;
             cursor: pointer;
             color: white;
-            background-color: #22c55e; /* Green for save */
+            background-color: #22c55e;
         }
         .edit-buttons .cancel-button {
-            background-color: #ef4444; /* Red for cancel */
+            background-color: #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header-bg text-white p-3 shadow-md">
         <h1 class="text-2xl font-bold text-center">Simple Chat</h1>
         <p id="user-id-display" class="text-xs text-center mt-1 opacity-80"></p>
     </header>
 
-    <!-- Messages Container -->
     <main id="messages-container" class="flex-1 overflow-y-auto p-3 space-y-3">
         <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
         <div id="error-message" class="error-message hidden"></div>
         <div id="no-messages-indicator" class="no-messages-indicator hidden">No messages yet!</div>
     </main>
 
-    <!-- Message Input Form and Cooldown -->
     <footer class="message-input-bg p-3 shadow-lg flex flex-col items-center">
         <form id="message-form" class="flex space-x-2 w-full">
             <input
@@ -183,14 +181,11 @@
         </div>
     </footer>
 
-    <!-- Firebase SDKs and Application Logic -->
     <script type="module">
-        // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Firebase Configuration (Replace with your actual config)
         const firebaseConfig = {
             apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0",
             authDomain: "chat-d312d.firebaseapp.com",
@@ -201,7 +196,6 @@
             measurementId: "G-CJKMEBMWD2"
         };
 
-        // --- Random Username Generator ---
         const ADJECTIVES = ["Happy", "Brave", "Clever", "Swift"];
         const NOUNS = ["Panda", "Tiger", "Star", "Cloud"];
 
@@ -219,9 +213,7 @@
             }
             return username;
         }
-        // --- End Username Generator ---
 
-        // DOM elements
         const messagesBox = document.getElementById('messages-container');
         const messageForm = document.getElementById('message-form');
         const messageInput = document.getElementById('message-input');
@@ -231,47 +223,39 @@
         const errorDisplay = document.getElementById('error-message');
         const noMessagesText = document.getElementById('no-messages-indicator');
 
-        // Cooldown elements
         const cooldownTimerEl = document.getElementById('cooldown-timer');
         const cooldownMessageEl = document.getElementById('cooldown-message');
 
-        // Cooldown settings
-        const COOLDOWN_DURATION_MS = 15 * 60 * 1000; // 15 minutes in milliseconds
-        let cooldownInterval = null; // To hold the interval timer
+        const COOLDOWN_DURATION_MS = 15 * 60 * 1000;
+        let cooldownInterval = null;
 
         let myUserId = null;
         let myUsername = getUserName();
 
-        // Init Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const messagesCollection = collection(db, `apps/${firebaseConfig.projectId}/messages`);
 
-        // Helper for showing errors
         function showError(msg) {
             errorDisplay.textContent = `Error: ${msg}`;
             errorDisplay.classList.remove('hidden');
             loadingSpinner.classList.add('hidden');
-            console.error("App Error:", msg);
         }
 
-        // Scroll messages to bottom
         function scrollChatToBottom() {
             messagesBox.scrollTop = messagesBox.scrollHeight;
         }
 
-        // --- Cooldown Logic ---
         function updateCooldownDisplay() {
             const lastMessageTime = localStorage.getItem(`lastMessageTime_${myUserId}`);
             if (!lastMessageTime) {
-                // No last message time, user can send
                 messageInput.disabled = false;
                 sendBtn.disabled = false;
                 cooldownTimerEl.classList.add('hidden');
                 cooldownMessageEl.classList.add('hidden');
                 if (cooldownInterval) {
-                    clearInterval(cooldownInterval); // Stop any running timer
+                    clearInterval(cooldownInterval);
                     cooldownInterval = null;
                 }
                 return;
@@ -281,7 +265,6 @@
             const timeLeft = COOLDOWN_DURATION_MS - timeElapsed;
 
             if (timeLeft <= 0) {
-                // Cooldown over
                 messageInput.disabled = false;
                 sendBtn.disabled = false;
                 cooldownTimerEl.classList.add('hidden');
@@ -291,7 +274,6 @@
                     cooldownInterval = null;
                 }
             } else {
-                // Still on cooldown
                 messageInput.disabled = true;
                 sendBtn.disabled = true;
                 cooldownTimerEl.classList.remove('hidden');
@@ -303,25 +285,20 @@
                 cooldownMessageEl.textContent = "Please wait before sending another message.";
 
                 if (!cooldownInterval) {
-                    cooldownInterval = setInterval(updateCooldownDisplay, 1000); // Start timer if not running
+                    cooldownInterval = setInterval(updateCooldownDisplay, 1000);
                 }
             }
         }
-        // --- End Cooldown Logic ---
 
-        // Delete message
         async function deleteMessage(messageId) {
-            // Using window.confirm for simplicity, replace with custom modal in production
             if (!confirm('Really delete this message?')) return;
             try {
                 await deleteDoc(doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId));
-                console.log(`Message ${messageId} deleted.`);
             } catch (e) {
                 showError(`Failed to delete: ${e.message}`);
             }
         }
 
-        // Edit message
         function editMessage(messageId, currentText) {
             const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
             if (!msgEl) return;
@@ -355,7 +332,6 @@
                         text: newText,
                         timestamp: serverTimestamp()
                     });
-                    console.log(`Message ${messageId} updated.`);
                 } catch (e) {
                     showError(`Failed to update: ${e.message}`);
                 }
@@ -375,7 +351,6 @@
             msgEl.appendChild(editBtnsDiv);
         }
 
-        // Render a single message
         function displayMessage(msg) {
             const msgWrapper = document.createElement('div');
             msgWrapper.classList.add('message-container');
@@ -404,7 +379,6 @@
             }
             msgBubble.appendChild(timeDiv);
 
-            // Add edit/delete for own messages
             if (msg.userId === myUserId) {
                 const actionsDiv = document.createElement('div');
                 actionsDiv.classList.add('message-actions');
@@ -427,22 +401,17 @@
             messagesBox.appendChild(msgWrapper);
         }
 
-        // Main setup when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            // Authenticate user and set up message listener
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     myUserId = user.uid;
                     usernameDisplay.textContent = `Your Name: ${myUsername}`;
-
-                    // Check and update cooldown status immediately
                     updateCooldownDisplay();
 
-                    // Listen for messages
                     onSnapshot(query(messagesCollection, orderBy('timestamp')), (snapshot) => {
                         errorDisplay.classList.add('hidden');
                         loadingSpinner.classList.add('hidden');
-                        messagesBox.innerHTML = ''; // Clear and re-render all for simplicity
+                        messagesBox.innerHTML = '';
 
                         if (snapshot.empty) {
                             noMessagesText.classList.remove('hidden');
@@ -455,31 +424,27 @@
                         showError(`Failed to load messages: ${err.message}`);
                     });
                 } else {
-                    // Sign in anonymously if no user is logged in
                     try {
                         await signInAnonymously(auth);
-                        console.log("Signed in anonymously.");
                     } catch (err) {
                         showError(`Authentication failed: ${err.message}`);
                     }
                 }
             });
 
-            // Handle sending messages
             messageForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const msgText = messageInput.value.trim();
 
-                // Check cooldown before attempting to send
                 const lastMessageTime = localStorage.getItem(`lastMessageTime_${myUserId}`);
                 const timeElapsed = lastMessageTime ? Date.now() - parseInt(lastMessageTime, 10) : COOLDOWN_DURATION_MS;
                 if (timeElapsed < COOLDOWN_DURATION_MS) {
                     showError("You are sending messages too fast! Please wait.");
-                    updateCooldownDisplay(); // Update countdown if user tries to bypass
+                    updateCooldownDisplay();
                     return;
                 }
 
-                if (msgText === '' || !myUserId) return; // Don't send empty or if not authenticated
+                if (msgText === '' || !myUserId) return;
 
                 try {
                     await addDoc(messagesCollection, {
@@ -488,13 +453,12 @@
                         userId: myUserId,
                         username: myUsername
                     });
-                    messageInput.value = ''; // Clear input
+                    messageInput.value = '';
                     errorDisplay.classList.add('hidden');
                     scrollChatToBottom();
 
-                    // Set last message time and start cooldown
                     localStorage.setItem(`lastMessageTime_${myUserId}`, Date.now().toString());
-                    updateCooldownDisplay(); // Immediately update UI to show cooldown
+                    updateCooldownDisplay();
                 } catch (e) {
                     showError(`Failed to send: ${e.message}`);
                 }
