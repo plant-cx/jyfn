@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Discussion Board</title>
+    <title>Secure Discussion Board</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -78,7 +78,7 @@
 <body>
     <!-- Header -->
     <header class="bg-blue-600 text-white p-4 shadow-md rounded-b-lg">
-        <h1 class="text-3xl font-bold text-center">Simple Discussion Board</h1>
+        <h1 class="text-3xl font-bold text-center">Secure Discussion Board</h1>
         <p id="user-id-display" class="text-sm text-center mt-1"></p>
     </header>
 
@@ -226,7 +226,7 @@
 
             // Function to start real-time message listener
             function startMessageListener() {
-                // Listen to the 'messages' collection, as this is where messages will now be written directly
+                // Listen to the 'messages' collection, as the function will move clean messages here
                 const messagesCollectionRef = collection(db, `apps/${firebaseConfig.projectId}/messages`);
                 const q = query(messagesCollectionRef, orderBy('timestamp'));
 
@@ -259,8 +259,8 @@
                 }
 
                 try {
-                    // Send message directly to 'messages' collection (no pending collection for moderation)
-                    await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages`), {
+                    // Send message to 'messages_pending' collection for moderation by Firebase Function
+                    await addDoc(collection(db, `apps/${firebaseConfig.projectId}/messages_pending`), {
                         text: messageText,
                         timestamp: serverTimestamp(),
                         userId: currentUserId,
