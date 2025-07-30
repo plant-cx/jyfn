@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/32/6969/6969728.png" type="image" sizes="64x64">
     <meta name="description" content="Master complex topics easily with Topic Path. We simplify advanced subjects for younger learners, making education engaging and accessible, so no one is kept from important knowledge. Empowering the next generation with skills once reserved for adults.">
-    <title>Topics Trail</title>
+    <title>Path of Knowledge</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
         :root {
-            --header-height: 3.25rem;
-            --font-medium: 505;
-            --font-semi-bold: 605;
-            --font-bold: 705;
-            --dark-color: #141414;
-            --dark-color-light: #7c7c7c;
-            --dark-color-lighten: #eeeeee;
-            --white-color: #FFF;
-            --body-font: 'Poppins', sans-serif;
-            --big-font-size: 1.25rem;
-            --bigger-font-size: 1.5rem;
-            --biggest-font-size: 2rem;
-            --h2-font-size: 1.25rem;
-            --normal-font-size: .938rem;
-            --smaller-font-size: .813rem;
-            --mb-1: .5rem;
-            --mb-2: 1rem;
-            --mb-3: 1.5rem;
-            --mb-4: 2rem;
-            --mb-5: 2.5rem;
-            --mb-6: 3rem;
-            --z-fixed: 100;
+            --top-bar-h: 3.25rem;
+            --font-reg: 505;
+            --font-bold: 605;
+            --font-xbold: 705;
+            --color-dark: #141414;
+            --color-gray-light: #7c7c7c;
+            --color-gray-lighter: #eeeeee;
+            --color-white: #FFF;
+            --main-font: 'Poppins', sans-serif;
+            --fsize-big: 1.25rem;
+            --fsize-bigger: 1.5rem;
+            --fsize-huge: 2rem;
+            --fsize-h2: 1.25rem;
+            --fsize-norm: .938rem;
+            --fsize-small: .813rem;
+            --m-1: .5rem;
+            --m-2: 1rem;
+            --m-3: 1.5rem;
+            --m-4: 2rem;
+            --m-5: 2.5rem;
+            --m-6: 3rem;
+            --z-high: 100;
         }
 
         *,
@@ -45,11 +45,11 @@
         }
 
         body {
-            margin: var(--header-height) 0 0 0;
-            font-family: var(--body-font);
-            font-size: var(--normal-font-size);
-            font-weight: var(--font-medium);
-            color: var(--dark-color);
+            margin: var(--top-bar-h) 0 0 0;
+            font-family: var(--main-font);
+            font-size: var(--fsize-norm);
+            font-weight: var(--font-reg);
+            color: var(--color-dark);
             line-height: 1.6;
         }
 
@@ -68,7 +68,7 @@
 
         a {
             text-decoration: none;
-            color: var(--dark-color);
+            color: var(--color-dark);
         }
 
         img {
@@ -77,126 +77,113 @@
             display: block;
         }
 
-        .section {
+        .section-pad {
             padding: 5rem 0 2rem;
         }
 
-        .section-title {
+        .section-head {
             position: relative;
-            font-size: var(--big-font-size);
-            margin-bottom: var(--mb-4);
+            font-size: var(--fsize-big);
+            margin-bottom: var(--m-4);
             text-align: center;
             letter-spacing: .1rem;
         }
 
-        .section-title::after {
-            position: absolute;
-            content: '';
-            width: 56px;
-            height: .18rem;
-            top: -1rem;
-            left: 0;
-            right: 0;
-            margin: auto;
-            background-color: var(--dark-color);
-            border-radius: 50%;
-        }
-
-        .grid {
+        .site-grid {
             max-width: 1024px;
             display: grid;
             grid-template-columns: 100%;
             column-gap: 2rem;
             width: calc(100% - 2rem);
-            margin-left: var(--mb-2);
-            margin-right: var(--mb-2);
+            margin-left: var(--m-2);
+            margin-right: var(--m-2);
         }
 
-        .header {
+        .main-header {
             width: 100%;
             position: fixed;
             top: 0;
             left: 0;
-            z-index: var(--z-fixed);
+            z-index: var(--z-high);
             background-color: transparent;
             transition: background-color .3s ease, backdrop-filter .3s ease;
         }
 
-        .scroll-header {
+        .scrolled-header {
             background-color: rgba(255, 255, 255, .5);
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
         }
 
-        .nav__link,
-        .nav__logo {
+        .nav-link-color,
+        .nav-logo-text {
             color: #fff;
         }
 
-        .scroll-header .nav__link,
-        .scroll-header .nav__logo {
+        .scrolled-header .nav-link-color,
+        .scrolled-header .nav-logo-text {
             color: #000;
         }
 
-        .nav {
-            height: var(--header-height);
+        .nav-content {
+            height: var(--top-bar-h);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         @media screen and (max-width: 768px) {
-            .nav__menu {
+            .nav-menu-panel {
                 position: fixed;
-                top: var(--header-height);
+                top: var(--top-bar-h);
                 left: -100%;
                 width: 70%;
                 height: 100vh;
                 padding: 2rem;
-                background-color: var(--white-color);
+                background-color: var(--color-white);
                 transition: .5s;
             }
 
-            .nav__logo {
+            .nav-logo-text {
                 color: #000;
             }
         }
 
-        .nav__item {
-            margin-bottom: var(--mb-4);
+        .nav-list-el {
+            margin-bottom: var(--m-4);
         }
 
-        .nav__logo {
-            font-weight: var(--font-semi-bold);
+        .nav-logo-text {
+            font-weight: var(--font-bold);
         }
 
-        .nav__shop,
-        .nav__toggle {
+        .nav-icon,
+        .nav-toggle {
             font-size: 1.3rem;
             cursor: pointer;
         }
 
-        .show {
+        .nav-show {
             left: 0;
         }
 
-        .active {
+        .active-link-dot {
             position: relative;
         }
 
-        .active::before {
+        .active-link-dot::before {
             content: '';
             position: absolute;
             bottom: -.5rem;
             left: 45%;
             width: 4px;
             height: 4px;
-            background-color: var(--dark-color);
+            background-color: var(--color-dark);
             border-radius: 50%;
         }
 
-        .home {
-            background-color: var(--dark-color-lighten);
+        .hero-banner {
+            background-color: var(--color-gray-lighter);
             background-size: cover;
             background-position: center 30%;
             background-image: url(https://i0.wp.com/4kwallpapers.com/images/wallpapers/gargantua-black-1280x1280-9621.jpg?ssl=1);
@@ -204,171 +191,164 @@
             padding: 4rem 0;
         }
 
-        .home__sneaker {
+        .hero-pic-section {
             position: relative;
             display: flex;
             justify-content: center;
             align-self: center;
         }
 
-        .home__shape {
+        .hero-circle {
             width: 220px;
             height: 220px;
             border-radius: 50%;
         }
 
-        .home__data {
+        .hero-info-text {
             color: #fff;
             margin-top: 2rem;
             text-align: center;
         }
 
-        .home__title {
-            font-size: var(--bigger-font-size);
-            margin-bottom: var(--mb-1);
+        .hero-main-title {
+            font-size: var(--fsize-bigger);
+            margin-bottom: var(--m-1);
         }
 
-        .home__description {
-            margin-bottom: var(--mb-6);
+        .hero-desc {
+            margin-bottom: var(--m-6);
         }
 
-        .button {
+        .btn-main {
             display: inline-block;
             background-color: #7d7357;
-            color: var(--white-color);
+            color: var(--color-white);
             padding: 1.125rem 2rem;
-            font-weight: var(--font-medium);
+            font-weight: var(--font-reg);
             border-radius: .5rem;
             transition: .3s;
         }
 
-        .button:hover {
+        .btn-main:hover {
             transform: translateY(-.25rem);
         }
 
-        .button-light {
+        .btn-light {
             display: inline-flex;
-            color: var(--dark-color);
-            font-weight: var(--font-bold);
+            color: var(--color-dark);
+            font-weight: var(--font-xbold);
             align-items: center;
         }
 
-        .button-icon {
+        .btn-icon {
             font-size: 1.25rem;
-            margin-left: var(--mb-1);
+            margin-left: var(--m-1);
             transition: .3s;
         }
 
-        .button-light:hover .button-icon {
+        .btn-light:hover .btn-icon {
             transform: translateX(.25rem);
         }
 
-        .featured__container {
+        .card-grid {
             row-gap: 2rem;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
 
-        .sneaker {
+        .topic-card {
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 2rem;
-            background-color: var(--dark-color-lighten);
+            background-color: var(--color-gray-lighter);
             border-radius: .5rem;
             transition: .4s;
             overflow: hidden;
         }
 
-        .sneaker:hover {
+        .topic-card:hover {
             height: 100%;
             transform: translateY(-.5rem);
         }
 
-        .sneaker__img {
+        .card-image {
             width: 220px;
-            margin-top: var(--mb-3);
-            margin-bottom: var(--mb-6);
+            margin-top: var(--m-3);
+            margin-bottom: var(--m-6);
             filter: drop-shadow(0 12px 8px rgba(0, 0, 0, .2));
         }
 
-        .sneaker__name,
-        .sneaker__preci {
-            font-size: var(--h2-font-size);
+        .card-name,
+        .card-price {
+            font-size: var(--fsize-h2);
             letter-spacing: .1rem;
-            font-weight: var(--font-bold);
+            font-weight: var(--font-xbold);
         }
 
-        .sneaker__name {
-            margin-bottom: var(--mb-1);
+        .card-name {
+            margin-bottom: var(--m-1);
         }
 
-        .sneaker__preci {
-            margin-bottom: var(--mb-3);
+        .card-price {
+            margin-bottom: var(--m-3);
         }
 
-        .collection__container {
+        .category-grid {
             row-gap: 2rem;
             justify-content: center;
         }
 
-        .collection__card {
+        .category-item-card {
             position: relative;
             display: flex;
             height: 328px;
-            background-color: var(--dark-color-lighten);
+            background-color: var(--color-gray-lighter);
             padding: 2rem;
             border-radius: .5rem;
             transition: .3s;
         }
 
-        .collection__card:hover {
+        .category-item-card:hover {
             transform: translateY(-.5rem);
         }
 
-        .collection__data {
+        .category-details {
             align-self: flex-end;
         }
 
-        .collection__img {
+        .category-image {
             position: absolute;
             top: 0;
             right: 0;
             width: 230px;
         }
 
-        .collection__name {
-            font-size: var(--bigger-font-size);
+        .category-title {
+            font-size: var(--fsize-bigger);
             margin-bottom: .25rem;
         }
 
-        .collection__description {
-            margin-bottom: var(--mb-2);
-        }
-
-        .footer__copy {
-            padding-top: 3rem;
-            font-size: var(--smaller-font-size);
-            color: var(--dark-color-light);
-            text-align: center;
+        .category-desc {
+            margin-bottom: var(--m-2);
         }
 
         @media screen and (max-width: 768px) {
-            .home__container {
+            .hero-container-small {
                 grid-template-columns: 1fr;
             }
 
-            .home__img {
+            .hero-img-hide {
                 display: none;
             }
         }
 
         @media screen and (min-width: 576px) {
-            .collection__container {
+            .category-grid {
                 grid-template-columns: 415px;
             }
 
-            .collection__img {
+            .category-image {
                 width: 260px;
             }
         }
@@ -378,56 +358,52 @@
                 margin: 0;
             }
 
-            .section {
+            .section-pad {
                 padding: 8rem 0 2rem;
             }
 
-            .section-title::after {
-                width: 76px;
+            .nav-content {
+                height: calc(var(--top-bar-h) + 1.5rem);
             }
 
-            .nav {
-                height: calc(var(--header-height) + 1.5rem);
-            }
-
-            .nav__menu {
+            .nav-menu-panel {
                 margin-left: auto;
             }
 
-            .nav__list {
+            .nav-list-main {
                 display: flex;
             }
 
-            .nav__item {
-                margin-left: var(--mb-6);
+            .nav-list-el {
+                margin-left: var(--m-6);
                 margin-bottom: 0;
             }
 
-            .nav__toggle {
+            .nav-toggle {
                 display: none;
             }
 
-            .home {
+            .hero-banner {
                 padding: 8rem 0;
                 background-image: url('https://raw.githubusercontent.com/qmze/TopicTrail.com/main/gargantua-black-2880x1800-9659%20(2).webp');
             }
 
-            .home__container {
+            .hero-container-small {
                 grid-template-columns: max-content max-content;
                 justify-content: center;
                 align-items: center;
             }
 
-            .home__sneaker {
+            .hero-pic-section {
                 order: 1;
             }
 
-            .home__shape {
+            .hero-circle {
                 width: 376px;
                 height: 376px;
             }
 
-            .home__img {
+            .hero-large-img {
                 width: 470px;
                 top: 3.5rem;
                 right: 0;
@@ -437,33 +413,34 @@
         }
 
         @media screen and (min-width: 1024px) {
-            .grid {
+            .site-grid {
                 margin-left: auto;
                 margin-right: auto;
             }
 
-            .home {
+            .hero-banner {
                 padding: 10rem 0;
                 background-image: url('https://raw.githubusercontent.com/qmze/TopicTrail.com/main/gargantua-black-2880x1800-9659%20(2).webp');
             }
 
-            .home__container {
+            .hero-container-small {
                 column-gap: 8rem;
             }
 
-            .collection__container {
+            .category-grid {
                 grid-template-columns: repeat(2, 415px);
             }
         }
 
-        .home_image12 {
+        .home_image12 { 
             transform: translateX(-350px);
         }
 
-        .main_text23 {
-            font-size: 3vh;
+        .main_text23 { 
+            font-size: 3vh; 
         }
 
+        /* Scrollbar styles - still a thing */
         html::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
@@ -482,7 +459,7 @@
             background: #555;
         }
 
-        .hover-button {
+        .magic-button {
             position: relative;
             display: inline-block;
             border: none;
@@ -494,7 +471,7 @@
             padding: 0;
         }
 
-        .hover-button::after {
+        .magic-button::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -505,170 +482,150 @@
             transition: width .3s ease, left .3s ease;
         }
 
-        .hover-button:hover::after {
+        .magic-button:hover::after {
             width: 100%;
             left: 0;
         }
     </style>
 </head>
 <body>
-    <header class="header" id="header">
-        <nav class="nav grid">
+    <header class="main-header" id="main-header-bar">
+        <nav class="nav-content site-grid">
             <div class="main_text23">
-                <a href="#" class="nav__logo">Topic Trail</a>
+                <a href="#" class="nav-logo-text">Path of Knowledge</a>
             </div>
-            <div class="nav__menu" id="nav-menu">
-                <ul class="nav__list">
-                    <li class="nav__item hover-button"><a href="#home" class="nav__link">Home</a></li>
-                    <li class="nav__item hover-button"><a href="#Science" class="nav__link">Science</a></li>
-                    <li class="nav__item hover-button"><a href="#Maths" class="nav__link">Maths</a></li>
+            <div class="nav-menu-panel" id="mobile-nav-drawer">
+                <ul class="nav-list-main">
+                    <li class="nav-list-el magic-button"><a href="#home-area" class="nav-link-color">Home</a></li>
+                    <li class="nav-list-el magic-button"><a href="#Science" class="nav-link-color">Science</a></li>
+                    <li class="nav-list-el magic-button"><a href="#Maths" class="nav-link-color">Maths</a></li>
                 </ul>
             </div>
         </nav>
     </header>
-    <main class="main">
-        <section class="home" id="home">
-            <div class="home__container grid">
-                <div class="home__sneaker">
-                    <div class="home__shape"></div>
-                    <div class="home_image12"></div>
+    <main class="main-content">
+        <section class="hero-banner" id="home-area">
+            <div class="hero-container-small site-grid">
+                <div class="hero-pic-section">
+                    <div class="hero-circle"></div>
+                    <div class="home_image12"></div> 
                 </div>
-                <div class="home__data hero-data">
-                    <h1 class="home__title">Topic Trail</h1>
-                    <p class="home__description">Insightful, Simplified, Educational</p>
-                    <a href="https://docs.topictrail.info" class="button">About Us</a>
+                <div class="hero-info-text hero-data">
+                    <h1 class="hero-main-title">Path of Knowledge</h1>
+                    <p class="hero-desc">Insightful, Simplified, Educational</p>
+                    <a href="https://docs.topictrail.info" class="btn-main">About Us</a>
                 </div>
             </div>
         </section>
 
-        <section class="featured section" id="Science">
-            <h2 class="section-title">Science</h2>
-            <div class="featured__container grid">
-                <article class="sneaker category-item">
+        <section class="featured-stuff section-pad" id="Science">
+            <h2 class="section-head">Science</h2>
+            <div class="card-grid site-grid">
+                <article class="topic-card category-item">
                     <a href="Physics.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1940/1940630.png" alt="" class="sneaker__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1940/1940630.png" alt="" class="card-image">
                     </a>
-                    <span class="sneaker__name">Physics</span>
-                    <a href="Physics.html" class="button-light">See Now</a>
+                    <span class="card-name">Physics</span>
+                    <a href="Physics.html" class="btn-light">Open</a>
                 </article>
-                <article class="sneaker category-item">
-                    <a href="Chemistry.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/8824/8824136.png" alt="" class="sneaker__img">
+                <article class="topic-card category-item">
+                    <a href="chemistry.html">
+                        <img src="https://cdn-icons-png.flaticon.com/512/8824/8824136.png" alt="" class="card-image">
                     </a>
-                    <span class="sneaker__name">Chemistry</span>
-                    <a href="Chemistry.html" class="button-light">See Now</a>
+                    <span class="card-name">Chemistry</span>
+                    <a href="chemistry.html" class="btn-light">Open</a>
                 </article>
-                <article class="sneaker category-item">
+                <article class="topic-card category-item">
                     <a href="Biology.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2784/2784428.png" alt="" class="sneaker__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2784/2784428.png" alt="" class="card-image">
                     </a>
-                    <span class="sneaker__name">Biology</span>
-                    <a href="Biology.html" class="button-light">See Now</a>
+                    <span class="card-name">Biology</span>
+                    <a href="Biology.html" class="btn-light">Open</a>
                 </article>
             </div>
         </section>
 
-        <section class="collection section" id="Engineering">
-            <h2 class="section-title">Engineering</h2>
-            <div class="collection__container grid">
-                <div class="collection__card category-item">
-                    <div class="collection__data">
-                        <h3 class="collection__name">Mechanical</h3>
-                        <p class="collection__description">Dynamics</p>
-                        <a href="Mechanical.html" class="button-light">See Now</a>
+        <section class="category-overview section-pad" id="Engineering">
+            <h2 class="section-head">Engineering</h2>
+            <div class="category-grid site-grid">
+                <div class="category-item-card category-item">
+                    <div class="category-details">
+                        <h3 class="category-title">Mechanical</h3>
+                        <p class="category-desc">Dynamics</p>
+                        <a href="Mechanical.html" class="btn-light">Open</a>
                     </div>
                     <a href="Mechanical.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1054/1054127.png" alt="" class="collection__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1054/1054127.png" alt="" class="category-image">
                     </a>
                 </div>
-                <div class="collection__card category-item">
-                    <div class="collection__data">
-                        <h3 class="collection__name">Systems</h3>
-                        <p class="collection__description">Frameworks</p>
-                        <a href="Systems.html" class="button-light">See Now</a>
+                <div class="category-item-card category-item">
+                    <div class="category-details">
+                        <h3 class="category-title">Systems</h3>
+                        <p class="category-desc">Frameworks</p>
+                        <a href="Systems.html" class="btn-light">Open</a>
                     </div>
                     <a href="Systems.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2562/2562060.png" alt="" class="collection__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2562/2562060.png" alt="" class="category-image">
                     </a>
                 </div>
             </div>
         </section>
 
-        <section class="featured section" id="Maths">
-            <h2 class="section-title">Maths</h2>
-            <div class="featured__container grid">
-                <article class="sneaker category-item">
+        <section class="featured-stuff section-pad" id="Maths">
+            <h2 class="section-head">Maths</h2>
+            <div class="card-grid site-grid">
+                <article class="topic-card category-item">
                     <a href="Pure__Maths.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2106/2106584.png" alt="" class="sneaker__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2106/2106584.png" alt="" class="card-image">
                     </a>
-                    <span class="sneaker__name">Pure Mathematics</span>
-                    <span class="collection__description">Abstract concepts</span>
-                    <a href="Pure__Maths.html" class="button-light">See Now</a>
+                    <span class="card-name">Pure Mathematics</span>
+                    <span class="category-desc">Abstract concepts</span>
+                    <a href="Pure__Maths.html" class="btn-light">Open</a>
                 </article>
-                <article class="sneaker category-item">
+                <article class="topic-card category-item">
                     <a href="Applied__Maths.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/7211/7211797.png" alt="" class="sneaker__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7211/7211797.png" alt="" class="card-image">
                     </a>
-                    <span class="sneaker__name">Applied Mathematics</span>
-                    <span class="collection__description">Practical problem-solving</span>
-                    <a href="Applied__Maths.html" class="button-light">See Now</a>
+                    <span class="card-name">Applied Mathematics</span>
+                    <span class="category-desc">Practical problem-solving</span>
+                    <a href="Applied__Maths.html" class="btn-light">Open</a>
                 </article>
-                <article class="sneaker category-item">
+                <article class="topic-card category-item">
                     <a href="Computational__Maths.html">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3696/3696502.png" alt="" class="sneaker__img">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3696/3696502.png" alt="" class="card-image">
                     </a>
-                    <span class="sneaker__name">Computational Mathematics</span>
-                    <span class="collection__description">Algorithms with computers.</span>
-                    <a href="Computational__Maths.html" class="button-light">See Now</a>
+                    <span class="card-name">Computational Mathematics</span>
+                    <span class="category-desc">Algorithms with computers.</span>
+                    <a href="Computational__Maths.html" class="btn-light">Open</a>
                 </article>
             </div>
         </section>
     </main>
-
-    <footer class="footer section">
-        <p class="footer__copy">&#169; 2024 Topic Trail. All right reserved</p>
-    </footer>
+<br>
+<br>
+<br>
 
     <script src="https://unpkg.com/scrollreveal"></script>
     <script>
         window.onscroll = () => {
-            const nav = document.getElementById('header');
-            if(this.scrollY >= 200) nav.classList.add('scroll-header'); else nav.classList.remove('scroll-header');
+            const headerBar = document.getElementById('main-header-bar');
+            if(window.scrollY >= 200) {
+                headerBar.classList.add('scrolled-header');
+            } else {
+                headerBar.classList.remove('scrolled-header');
+            }
         };
 
-        const revealEffect = ScrollReveal({
+        const pageScrollAnim = ScrollReveal({
             origin: 'top',
-            distance: '62px',
-            duration: 1050,
-            delay: 210,
-            reset: false
+            distance: '60px',
+            duration: 1500,
+            delay: 1, 
         });
 
-        revealEffect.reveal(`.home__data`, {
-            opacity: 0,
-            blur: '11px',
-            scale: 0.91
-        });
-
-        revealEffect.reveal(`.section-title`, {
-            opacity: 0,
-            blur: '6px',
-            scale: 0.96
-        });
-
-        revealEffect.reveal(`.sneaker`, {
-            interval: 105,
-            opacity: 0,
-            blur: '6px',
-            scale: 0.96
-        });
-
-        revealEffect.reveal(`.collection__card`, {
-            interval: 105,
-            opacity: 0,
-            blur: '6px',
-            scale: 0.96
-        });
+        pageScrollAnim.reveal(`.hero-info-text`);
+        pageScrollAnim.reveal(`.section-head`);
+        pageScrollAnim.reveal(`.topic-card, .category-item-card`, { interval: 50 });
     </script>
 </body>
 </html>
