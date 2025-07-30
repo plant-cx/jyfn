@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discussion Board with Random Usernames</title>
+    <title>Discussion Board with Random Usernames, Edit & Delete</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -20,6 +20,7 @@
         .message-container {
             display: flex;
             margin-bottom: 1rem;
+            align-items: flex-start; /* Align items to the top */
         }
         .message-bubble {
             max-width: 70%; /* Limit bubble width */
@@ -27,6 +28,10 @@
             border-radius: 1.5rem; /* More rounded corners */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
             word-wrap: break-word; /* Ensure long words break */
+            position: relative; /* For positioning edit/delete buttons */
+            display: flex; /* Use flex to arrange text and buttons */
+            flex-direction: column; /* Stack text and buttons */
+            flex-grow: 1; /* Allow bubble to grow */
         }
         .sent {
             background-color: #3b82f6; /* Blue for sent messages */
@@ -51,14 +56,29 @@
             margin-top: 0.25rem;
             text-align: right;
         }
-        /* Flex container for messages to push content to bottom */
-        #messages-container {
+        .message-actions {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.5rem;
             display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            scroll-behavior: smooth; /* Smooth scrolling */
+            gap: 0.25rem;
+            z-index: 10; /* Ensure buttons are above other content */
+        }
+        .message-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7); /* For sent messages */
+            padding: 0.2rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        .received .message-actions button {
+            color: rgba(0, 0, 0, 0.5); /* For received messages */
+        }
+        .message-actions button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
         }
         .loading-indicator, .error-message {
             text-align: center;
@@ -72,6 +92,43 @@
             border: 1px solid #ef4444;
             border-radius: 0.5rem;
             margin: 1rem;
+        }
+        /* Styling for the edit input field */
+        .edit-input {
+            width: 95%; /* Adjust width to fit within bubble */
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            box-sizing: border-box; /* Include padding in width */
+            color: #374151; /* Ensure text color is visible */
+        }
+        .edit-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            justify-content: flex-end;
+        }
+        .edit-buttons button {
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .edit-buttons .save-button {
+            background-color: #22c55e; /* Green */
+            color: white;
+        }
+        .edit-buttons .save-button:hover {
+            background-color: #16a34a;
+        }
+        .edit-buttons .cancel-button {
+            background-color: #ef4444; /* Red */
+            color: white;
+        }
+        .edit-buttons .cancel-button:hover {
+            background-color: #dc2626;
         }
     </style>
 </head>
@@ -116,7 +173,8 @@
         // Import Firebase modules from CDN
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        // Import updateDoc and deleteDoc for edit/delete functionality
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // YOUR FIREBASE CONFIGURATION - This is critical for your app to connect to Firebase
         const firebaseConfig = {
@@ -188,21 +246,107 @@
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
 
+            // Function to handle message deletion
+            async function handleDeleteMessage(messageId) {
+                // IMPORTANT: Using window.confirm for simplicity, replace with custom modal in production for better UX.
+                if (!window.confirm('Are you sure you want to delete this message?')) {
+                    return; // User cancelled
+                }
+                try {
+                    const messageRef = doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId);
+                    await deleteDoc(messageRef);
+                    console.log(`Message ${messageId} deleted successfully.`);
+                    // The onSnapshot listener will automatically re-render the messages
+                } catch (e) {
+                    console.error("Error deleting message: ", e);
+                    displayError(`Failed to delete message: ${e.message}`);
+                }
+            }
+
+            // Function to handle message editing
+            function handleEditMessage(messageId, currentText) {
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (!messageElement) return;
+
+                // Find the original text paragraph
+                const originalTextP = messageElement.querySelector('p');
+                // Find the actions div (contains edit/delete buttons)
+                const actionsDiv = messageElement.querySelector('.message-actions');
+
+                // Hide the original text and buttons
+                if (originalTextP) originalTextP.style.display = 'none';
+                if (actionsDiv) actionsDiv.style.display = 'none';
+
+                // Create an input field for editing
+                const editInput = document.createElement('input');
+                editInput.type = 'text';
+                editInput.value = currentText;
+                editInput.classList.add('edit-input');
+                // Insert the input field right after the original text paragraph
+                originalTextP.parentNode.insertBefore(editInput, originalTextP.nextSibling);
+                editInput.focus(); // Focus on the input field
+                editInput.select(); // Select all text in the input
+
+                // Create Save and Cancel buttons
+                const editButtonsDiv = document.createElement('div');
+                editButtonsDiv.classList.add('edit-buttons');
+
+                const saveButton = document.createElement('button');
+                saveButton.textContent = 'Save';
+                saveButton.classList.add('save-button');
+                saveButton.onclick = async () => {
+                    const newText = editInput.value.trim();
+                    if (newText === '') {
+                        displayError("Message cannot be empty.");
+                        return;
+                    }
+                    try {
+                        const messageRef = doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId);
+                        await updateDoc(messageRef, {
+                            text: newText,
+                            timestamp: serverTimestamp() // Update timestamp on edit
+                        });
+                        console.log(`Message ${messageId} updated.`);
+                        // The onSnapshot listener will automatically re-render the messages,
+                        // which will remove the edit controls and show the updated text.
+                    } catch (e) {
+                        console.error("Error updating message: ", e);
+                        displayError(`Failed to update message: ${e.message}`);
+                    }
+                };
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.classList.add('cancel-button');
+                cancelButton.onclick = () => {
+                    // Remove edit controls and show original text/buttons
+                    if (originalTextP) originalTextP.style.display = '';
+                    if (actionsDiv) actionsDiv.style.display = '';
+                    editInput.remove();
+                    editButtonsDiv.remove();
+                };
+
+                editButtonsDiv.appendChild(saveButton);
+                editButtonsDiv.appendChild(cancelButton);
+                messageElement.appendChild(editButtonsDiv); // Append buttons to the message bubble
+            }
+
+
             // Function to render a single message
             function renderMessage(msg) {
                 const messageWrapper = document.createElement('div');
                 messageWrapper.classList.add('message-container');
-                // Check if the message was sent by the current user's Firebase UID
                 messageWrapper.classList.add(msg.userId === currentUserId ? 'justify-end' : 'justify-start');
 
                 const messageBubble = document.createElement('div');
                 messageBubble.classList.add('message-bubble');
                 messageBubble.classList.add(msg.userId === currentUserId ? 'sent' : 'received');
+                messageBubble.setAttribute('data-message-id', msg.id); // Add data-id for targeting
 
                 const userInfo = document.createElement('div');
                 userInfo.classList.add('message-info');
                 // Display the stored username, or the truncated Firebase UID if username is missing
-                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.username || (msg.userId ? msg.userId.substring(0, 8) + '...' : 'Unknown')}`;
+                userInfo.textContent = msg.userId === currentUserId ? 'You' : `User: ${msg.username || 'Unknown User'}`; // Use 'Unknown User' if username is missing or for older messages
                 messageBubble.appendChild(userInfo);
 
                 const messageText = document.createElement('p');
@@ -217,6 +361,26 @@
                     timestampDiv.textContent = 'Sending...'; // Or handle cases where timestamp is not a Firestore Timestamp
                 }
                 messageBubble.appendChild(timestampDiv);
+
+                // Add Edit and Delete buttons if the message belongs to the current user
+                if (msg.userId === currentUserId) {
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.classList.add('message-actions');
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = '✏️'; // Pencil emoji for edit
+                    editButton.title = 'Edit Message';
+                    editButton.onclick = () => handleEditMessage(msg.id, msg.text);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '🗑️'; // Trash can emoji for delete
+                    deleteButton.title = 'Delete Message';
+                    deleteButton.onclick = () => handleDeleteMessage(msg.id);
+
+                    actionsDiv.appendChild(editButton);
+                    actionsDiv.appendChild(deleteButton);
+                    messageBubble.appendChild(actionsDiv);
+                }
 
                 messageWrapper.appendChild(messageBubble);
                 messagesContainer.appendChild(messageWrapper);
