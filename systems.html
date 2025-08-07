@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>Systems Engineering</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
+
+        :root {
+            --header-height: 3.6rem;
+            --main-background-color: hsl(221, 18%, 79%);
+            --heading-color: hsl(220, 9%, 11%);
+            --paragraph-text-color: hsl(220, 5%, 33%);
+            --body-background-color: hsl(220, 18%, 100%);
+            --main-font-family: 'Lora', serif;
+            --extra-large-font-size: 2.3rem;
+            --large-font-size: 1.6rem;
+            --medium-font-size: 1.3rem;
+            --font-weight-medium: 500;
+        }
+
+        @media screen and (min-width: 1125px) {
+            :root {
+                --extra-large-font-size: 4.6rem;
+                --large-font-size: 2.3rem;
+                --medium-font-size: 1.6rem;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: var(--main-font-family);
+            font-size: .95rem;
+            background-color: var(--body-background-color);
+            color: var(--paragraph-text-color);
+        }
+
+        h1, h2 {
+            color: var(--heading-color);
+            font-weight: var(--font-weight-medium);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .page-container {
+            max-width: 1025px;
+            margin-right: 1.6rem;
+            margin-left: 1.6rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            gap: 1.6rem;
+        }
+
+        .content-section {
+            padding: 4.6rem 0 2.1rem;
+        }
+
+        .section-heading {
+            font-size: var(--large-font-size);
+            text-align: center;
+            margin-bottom: 3.1rem;
+        }
+
+        .header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: transparent;
+        }
+
+        .site-nav {
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media screen and (max-width: 1024px) {
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        .hero-section {
+            background-color: var(--main-background-color);
+            overflow: hidden;
+        }
+
+        .hero-container {
+            padding: 4.1rem 0 1.1rem;
+            row-gap: 8.6rem;
+        }
+
+        .hero-title {
+            font-size: var(--extra-large-font-size);
+            font-weight: 400;
+            line-height: 141%;
+        }
+
+        .hero-description {
+            color: var(--heading-color);
+            margin: 1.1rem 0 2.1rem;
+            line-height: 141%;
+        }
+
+        .hero-images {
+            position: relative;
+            width: 311px;
+            justify-self: center;
+        }
+
+        .hero-images img:nth-child(1) {
+            width: 225px;
+            position: absolute;
+            right: -1.6rem;
+            top: -9.6rem;
+        }
+
+        .hero-images img:nth-child(2) {
+            width: 181px;
+            margin-left: .6rem;
+            position: relative;
+        }
+
+        .learn-more-button {
+            color: var(--heading-color);
+            font-weight: var(--font-weight-medium);
+            display: inline-flex;
+            align-items: center;
+            column-gap: .6rem;
+        }
+
+        .learn-more-button i {
+            font-size: 1.1rem;
+        }
+
+        .card-container {
+            row-gap: 2.6rem;
+            padding-bottom: 1.6rem;
+        }
+
+        .category-card {
+            justify-self: center;
+        }
+
+        .card-image {
+            width: 271px;
+            margin-bottom: 1.1rem;
+        }
+
+        .card-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--heading-color);
+            padding-right: .8rem;
+        }
+
+        .card-link i {
+            font-size: 1.3rem;
+        }
+
+        .card-title {
+            font-size: var(--medium-font-size);
+            margin-bottom: .6rem;
+        }
+
+        .card-subtitle {
+            font-size: .8rem;
+            color: var(--paragraph-text-color);
+        }
+
+        .brand-logo-container {
+            grid-template-columns: repeat(2, max-content);
+            justify-content: center;
+            column-gap: 1.3rem;
+        }
+
+        .brand-logo-img {
+            width: 121px;
+        }
+
+        .brand-logo-img:nth-child(even) {
+            margin-top: 2.1rem;
+        }
+
+        @media screen and (max-width: 341px) {
+            .page-container {
+                margin-left: 1.1rem;
+                margin-right: 1.1rem;
+            }
+
+            .hero-container {
+                padding: 2.1rem 0 1.1rem;
+                row-gap: 6.1rem;
+            }
+
+            .hero-description {
+                font-size: .82rem;
+            }
+
+            .hero-images {
+                width: 249px;
+            }
+
+            .hero-images img:nth-child(1) {
+                width: 181px;
+                top: -7.1rem;
+            }
+
+            .hero-images img:nth-child(2) {
+                width: 151px;
+            }
+
+            .card-image {
+                width: 231px;
+            }
+
+            .card-link {
+                padding-right: 0;
+            }
+
+            .brand-logo-container {
+                grid-template-columns: repeat(2, 101px);
+                row-gap: .6rem;
+            }
+        }
+
+        @media screen and (min-width: 577px) {
+            .nav-menu {
+                width: 343px;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .hero-container,
+            .card-container {
+                grid-template-columns: repeat(2, max-content);
+                justify-content: center;
+            }
+
+            .hero-images {
+                margin-top: 6.1rem;
+            }
+
+            .brand-logo-container {
+                grid-template-columns: repeat(4, max-content);
+            }
+        }
+
+        @media screen and (min-width: 1024px) {
+            .content-section {
+                padding: 7.1rem 0 1.1rem;
+            }
+
+            .section-heading {
+                margin-bottom: 4.1rem;
+            }
+
+            .site-nav {
+                height: calc(var(--header-height) + 1.6rem);
+            }
+
+            .nav-menu {
+                display: block;
+                width: initial;
+                margin-left: auto;
+            }
+
+            .nav-list {
+                display: flex;
+                column-gap: 3.1rem;
+            }
+
+            .nav-link {
+                color: var(--paragraph-text-color);
+                font-weight: var(--font-weight-medium);
+            }
+
+            .nav-link i {
+                display: none;
+            }
+        }
+
+        @media screen and (min-width: 1055px) {
+            .page-container {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media screen and (min-width: 1125px) {
+            .hero-container {
+                padding: 10.1rem 0 3.1rem;
+                column-gap: 0;
+            }
+
+            .hero-images {
+                width: 501px;
+                margin-top: 8.1rem;
+                transform: translate(-1.1rem);
+            }
+
+            .hero-images img:nth-child(1) {
+                width: 346px;
+                top: -14.6rem;
+            }
+
+            .hero-images img:nth-child(2) {
+                width: 278px;
+            }
+
+            .card-container {
+                grid-template-columns: repeat(3, max-content);
+                padding-bottom: 4.6rem;
+                gap: 4.6rem;
+            }
+
+            .card-image {
+                margin-bottom: 1.3rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .brand-logo-container {
+                column-gap: 5.6rem;
+            }
+
+            .brand-logo-img {
+                width: 141px;
+            }
+        }
+
+        @media screen and (min-width: 2049px) {
+            body {
+                zoom: 1.4;
+            }
+        }
+
+        @media screen and (min-width: 3841px) {
+            body {
+                zoom: 2.4;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header-bar">
+        <nav class="site-nav page-container">
+            <div class="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="ri-home-line"></i>
+                            <span>Back Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#Categories" class="nav-link">
+                            <i class="ri-price-tag-3-line"></i>
+                            <span>Category</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#Fundamentals" class="nav-link">
+                            <i class="ri-t-shirt-line"></i>
+                            <span>Fundamentals</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="hero-section content-section">
+            <div class="hero-container page-container grid-layout">
+                <div class="hero-text-content">
+                    <h1 class="hero-title"> Systems </h1>
+                    <br>
+                    <p class="hero-description"> Engineering Made Simple. </p>
+                    <a href="about__silver" class="learn-more-button"> Read More<i class="ri-arrow-right-line"></i> </a>
+                </div>
+                <div class="hero-images">
+                    <img src="https://cdn-icons-png.flaticon.com/512/12969/12969763.png" alt="main homepage image">
+                </div>
+            </div>
+        </section>
+
+        <section class="card-section content-section" id="Categories">
+            <h2 class="section-heading">Categories </h2>
+            <div class="card-container page-container grid-layout">
+                <article class="category-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="scalability icon" class="card-image">
+                    <a href="Scalability.html" class="card-link">
+                        <div class="card-text">
+                            <h2 class="card-title"> Scalability </h2>
+                            <span class="card-subtitle"> Read More </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="category-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/10700/10700684.png" alt="interoperability icon" class="card-image">
+                    <a href="Interoperability.html" class="card-link">
+                        <div class="card-text">
+                            <h2 class="card-title"> Interoperability </h2>
+                            <span class="card-subtitle">Read More </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="category-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/848/848520.png" alt="change management icon" class="card-image">
+                    <a href="Change__Management.html" class="card-link">
+                        <div class="card-text">
+                            <h2 class="card-title"> Change Management </h2>
+                            <span class="card-subtitle">Read More </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section class="card-section content-section">
+            <div class="card-container page-container grid-layout">
+                <article class="category-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/9873/9873449.png" alt="security icon" class="card-image">
+                    <a href="Security.html" class="card-link">
+                        <div class="card-text">
+                            <h2 class="card-title"> Security </h2>
+                            <span class="card-subtitle"> Read More </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="category-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/682/682503.png" alt="systems integration icon" class="card-image">
+                    <a href="Systems_Integration.html" class="card-link">
+                        <div class="card-text">
+                            <h2 class="card-title"> Systems Integration </h2>
+                            <span class="card-subtitle">Read More </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+                <article class="category-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/301/301666.png" alt="optimization icon" class="card-image">
+                    <a href="Optimization.html" class="card-link">
+                        <div class="card-text">
+                            <h2 class="card-title"> Optimization </h2>
+                            <span class="card-subtitle">Read More </span>
+                        </div>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <section class="brand-section content-section" id="Fundamentals">
+            <h2 class="section-heading">Fundamentals</h2>
+            <div class="brand-logo-container page-container grid-layout">
+                <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="fundamentals logo image" class="brand-logo-img">
+                <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="fundamentals logo image" class="brand-logo-img">
+                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="fundamentals logo image" class="brand-logo-img">
+                <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="fundamentals logo image" class="brand-logo-img">
+            </div>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        const scrollReveal = ScrollReveal({
+            origin: 'top',
+            distance: '61px',
+            duration: 1010,
+            delay: 210,
+            reset: false
+        });
+
+        scrollReveal.reveal(`.hero-text-content, .hero-images`, {
+            opacity: 0,
+            blur: '11px',
+            scale: 0.91
+        });
+
+        scrollReveal.reveal(`.category-card`, {
+            interval: 110,
+            opacity: 0,
+            blur: '6px',
+            scale: 0.96
+        });
+
+        scrollReveal.reveal(`.brand-logo-img`, {
+            interval: 110,
+            opacity: 0,
+            blur: '4px',
+            scale: 0.99
+        });
+    </script>
+</body>
+
+</html>
