@@ -1,566 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <title>Knowledge Hub</title>
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
-
-        :root {
-            --spacing-xl: 3.5rem;
-            --color-light-gray: hsl(220, 18%, 78%);
-            --color-lighter-gray: hsl(220, 18%, 86%);
-            --color-dark-text: hsl(220, 8%, 10%);
-            --color-medium-text: hsl(220, 4%, 32%);
-            --color-light-text: hsl(220, 4%, 55%);
-            --color-white-ish: hsl(220, 18%, 99%);
-            --color-light-box: hsl(220, 18%, 97%);
-            --font-primary: 'Lora', serif;
-            --font-size-hero: 2.25rem;
-            --font-size-h1: 1.5rem;
-            --font-size-h2: 1.25rem;
-            --font-size-base: 1rem;
-            --font-size-sm: .938rem;
-            --font-size-xs: .813rem;
-            --font-size-xxs: .75rem;
-            --font-weight-light: 400;
-            --font-weight-normal: 500;
-            --font-weight-bold: 600;
-            --z-index-low: 10;
-            --z-index-high: 100;
-        }
-
-        @media screen and (min-width: 1124px) {
-            :root {
-                --font-size-hero: 4.5rem;
-                --font-size-h1: 2.25rem;
-                --font-size-h2: 1.5rem;
-                --font-size-base: 1.25rem;
-                --font-size-sm: 1rem;
-                --font-size-xs: .875rem;
-                --font-size-xxs: .813rem;
-            }
-        }
-
-        * {
-            box-sizing: border-box;
-            padding: 0;
-            margin: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font-primary);
-            font-size: var(--font-size-sm);
-            background-color: var(--color-white-ish);
-            color: var(--color-medium-text);
-            transition: .4s;
-        }
-
-        h1, h2, h3 {
-            color: var(--color-dark-text);
-            font-weight: var(--font-weight-normal);
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .container {
-            max-width: 1024px;
-            margin-right: 1.5rem;
-            margin-left: 1.5rem;
-        }
-
-        .grid-container {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .section {
-            padding: 4.5rem 0 2rem;
-        }
-
-        .section-title {
-            font-size: var(--font-size-h1);
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .main {
-            overflow: hidden;
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: transparent;
-            z-index: var(--z-index-high);
-            transition: .4s;
-        }
-
-        .nav {
-            height: var(--spacing-xl);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-logo {
-            color: var(--color-dark-text);
-            font-weight: var(--font-weight-normal);
-        }
-
-        .header-scrolled {
-            background-color: var(--color-white-ish);
-            box-shadow: 0 1px 4px hsla(220, 4%, 15%, .1);
-        }
-
-        .nav-active {
-            color: var(--color-dark-text);
-            text-decoration: line-through;
-        }
-
-        .hero-section {
-            background-color: var(--color-light-gray);
-            overflow: hidden;
-            transition: .4s;
-        }
-
-        .hero-content {
-            padding: 4rem 0 1rem;
-            row-gap: 8.5rem;
-        }
-
-        .hero-title {
-            font-size: var(--font-size-hero);
-            font-weight: var(--font-weight-light);
-        }
-
-        .hero-description {
-            color: var(--color-dark-text);
-            margin: 1rem 0 2rem;
-        }
-
-        .hero-title, .hero-description {
-            line-height: 140%;
-        }
-
-        .hero-images {
-            position: relative;
-            width: 310px;
-            justify-self: center;
-        }
-
-        .hero-images img:nth-child(1) {
-            width: 224px;
-            position: absolute;
-            right: -1.5rem;
-            top: -9.5rem;
-        }
-
-        .button-link {
-            color: var(--color-dark-text);
-            font-weight: var(--font-weight-normal);
-            display: inline-flex;
-            align-items: center;
-            column-gap: .5rem;
-        }
-
-        .button-link i {
-            font-size: var(--font-size-base);
-            transition: .3s;
-        }
-
-        .button-link:hover i {
-            transform: translateX(.25rem);
-        }
-
-        .product-grid {
-            row-gap: 2.5rem;
-            padding-bottom: 1.5rem;
-        }
-
-        .product-card {
-            justify-self: center;
-        }
-
-        .product-image {
-            width: 270px;
-            margin-bottom: 1rem;
-        }
-
-        .product-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: var(--color-dark-text);
-            padding-right: .75rem;
-        }
-
-        .product-link i {
-            font-size: var(--font-size-h2);
-            transition: .3s;
-        }
-
-        .product-name {
-            font-size: var(--font-size-h2);
-            margin-bottom: .5rem;
-        }
-
-        .product-category {
-            font-size: var(--font-size-xxs);
-            color: var(--color-medium-text);
-        }
-
-        .product-link:hover i {
-            transform: translateX(.25rem);
-        }
-
-        .brand-grid {
-            grid-template-columns: repeat(2, max-content);
-            justify-content: center;
-            column-gap: 1.25rem;
-        }
-
-        .brand-logo {
-            width: 120px;
-        }
-
-        .brand-logo:nth-child(even) {
-            margin-top: 2rem;
-        }
-
-        .footer-text {
-            font-size: var(--font-size-xxs);
-            color: var(--color-light-text);
-        }
-
-        ::-webkit-scrollbar {
-            width: .6rem;
-            border-radius: .5rem;
-            background-color: hsl(220, 8%, 76%);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: hsl(220, 8%, 64%);
-            border-radius: .5rem;
-            cursor: pointer;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: hsl(220, 8%, 54%);
-        }
-
-        @media screen and (max-width: 340px) {
-            .container {
-                margin-left: 1rem;
-                margin-right: 1rem;
-            }
-
-            .hero-content {
-                padding: 2rem 0 1rem;
-                row-gap: 6rem;
-            }
-
-            .hero-description {
-                font-size: var(--font-size-xs);
-            }
-
-            .hero-images {
-                width: 248px;
-            }
-
-            .hero-images img:nth-child(1) {
-                width: 180px;
-                top: -7rem;
-            }
-
-            .product-image {
-                width: 230px;
-            }
-
-            .product-link {
-                padding-right: 0;
-            }
-
-            .brand-grid {
-                grid-template-columns: repeat(2, 100px);
-                row-gap: .5rem;
-            }
-        }
-
-        @media screen and (min-width: 767px) {
-            .hero-content, .product-grid {
-                grid-template-columns: repeat(2, max-content);
-                justify-content: center;
-            }
-
-            .hero-images {
-                margin-top: 6rem;
-            }
-
-            .brand-grid {
-                grid-template-columns: repeat(4, max-content);
-            }
-        }
-
-        @media screen and (min-width: 1023px) {
-            .section {
-                padding: 7rem 0 1rem;
-            }
-
-            .section-title {
-                margin-bottom: 4rem;
-            }
-
-            .nav {
-                height: calc(var(--spacing-xl) + 1.5rem);
-            }
-
-            .nav-active {
-                color: var(--color-dark-text);
-                text-decoration: line-through;
-            }
-        }
-
-        @media screen and (min-width: 1054px) {
-            .container {
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-
-        @media screen and (min-width: 1124px) {
-            .hero-content {
-                padding: 10rem 0 3rem;
-                column-gap: 0;
-            }
-
-            .hero-images {
-                width: 500px;
-                margin-top: 8rem;
-                transform: translate(-1rem);
-            }
-
-            .hero-images img:nth-child(1) {
-                width: 345px;
-                top: -14.5rem;
-            }
-
-            .product-grid {
-                grid-template-columns: repeat(3, max-content);
-                padding-bottom: 4.5rem;
-                gap: 4.5rem;
-            }
-
-            .product-image {
-                margin-bottom: 1.25rem;
-            }
-
-            .product-name {
-                font-size: var(--font-size-base);
-            }
-
-            .brand-grid {
-                column-gap: 5.5rem;
-            }
-
-            .brand-logo {
-                width: 140px;
-            }
-        }
-
-        @media screen and (min-width: 2048px) {
-            body {
-                zoom: 1.3;
-            }
-        }
-
-        @media screen and (min-width: 3840px) {
-            body {
-                zoom: 2.3;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="header" id="header">
-        <nav class="nav container">
-        </nav>
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
+
+    :root {
+      --main-font: 'Lora', serif;
+      --big-title-size: 2.25rem;
+      --medium-title-size: 1.5rem;
+      --small-title-size: 1.25rem;
+      --normal-text-size: .938rem;
+      --small-text-size: .813rem;
+      --tiny-text-size: .75rem;
+      --font-regular: 400;
+      --font-medium: 500;
+      --font-bold: 600;
+      --main-color: hsl(220, 18%, 99%);
+      --light-color: hsl(220, 18%, 97%);
+      --dark-color: hsl(220, 8%, 10%);
+      --text-color: hsl(220, 4%, 32%);
+      --light-text-color: hsl(220, 4%, 55%);
+      --header-height: 3.5rem;
+    }
+
+    @media screen and (min-width: 1124px) {
+      :root {
+        --big-title-size: 4.5rem;
+        --medium-title-size: 2.25rem;
+        --small-title-size: 1.5rem;
+        --normal-text-size: 1rem;
+        --small-text-size: .875rem;
+        --tiny-text-size: .813rem;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--main-font);
+      font-size: var(--normal-text-size);
+      background-color: var(--main-color);
+      color: var(--text-color);
+      transition: .4s;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--dark-color);
+      font-weight: var(--font-medium);
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .container {
+      max-width: 1024px;
+      margin-right: 1.5rem;
+      margin-left: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .main-section {
+      padding: 4.5rem 0 2rem;
+    }
+
+    .section-title {
+      font-size: var(--medium-title-size);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .main-content {
+      overflow: hidden;
+    }
+
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: transparent;
+      z-index: 100;
+      transition: .4s;
+    }
+
+    .nav-bar {
+      height: var(--header-height);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-menu {
+      display: none;
+    }
+
+    .nav-list {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      column-gap: 3rem;
+    }
+
+    .nav-link {
+      color: var(--text-color);
+      font-weight: var(--font-medium);
+      transition: .3s;
+    }
+
+    .nav-link:hover {
+      color: var(--dark-color);
+    }
+
+    .scrolled-header {
+      background-color: hsla(220, 18%, 99%, .85);
+      box-shadow: 0 1px 4px hsla(220, 4%, 15%, .1);
+      backdrop-filter: blur(8px);
+    }
+
+    .home-section {
+      background-color: hsl(220, 18%, 78%);
+      overflow: hidden;
+      transition: .4s;
+    }
+
+    .home-container {
+      padding: 4rem 0 1rem;
+      row-gap: 8.5rem;
+    }
+
+    .page-title {
+      font-size: var(--big-title-size);
+      font-weight: 400;
+    }
+
+    .page-description {
+      color: var(--dark-color);
+      margin: 1rem 0 2rem;
+    }
+
+    .page-title,
+    .page-description {
+      line-height: 140%;
+    }
+
+    .home-images {
+      position: relative;
+      width: 310px;
+      justify-self: center;
+    }
+
+    .home-images img {
+      position: relative;
+    }
+
+    .home-images img:nth-child(1) {
+      width: 224px;
+      position: absolute;
+      right: -1.5rem;
+      top: -9.5rem;
+    }
+
+    .cards-container {
+      row-gap: 2.5rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .topic-card {
+      justify-self: center;
+    }
+
+    .topic-image {
+      width: 270px;
+      margin-bottom: 1rem;
+    }
+
+    .topic-link {
+      display: flex;
+      align-items: center;
+      color: var(--dark-color);
+    }
+
+    .topic-title {
+      font-size: var(--small-title-size);
+      margin-bottom: .5rem;
+    }
+
+    .logo-grid {
+      grid-template-columns: repeat(2, max-content);
+      justify-content: center;
+      column-gap: 1.25rem;
+    }
+
+    .logo-image {
+      width: 120px;
+    }
+
+    .logo-image:nth-child(even) {
+      margin-top: 2rem;
+    }
+
+    @media screen and (max-width: 340px) {
+      .container {
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
+
+      .home-container {
+        padding: 2rem 0 1rem;
+        row-gap: 6rem;
+      }
+
+      .page-description {
+        font-size: var(--small-text-size);
+      }
+
+      .home-images {
+        width: 248px;
+      }
+
+      .home-images img:nth-child(1) {
+        width: 180px;
+        top: -7rem;
+      }
+
+      .topic-image {
+        width: 230px;
+      }
+
+      .logo-grid {
+        grid-template-columns: repeat(2, 100px);
+        row-gap: .5rem;
+      }
+    }
+
+    @media screen and (max-width: 1022px) {
+      .nav-menu {
+        display: none;
+      }
+    }
+
+    @media screen and (min-width: 767px) {
+      .home-container,
+      .cards-container {
+        grid-template-columns: repeat(2, max-content);
+        justify-content: center;
+      }
+
+      .home-images {
+        margin-top: 6rem;
+      }
+
+      .logo-grid {
+        grid-template-columns: repeat(4, max-content);
+      }
+    }
+
+    @media screen and (min-width: 1023px) {
+      .main-section {
+        padding: 7rem 0 1rem;
+      }
+
+      .section-title {
+        margin-bottom: 4rem;
+      }
+
+      .nav-bar {
+        height: calc(var(--header-height) + 1.5rem);
+      }
+
+      .nav-menu {
+        display: flex;
+        margin-left: auto;
+      }
+
+      .logo-grid {
+        column-gap: 5.5rem;
+      }
+
+      .logo-image {
+        width: 140px;
+      }
+    }
+
+    @media screen and (min-width: 1054px) {
+      .container {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @media screen and (min-width: 1124px) {
+      .home-container {
+        padding: 10rem 0 3rem;
+        column-gap: 0;
+      }
+
+      .home-images {
+        width: 500px;
+        margin-top: 8rem;
+        transform: translate(-1rem);
+      }
+
+      .home-images img:nth-child(1) {
+        width: 345px;
+        top: -14.5rem;
+      }
+
+      .cards-container {
+        grid-template-columns: repeat(3, max-content);
+        padding-bottom: 4.5rem;
+        gap: 4.5rem;
+      }
+
+      .topic-image {
+        margin-bottom: 1.25rem;
+      }
+
+      .topic-title {
+        font-size: var(--small-title-size);
+      }
+    }
+
+    @media screen and (min-width: 2048px) {
+      body {
+        zoom: 1.3;
+      }
+    }
+
+    @media screen and (min-width: 3840px) {
+      body {
+        zoom: 2.3;
+      }
+    }
+  </style>
+  <body>
+    <header class="header-bar" id="header-bar">
+      <nav class="nav-bar container">
+        <div class="nav-menu">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#home" class="nav-link">
+                <span>Home</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#Categories" class="nav-link">
+                <span>Key Topics</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#Fundamentals" class="nav-link">
+                <span>Fundamentals</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
     </header>
-    <main class="main">
-        <section class="hero-section section" id="home">
-            <div class="hero-content container grid-container">
-                <div class="home__data hero-info-text">
-                    <h1 class="hero-title">
-                        Biology
-                    </h1>
-                    <br>
-                    <p class="hero-description">
-                        Exploring fundamental concepts in biology and beyond.
-                    </p>
-                    <a href="index.html" class="button-link">
-                        Back Home<i class="ri-arrow-right-line"></i>
-                    </a>
-                </div>
-                <div class="hero-images">
-                    <img src="https://cdn-icons-png.flaticon.com/512/8716/8716846.png" alt="home image">
-                </div>
-            </div>
-        </section>
-
-        <section class="new section" id="Categories">
-            <h2 class="section-title section-head">
-                Key Topics
-            </h2>
-            <div class="product-grid container grid-container">
-                <article class="product-card topic-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2201/2201544.png" alt="Neurobiology icon" class="product-image">
-                    <a href="Neurobiology.html" class="product-link">
-                        <div class="new__data">
-                            <h2 class="product-name">
-                                Neurobiology
-                            </h2>
-                            <span class="product-category">
-                                Discover
-                            </span>
-                        </div>
-                        <i class="ri-arrow-right-line"></i>
-                    </a>
-                </article>
-                <article class="product-card topic-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2201/2201470.png" alt="Molecular Genetics icon" class="product-image">
-                    <a href="Molecular_Genetics.html" class="product-link">
-                        <div class="new__data">
-                            <h2 class="product-name">
-                                Molecular Genetics
-                            </h2>
-                            <span class="product-category">
-                                Discover
-                            </span>
-                        </div>
-                        <i class="ri-arrow-right-line"></i>
-                    </a>
-                </article>
-                <article class="product-card topic-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2201/2201531.png" alt="Evolutionary Biology icon" class="product-image">
-                    <a href="Evolutionary_Biology.html" class="product-link">
-                        <div class="new__data">
-                            <h2 class="product-name">
-                                Evolutionary Biology
-                            </h2>
-                            <span class="product-category">
-                                Discover
-                            </span>
-                        </div>
-                        <i class="ri-arrow-right-line"></i>
-                    </a>
-                </article>
-            </div>
-        </section>
-
-        <section class="new section" id="new">
-            <div class="product-grid container grid-container">
-                <article class="product-card topic-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5369/5369466.png" alt="Immunology icon" class="product-image">
-                    <a href="Imunology.html" class="product-link">
-                        <div class="new__data">
-                            <h2 class="product-name">
-                                Immunology
-                            </h2>
-                            <span class="product-category">
-                                Discover
-                            </span>
-                        </div>
-                        <i class="ri-arrow-right-line"></i>
-                    </a>
-                </article>
-                <article class="product-card topic-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/6502/6502964.png" alt="Biophysics icon" class="product-image">
-                    <a href="Biophysics.html" class="product-link">
-                        <div class="new__data">
-                            <h2 class="product-name">
-                                Biophysics
-                            </h2>
-                            <span class="product-category">
-                                Discover
-                            </span>
-                        </div>
-                        <i class="ri-arrow-right-line"></i>
-                    </a>
-                </article>
-                <article class="product-card topic-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1730/1730586.png" alt="Microbiology icon" class="product-image">
-                    <a href="Microbiology.html" class="product-link">
-                        <div class="new__data">
-                            <h2 class="product-name">
-                                Microbiology
-                            </h2>
-                            <span class="product-category">
-                                Discover
-                            </span>
-                        </div>
-                        <i class="ri-arrow-right-line"></i>
-                    </a>
-                </article>
-            </div>
-        </section>
-
-        <section class="brand section" id="Fundamentals">
-            <h2 class="section-title section-head">
-                Fundamentals
-            </h2>
-            <div class="brand-grid container grid-container">
-                <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="Biology concept icon" class="brand-logo category-item-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="Chemistry concept icon" class="brand-logo category-item-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="Physics concept icon" class="brand-logo category-item-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="Mathematics concept icon" class="brand-logo category-item-card">
-            </div>
-        </section>
+    <main class="main-content">
+      <section class="home-section main-section" id="home">
+        <div class="home-container container grid">
+          <div class="home-data">
+            <h1 class="page-title">Biology</h1>
+            <br>
+            <p class="page-description">Exploring fundamental concepts in biology and beyond.</p>
+          </div>
+          <div class="home-images">
+            <img src="https://cdn-icons-png.flaticon.com/512/8716/8716846.png" alt="home image">
+          </div>
+        </div>
+      </section>
+      <section class="main-section" id="Categories">
+        <h2 class="section-title">Key Topics</h2>
+        <div class="cards-container container grid">
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2201/2201544.png" alt="Neurobiology icon" class="topic-image">
+            <a href="Neurobiology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Neurobiology</h2>
+              </div>
+            </a>
+          </article>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2201/2201470.png" alt="Molecular Genetics icon" class="topic-image">
+            <a href="Molecular_Genetics.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Molecular Genetics</h2>
+              </div>
+            </a>
+          </article>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2201/2201531.png" alt="Evolutionary Biology icon" class="topic-image">
+            <a href="Evolutionary_Biology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Evolutionary Biology</h2>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+      <section class="main-section" id="new">
+        <div class="cards-container container grid">
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/5369/5369466.png" alt="Immunology icon" class="topic-image">
+            <a href="Imunology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Immunology</h2>
+              </div>
+            </a>
+          </article>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/6502/6502964.png" alt="Biophysics icon" class="topic-image">
+            <a href="Biophysics.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Biophysics</h2>
+              </div>
+            </a>
+          </article>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/1730/1730586.png" alt="Microbiology icon" class="topic-image">
+            <a href="Microbiology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Microbiology</h2>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+      <section class="main-section" id="Fundamentals">
+        <h2 class="section-title">Fundamentals</h2>
+        <div class="logo-grid container grid">
+          <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="Biology concept icon" class="logo-image">
+          <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="Chemistry concept icon" class="logo-image">
+          <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="Physics concept icon" class="logo-image">
+          <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="Mathematics concept icon" class="logo-image">
+        </div>
+      </section>
     </main>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script>
-        window.onscroll = () => {
-            const header = document.getElementById('header');
-            if (window.scrollY >= 200) {
-                header.classList.add('header-scrolled');
-            } else {
-                header.classList.remove('header-scrolled');
-            }
-        };
+      const headerBar = document.getElementById('header-bar');
+      const scrollHeader = () => {
+        if (window.scrollY >= 50) {
+          headerBar.classList.add('scrolled-header');
+        } else {
+          headerBar.classList.remove('scrolled-header');
+        }
+      };
+      window.addEventListener('scroll', scrollHeader);
 
-        const sr = ScrollReveal({
-            origin: 'top',
-            distance: '60px',
-            duration: 1500,
-            delay: 1,
-            opacity: 0,
-            blur: '10px',
-            scale: 1,
-            reset: false
-        });
+      const sr = ScrollReveal({
+        origin: 'top',
+        distance: '60px',
+        duration: 1000,
+        delay: 200,
+        reset: false
+      });
 
-        sr.reveal(`.hero-info-text`);
-        sr.reveal(`.section-head`);
-        sr.reveal(`.topic-card, .category-item-card`, { interval: 50 });
+      sr.reveal(`.home-data, .home-images`, {
+        opacity: 0,
+        blur: '10px',
+        scale: 0.9
+      });
+
+      sr.reveal(`.topic-card`, {
+        interval: 100,
+        opacity: 0,
+        blur: '5px',
+        scale: 0.95
+      });
+
+      sr.reveal(`.logo-image`, {
+        interval: 100,
+        opacity: 0,
+        blur: '3px',
+        scale: 0.98
+      });
     </script>
-</body>
+  </body>
 </html>
