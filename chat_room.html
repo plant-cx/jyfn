@@ -20,20 +20,18 @@
         .header-bg {
             background-color: #5a524a;
             background-image: linear-gradient(to right, #5a524a, #6d645b);
-            /* Use flexbox for horizontal alignment */
-            display: flex;
-            align-items: center; /* Vertically center items */
-            justify-content: space-between; /* Pushes content to the edges */
-            padding: 1rem 1.5rem; /* Consistent padding */
-        }
-
-        /* Center container for logo and main title */
-        .header-center-content {
-            flex-grow: 1; /* Allows it to take up available space */
-            text-align: center; /* Centers its content */
             display: flex;
             align-items: center;
-            justify-content: center; /* Center the logo and text within its flex container */
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+        }
+
+        .header-center-content {
+            flex-grow: 1;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .message-input-bg {
             background-color: #6d645b;
@@ -212,7 +210,8 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const firebaseConfig = {
+        // This is my special configuration for Firebase
+        const firebase_configuration_settings = {
             apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0",
             authDomain: "chat-d312d.firebaseapp.com",
             projectId: "chat-d312d",
@@ -222,274 +221,291 @@
             measurementId: "G-CJKMEBMWD2"
         };
 
-        const ADJECTIVES = ["Happy", "Brave", "Clever", "Swift"];
-        const NOUNS = ["Panda", "Tiger", "Star", "Cloud"];
+        // Arrays to create fun usernames
+        const LIST_OF_ADJECTIVES = ["Happy", "Brave", "Clever", "Swift"];
+        const LIST_OF_NOUNS = ["Panda", "Tiger", "Star", "Cloud"];
 
-        function makeRandomUsername() {
-            const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
-            const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
-            return `${adj}${noun}`;
+        // This function creates a random username for a new user
+        function create_a_random_username() {
+            const random_adjective = LIST_OF_ADJECTIVES[Math.floor(Math.random() * LIST_OF_ADJECTIVES.length)];
+            const random_noun = LIST_OF_NOUNS[Math.floor(Math.random() * LIST_OF_NOUNS.length)];
+            return `${random_adjective}${random_noun}`;
         }
 
-        function getUserName() {
-            let username = sessionStorage.getItem('chatUser');
-            if (!username) {
-                username = makeRandomUsername();
-                sessionStorage.setItem('chatUser', username);
+        // This function gets the username, either an existing one or a new random one
+        function get_the_users_username() {
+            let my_username = sessionStorage.getItem('chatUser');
+            if (!my_username) {
+                my_username = create_a_random_username();
+                sessionStorage.setItem('chatUser', my_username);
             }
-            return username;
+            return my_username;
         }
 
-        const messagesBox = document.getElementById('messages-container');
-        const messageForm = document.getElementById('message-form');
-        const messageInput = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-button');
-        const usernameDisplay = document.getElementById('user-id-display'); // Still referenced in JS, but hidden in HTML
-        const loadingSpinner = document.getElementById('loading-indicator');
-        const errorDisplay = document.getElementById('error-message');
-        const noMessagesText = document.getElementById('no-messages-indicator');
+        // Getting all the HTML elements I need to use
+        const main_messages_container = document.getElementById('messages-container');
+        const the_message_form = document.getElementById('message-form');
+        const the_message_input_field = document.getElementById('message-input');
+        const the_send_message_button = document.getElementById('send-button');
+        const the_loading_spinner_element = document.getElementById('loading-indicator');
+        const the_error_message_display = document.getElementById('error-message');
+        const the_no_messages_text_element = document.getElementById('no-messages-indicator');
 
-        const cooldownTimerEl = document.getElementById('cooldown-timer');
-        const cooldownMessageEl = document.getElementById('cooldown-message');
+        const the_cooldown_timer_display = document.getElementById('cooldown-timer');
+        const the_cooldown_message_display = document.getElementById('cooldown-message');
 
-        const COOLDOWN_DURATION_MS = 15 * 60 * 1000;
-        let cooldownInterval = null;
+        // I want to set a cooldown duration of 15 minutes in milliseconds
+        const THE_COOLDOWN_DURATION_IN_MILLISECONDS = 15 * 60 * 1000;
+        let my_cooldown_timer_interval = null;
 
-        let myUserId = null;
-        let myUsername = getUserName();
+        // Variables for the current user
+        let my_user_id = null;
+        let my_user_name = get_the_users_username();
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const messagesCollection = collection(db, `apps/${firebaseConfig.projectId}/messages`);
+        // Initialize Firebase app and services
+        const my_firebase_app = initializeApp(firebase_configuration_settings);
+        const my_firebase_auth = getAuth(my_firebase_app);
+        const my_firestore_db = getFirestore(my_firebase_app);
+        const my_firestore_messages_collection = collection(my_firestore_db, `apps/${firebase_configuration_settings.projectId}/messages`);
 
-        function showError(msg) {
-            errorDisplay.textContent = `Error: ${msg}`;
-            errorDisplay.classList.remove('hidden');
-            loadingSpinner.classList.add('hidden');
+        // This function shows an error message to the user
+        function display_an_error_message(message_text) {
+            the_error_message_display.textContent = `Error: ${message_text}`;
+            the_error_message_display.classList.remove('hidden');
+            the_loading_spinner_element.classList.add('hidden');
         }
 
-        function scrollChatToBottom() {
-            messagesBox.scrollTop = messagesBox.scrollHeight;
+        // This function scrolls the chat to the very bottom
+        function scroll_the_chat_to_the_bottom() {
+            main_messages_container.scrollTop = main_messages_container.scrollHeight;
         }
 
-        function updateCooldownDisplay() {
-            const lastMessageTime = localStorage.getItem(`lastMessageTime_${myUserId}`);
-            if (!lastMessageTime) {
-                messageInput.disabled = false;
-                sendBtn.disabled = false;
-                cooldownTimerEl.classList.add('hidden');
-                cooldownMessageEl.classList.add('hidden');
-                if (cooldownInterval) {
-                    clearInterval(cooldownInterval);
-                    cooldownInterval = null;
+        // This function updates the cooldown timer on the screen
+        function update_the_cooldown_display() {
+            const last_message_sent_time = localStorage.getItem(`lastMessageTime_${my_user_id}`);
+            if (!last_message_sent_time) {
+                the_message_input_field.disabled = false;
+                the_send_message_button.disabled = false;
+                the_cooldown_timer_display.classList.add('hidden');
+                the_cooldown_message_display.classList.add('hidden');
+                if (my_cooldown_timer_interval) {
+                    clearInterval(my_cooldown_timer_interval);
+                    my_cooldown_timer_interval = null;
                 }
                 return;
             }
 
-            const timeElapsed = Date.now() - parseInt(lastMessageTime, 10);
-            const timeLeft = COOLDOWN_DURATION_MS - timeElapsed;
+            const time_since_last_message = Date.now() - parseInt(last_message_sent_time, 10);
+            const remaining_time_left = THE_COOLDOWN_DURATION_IN_MILLISECONDS - time_since_last_message;
 
-            if (timeLeft <= 0) {
-                messageInput.disabled = false;
-                sendBtn.disabled = false;
-                cooldownTimerEl.classList.add('hidden');
-                cooldownMessageEl.classList.add('hidden');
-                if (cooldownInterval) {
-                    clearInterval(cooldownInterval);
-                    cooldownInterval = null;
+            if (remaining_time_left <= 0) {
+                the_message_input_field.disabled = false;
+                the_send_message_button.disabled = false;
+                the_cooldown_timer_display.classList.add('hidden');
+                the_cooldown_message_display.classList.add('hidden');
+                if (my_cooldown_timer_interval) {
+                    clearInterval(my_cooldown_timer_interval);
+                    my_cooldown_timer_interval = null;
                 }
             } else {
-                messageInput.disabled = true;
-                sendBtn.disabled = true;
-                cooldownTimerEl.classList.remove('hidden');
-                cooldownMessageEl.classList.remove('hidden');
+                the_message_input_field.disabled = true;
+                the_send_message_button.disabled = true;
+                the_cooldown_timer_display.classList.remove('hidden');
+                the_cooldown_message_display.classList.remove('hidden');
 
-                const minutes = Math.floor(timeLeft / (60 * 1000));
-                const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
-                cooldownTimerEl.textContent = `Next message in: ${minutes}m ${seconds}s`;
-                cooldownMessageEl.textContent = "Please wait before sending another message.";
+                const minutes_left = Math.floor(remaining_time_left / (60 * 1000));
+                const seconds_left = Math.floor((remaining_time_left % (60 * 1000)) / 1000);
+                the_cooldown_timer_display.textContent = `Next message in: ${minutes_left}m ${seconds_left}s`;
+                the_cooldown_message_display.textContent = "Please wait before sending another message.";
 
-                if (!cooldownInterval) {
-                    cooldownInterval = setInterval(updateCooldownDisplay, 1000);
+                if (!my_cooldown_timer_interval) {
+                    my_cooldown_timer_interval = setInterval(update_the_cooldown_display, 1000);
                 }
             }
         }
 
-        async function deleteMessage(messageId) {
+        // This function deletes a message from the database
+        async function delete_a_message(message_identification_id) {
             if (!confirm('Really delete this message?')) return;
             try {
-                await deleteDoc(doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId));
-            } catch (e) {
-                showError(`Failed to delete: ${e.message}`);
+                await deleteDoc(doc(my_firestore_db, `apps/${firebase_configuration_settings.projectId}/messages`, message_identification_id));
+            } catch (a_deletion_error) {
+                display_an_error_message(`Failed to delete: ${a_deletion_error.message}`);
             }
         }
 
-        function editMessage(messageId, currentText) {
-            const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
-            if (!msgEl) return;
+        // This function lets a user edit their own message
+        function edit_a_message(message_identification_id, current_message_text) {
+            const message_element_to_edit = document.querySelector(`[data-message-id="${message_identification_id}"]`);
+            if (!message_element_to_edit) return;
 
-            const originalTextEl = msgEl.querySelector('p');
-            const actionsEl = msgEl.querySelector('.message-actions');
+            const original_text_element = message_element_to_edit.querySelector('p');
+            const message_actions_element = message_element_to_edit.querySelector('.message-actions');
 
-            originalTextEl.style.display = 'none';
-            actionsEl.style.display = 'none';
+            original_text_element.style.display = 'none';
+            message_actions_element.style.display = 'none';
 
-            const editInput = document.createElement('input');
-            editInput.type = 'text';
-            editInput.value = currentText;
-            editInput.classList.add('edit-input');
-            originalTextEl.parentNode.insertBefore(editInput, originalTextEl.nextSibling);
-            editInput.focus();
+            const new_edit_input_field = document.createElement('input');
+            new_edit_input_field.type = 'text';
+            new_edit_input_field.value = current_message_text;
+            new_edit_input_field.classList.add('edit-input');
+            original_text_element.parentNode.insertBefore(new_edit_input_field, original_text_element.nextSibling);
+            new_edit_input_field.focus();
 
-            const editBtnsDiv = document.createElement('div');
-            editBtnsDiv.classList.add('edit-buttons');
+            const the_edit_buttons_container = document.createElement('div');
+            the_edit_buttons_container.classList.add('edit-buttons');
 
-            const saveBtn = document.createElement('button');
-            saveBtn.textContent = 'Save';
-            saveBtn.onclick = async () => {
-                const newText = editInput.value.trim();
-                if (newText === '') {
-                    showError("Message can't be empty.");
+            const save_button = document.createElement('button');
+            save_button.textContent = 'Save';
+            save_button.onclick = async () => {
+                const updated_message_text = new_edit_input_field.value.trim();
+                if (updated_message_text === '') {
+                    display_an_error_message("Message can't be empty.");
                     return;
                 }
                 try {
-                    await updateDoc(doc(db, `apps/${firebaseConfig.projectId}/messages`, messageId), {
-                        text: newText,
+                    await updateDoc(doc(my_firestore_db, `apps/${firebase_configuration_settings.projectId}/messages`, message_identification_id), {
+                        text: updated_message_text,
                         timestamp: serverTimestamp()
                     });
-                } catch (e) {
-                    showError(`Failed to update: ${e.message}`);
+                } catch (an_update_error) {
+                    display_an_error_message(`Failed to update: ${an_update_error.message}`);
                 }
             };
 
-            const cancelBtn = document.createElement('button');
-            cancelBtn.textContent = 'Cancel';
-            cancelBtn.classList.add('cancel-button');
-            cancelBtn.onclick = () => {
-                originalTextEl.style.display = '';
-                actionsEl.style.display = '';
-                editInput.remove();
-                editBtnsDiv.remove();
+            const cancel_button = document.createElement('button');
+            cancel_button.textContent = 'Cancel';
+            cancel_button.classList.add('cancel-button');
+            cancel_button.onclick = () => {
+                original_text_element.style.display = '';
+                message_actions_element.style.display = '';
+                new_edit_input_field.remove();
+                the_edit_buttons_container.remove();
             };
 
-            editBtnsDiv.append(saveBtn, cancelBtn);
-            msgEl.appendChild(editBtnsDiv);
+            the_edit_buttons_container.append(save_button, cancel_button);
+            message_element_to_edit.appendChild(the_edit_buttons_container);
         }
 
-        function displayMessage(msg) {
-            const msgWrapper = document.createElement('div');
-            msgWrapper.classList.add('message-container');
-            msgWrapper.classList.add(msg.userId === myUserId ? 'justify-end' : 'justify-start');
+        // This function creates and adds a message bubble to the chat
+        function create_and_display_a_message_on_the_screen(message_data) {
+            const message_wrapper_div = document.createElement('div');
+            message_wrapper_div.classList.add('message-container');
+            message_wrapper_div.classList.add(message_data.userId === my_user_id ? 'justify-end' : 'justify-start');
 
-            const msgBubble = document.createElement('div');
-            msgBubble.classList.add('message-bubble');
-            msgBubble.classList.add(msg.userId === myUserId ? 'sent' : 'received');
-            msgBubble.setAttribute('data-message-id', msg.id);
+            const message_bubble_div = document.createElement('div');
+            message_bubble_div.classList.add('message-bubble');
+            message_bubble_div.classList.add(message_data.userId === my_user_id ? 'sent' : 'received');
+            message_bubble_div.setAttribute('data-message-id', message_data.id);
 
-            const userInfo = document.createElement('div');
-            userInfo.classList.add('message-info');
-            userInfo.textContent = msg.userId === myUserId ? 'You' : `User: ${msg.username || 'Unknown'}`;
-            msgBubble.appendChild(userInfo);
+            const user_info_div = document.createElement('div');
+            user_info_div.classList.add('message-info');
+            user_info_div.textContent = message_data.userId === my_user_id ? 'You' : `User: ${message_data.username || 'Unknown'}`;
+            message_bubble_div.appendChild(user_info_div);
 
-            const msgText = document.createElement('p');
-            msgText.textContent = msg.text;
-            msgBubble.appendChild(msgText);
+            const message_text_paragraph = document.createElement('p');
+            message_text_paragraph.textContent = message_data.text;
+            message_bubble_div.appendChild(message_text_paragraph);
 
-            const timeDiv = document.createElement('div');
-            timeDiv.classList.add('timestamp');
-            if (msg.timestamp && typeof msg.timestamp.toDate === 'function') {
-                timeDiv.textContent = msg.timestamp.toDate().toLocaleString();
+            const time_stamp_div = document.createElement('div');
+            time_stamp_div.classList.add('timestamp');
+            if (message_data.timestamp && typeof message_data.timestamp.toDate === 'function') {
+                time_stamp_div.textContent = message_data.timestamp.toDate().toLocaleString();
             } else {
-                timeDiv.textContent = 'Sending...';
+                time_stamp_div.textContent = 'Sending...';
             }
-            msgBubble.appendChild(timeDiv);
+            message_bubble_div.appendChild(time_stamp_div);
 
-            if (msg.userId === myUserId) {
-                const actionsDiv = document.createElement('div');
-                actionsDiv.classList.add('message-actions');
+            if (message_data.userId === my_user_id) {
+                const message_actions_div = document.createElement('div');
+                message_actions_div.classList.add('message-actions');
 
-                const editBtn = document.createElement('button');
-                editBtn.textContent = '✏️';
-                editBtn.title = 'Edit';
-                editBtn.onclick = () => editMessage(msg.id, msg.text);
+                const edit_button = document.createElement('button');
+                edit_button.textContent = '✏️';
+                edit_button.title = 'Edit';
+                edit_button.onclick = () => edit_a_message(message_data.id, message_data.text);
 
-                const delBtn = document.createElement('button');
-                delBtn.textContent = '🗑️';
-                delBtn.title = 'Delete';
-                delBtn.onclick = () => deleteMessage(msg.id);
+                const delete_button = document.createElement('button');
+                delete_button.textContent = '🚫';
+                delete_button.title = 'Delete';
+                delete_button.onclick = () => delete_a_message(message_data.id);
 
-                actionsDiv.append(editBtn, delBtn);
-                msgBubble.appendChild(actionsDiv);
+                message_actions_div.append(edit_button, delete_button);
+                message_bubble_div.appendChild(message_actions_div);
             }
 
-            msgWrapper.appendChild(msgBubble);
-            messagesBox.appendChild(msgWrapper);
+            message_wrapper_div.appendChild(message_bubble_div);
+            main_messages_container.appendChild(message_wrapper_div);
         }
 
+        // This code runs when the page is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    myUserId = user.uid;
-                    updateCooldownDisplay();
+            // Check if a user is logged in
+            onAuthStateChanged(my_firebase_auth, async (authenticated_user) => {
+                if (authenticated_user) {
+                    // The user is logged in, so get their ID and enable the form
+                    my_user_id = authenticated_user.uid;
+                    update_the_cooldown_display();
 
-                    onSnapshot(query(messagesCollection, orderBy('timestamp')), (snapshot) => {
-                        errorDisplay.classList.add('hidden');
-                        loadingSpinner.classList.add('hidden');
-                        messagesBox.innerHTML = '';
+                    // This listens for new messages from the database
+                    onSnapshot(query(my_firestore_messages_collection, orderBy('timestamp')), (message_snapshot) => {
+                        the_error_message_display.classList.add('hidden');
+                        the_loading_spinner_element.classList.add('hidden');
+                        main_messages_container.innerHTML = '';
 
-                        if (snapshot.empty) {
-                            noMessagesText.classList.remove('hidden');
+                        if (message_snapshot.empty) {
+                            the_no_messages_text_element.classList.remove('hidden');
                         } else {
-                            noMessagesText.classList.add('hidden');
-                            snapshot.forEach((doc) => displayMessage({ id: doc.id, ...doc.data() }));
-                            scrollChatToBottom();
+                            the_no_messages_text_element.classList.add('hidden');
+                            message_snapshot.forEach((firestore_document) => create_and_display_a_message_on_the_screen({ id: firestore_document.id, ...firestore_document.data() }));
+                            scroll_the_chat_to_the_bottom();
                         }
-                    }, (err) => {
-                        showError(`Failed to load messages: ${err.message}`);
+                    }, (a_snapshot_error) => {
+                        display_an_error_message(`Failed to load messages: ${a_snapshot_error.message}`);
                     });
                 } else {
+                    // The user is not logged in, so log them in anonymously
                     try {
-                        await signInAnonymously(auth);
-                    } catch (err) {
-                        showError(`Authentication failed: ${err.message}`);
+                        await signInAnonymously(my_firebase_auth);
+                    } catch (an_authentication_error) {
+                        display_an_error_message(`Authentication failed: ${an_authentication_error.message}`);
                     }
                 }
             });
 
-            messageForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const msgText = messageInput.value.trim();
+            // This handles when the user submits the message form
+            the_message_form.addEventListener('submit', async (the_submit_event) => {
+                the_submit_event.preventDefault();
+                const the_message_text_to_send = the_message_input_field.value.trim();
 
-                const lastMessageTime = localStorage.getItem(`lastMessageTime_${myUserId}`);
-                const timeElapsed = lastMessageTime ? Date.now() - parseInt(lastMessageTime, 10) : COOLDOWN_DURATION_MS;
-                if (timeElapsed < COOLDOWN_DURATION_MS) {
-                    showError("You are sending messages too fast! Please wait.");
-                    updateCooldownDisplay();
+                const last_message_time = localStorage.getItem(`lastMessageTime_${my_user_id}`);
+                const time_passed_since_last_message = last_message_time ? Date.now() - parseInt(last_message_time, 10) : THE_COOLDOWN_DURATION_IN_MILLISECONDS;
+                if (time_passed_since_last_message < THE_COOLDOWN_DURATION_IN_MILLISECONDS) {
+                    display_an_error_message("You are sending messages too fast! Please wait.");
+                    update_the_cooldown_display();
                     return;
                 }
 
-                if (msgText === '' || !myUserId) return;
+                if (the_message_text_to_send === '' || !my_user_id) return;
 
                 try {
-                    await addDoc(messagesCollection, {
-                        text: msgText,
+                    await addDoc(my_firestore_messages_collection, {
+                        text: the_message_text_to_send,
                         timestamp: serverTimestamp(),
-                        userId: myUserId,
-                        username: myUsername
+                        userId: my_user_id,
+                        username: my_user_name
                     });
-                    messageInput.value = '';
-                    errorDisplay.classList.add('hidden');
-                    scrollChatToBottom();
+                    the_message_input_field.value = '';
+                    the_error_message_display.classList.add('hidden');
+                    scroll_the_chat_to_the_bottom();
 
-                    localStorage.setItem(`lastMessageTime_${myUserId}`, Date.now().toString());
-                    updateCooldownDisplay();
-                } catch (e) {
-                    showError(`Failed to send: ${e.message}`);
+                    localStorage.setItem(`lastMessageTime_${my_user_id}`, Date.now().toString());
+                    update_the_cooldown_display();
+                } catch (a_sending_error) {
+                    display_an_error_message(`Failed to send: ${a_sending_error.message}`);
                 }
             });
         });
     </script>
 </body>
 </html>
-
