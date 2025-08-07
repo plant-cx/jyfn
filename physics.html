@@ -1,445 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topics Trail</title>
-
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
 
+      :root {
+        --header-height: 3.5rem;
+        --bg-color: hsl(221, 19%, 76%);
+        --title-color: hsl(220, 8%, 11%);
+        --text-color: hsl(220, 4%, 31%);
+        --body-color: hsl(210, 18%, 96%);
+        --container-color: hsl(220, 16%, 94%);
+        --body-font: 'Lora', serif;
+        --biggest-font-size: 2.25rem;
+        --h1-font-size: 1.5rem;
+        --h2-font-size: 1.25rem;
+        --h3-font-size: 1rem;
+        --normal-font-size: .931rem;
+        --font-medium: 490;
+        --z-fixed: 100;
+      }
+
+      @media screen and (min-width: 1124px) {
         :root {
-            --header-height: 3.5rem;
-            --bg-color: hsl(221, 19%, 76%);
-            --title-color: hsl(220, 8%, 11%);
-            --text-color: hsl(220, 4%, 31%);
-            --body-color: hsl(210, 18%, 96%);
-            --container-color: hsl(220, 16%, 94%);
-            --body-font: 'Lora', serif;
-            --biggest-font-size: 2.25rem;
-            --h1-font-size: 1.5rem;
-            --h2-font-size: 1.25rem;
-            --h3-font-size: 1rem;
-            --normal-font-size: .931rem;
-            --font-medium: 490;
-            --z-fixed: 100;
+          --biggest-font-size: 4.5rem;
+          --h1-font-size: 2.25rem;
+          --h2-font-size: 1.5rem;
+          --h3-font-size: 1.25rem;
+          --normal-font-size: 1rem;
         }
+      }
 
-        @media screen and (min-width: 1124px) {
-            :root {
-                --biggest-font-size: 4.5rem;
-                --h1-font-size: 2.25rem;
-                --h2-font-size: 1.5rem;
-                --h3-font-size: 1.25rem;
-                --normal-font-size: 1rem;
-            }
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--body-font);
+        font-size: var(--normal-font-size);
+        background-color: var(--body-color);
+        color: var(--text-color);
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: var(--title-color);
+        font-weight: var(--font-medium);
+      }
+
+      ul {
+        list-style: none;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .container {
+        max-width: 1024px;
+        margin-right: 1.5rem;
+        margin-left: 1.5rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .section {
+        padding: 4.5rem 0 2rem;
+      }
+
+      .section__title {
+        font-size: var(--h1-font-size);
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: transparent;
+        z-index: var(--z-fixed);
+      }
+
+      .nav {
+        height: var(--header-height);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav__menu {
+        display: none;
+      }
+
+      .nav__list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        column-gap: 3rem;
+      }
+
+      .nav__link {
+        color: var(--text-color);
+        font-weight: var(--font-medium);
+        transition: .3s;
+      }
+
+      .nav__link:hover {
+        color: var(--title-color);
+      }
+
+      .scrolled-header {
+        background-color: hsla(210, 18%, 96%, .85);
+        box-shadow: 0 1px 4px hsla(220, 4%, 15%, .1);
+        backdrop-filter: blur(8px);
+      }
+
+      .home {
+        background-color: var(--bg-color);
+        overflow: hidden;
+      }
+
+      .home__container {
+        padding: 4rem 0 1rem;
+        row-gap: 8.5rem;
+      }
+
+      .home__title {
+        font-size: var(--biggest-font-size);
+        font-weight: 400;
+      }
+
+      .home__description {
+        color: var(--title-color);
+        margin: 1rem 0 2rem;
+      }
+
+      .home__title,
+      .home__description {
+        line-height: 140%;
+      }
+
+      .home__images {
+        position: relative;
+        width: 310px;
+        justify-self: center;
+      }
+
+      .home__images img:nth-child(1) {
+        width: 224px;
+        position: absolute;
+        right: -1.5rem;
+        top: -9.5rem;
+      }
+
+      .button__link {
+        color: var(--title-color);
+        font-weight: var(--font-medium);
+        display: inline-flex;
+        align-items: center;
+        column-gap: .5rem;
+      }
+
+      .button__link i {
+        font-size: 1rem;
+        transition: .3s;
+      }
+
+      .button__link:hover i {
+        transform: translateX(.25rem);
+      }
+
+      .new__container {
+        row-gap: 2.5rem;
+        padding-bottom: 1.5rem;
+      }
+
+      .new__card {
+        justify-self: center;
+      }
+
+      .new__img {
+        width: 270px;
+        margin-bottom: 1rem;
+      }
+
+      .new__link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--title-color);
+        padding-right: .75rem;
+      }
+
+      .new__link i {
+        font-size: 1.25rem;
+        transition: .3s;
+      }
+
+      .new__title {
+        font-size: var(--h2-font-size);
+        margin-bottom: .5rem;
+      }
+
+      .new__subtitle {
+        font-size: var(--smaller-font-size);
+        color: var(--text-color);
+      }
+
+      .new__link:hover i {
+        transform: translateX(.25rem);
+      }
+
+      .brand__container {
+        grid-template-columns: repeat(2, max-content);
+        justify-content: center;
+        column-gap: 1.25rem;
+      }
+
+      .brand__img {
+        width: 120px;
+      }
+
+      .brand__img:nth-child(even) {
+        margin-top: 2rem;
+      }
+
+      .footer__copy {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+        text-align: center;
+        font-size: var(--smaller-font-size);
+      }
+
+      @media screen and (max-width: 1022px) {
+        .nav__menu {
+          display: none;
         }
+      }
 
-        * {
-            box-sizing: border-box;
-            padding: 0;
-            margin: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--body-font);
-            font-size: var(--normal-font-size);
-            background-color: var(--body-color);
-            color: var(--text-color);
-        }
-
-        h1, h2, h3 {
-            color: var(--title-color);
-            font-weight: var(--font-medium);
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .container {
-            max-width: 1024px;
-            margin-right: 1.5rem;
-            margin-left: 1.5rem;
-        }
-
-        .grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .section {
-            padding: 4.5rem 0 2rem;
-        }
-
-        .section__title {
-            font-size: var(--h1-font-size);
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: transparent;
-            z-index: var(--z-fixed);
-        }
-
-        .nav {
-            height: var(--header-height);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .home {
-            background-color: var(--bg-color);
-            overflow: hidden;
-        }
-
-        .home__container {
-            padding: 4rem 0 1rem;
-            row-gap: 8.5rem;
-        }
-
-        .home__title {
-            font-size: var(--biggest-font-size);
-            font-weight: 400;
-        }
-
-        .home__description {
-            color: var(--title-color);
-            margin: 1rem 0 2rem;
-        }
-
-        .home__title,
-        .home__description {
-            line-height: 140%;
+      @media screen and (min-width: 767px) {
+        .home__container,
+        .new__container {
+          grid-template-columns: repeat(2, max-content);
+          justify-content: center;
         }
 
         .home__images {
-            position: relative;
-            width: 310px;
-            justify-self: center;
-        }
-
-        .home__images img:nth-child(1) {
-            width: 224px;
-            position: absolute;
-            right: -1.5rem;
-            top: -9.5rem;
-        }
-
-        .button__link {
-            color: var(--title-color);
-            font-weight: var(--font-medium);
-            display: inline-flex;
-            align-items: center;
-            column-gap: .5rem;
-        }
-
-        .button__link i {
-            font-size: 1rem;
-            transition: .3s;
-        }
-
-        .button__link:hover i {
-            transform: translateX(.25rem);
-        }
-
-        .new__container {
-            row-gap: 2.5rem;
-            padding-bottom: 1.5rem;
-        }
-
-        .new__card {
-            justify-self: center;
-        }
-
-        .new__img {
-            width: 270px;
-            margin-bottom: 1rem;
-        }
-
-        .new__link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: var(--title-color);
-            padding-right: .75rem;
-        }
-
-        .new__link i {
-            font-size: 1.25rem;
-            transition: .3s;
-        }
-
-        .new__title {
-            font-size: var(--h2-font-size);
-            margin-bottom: .5rem;
-        }
-
-        .new__subtitle {
-            font-size: var(--smaller-font-size);
-            color: var(--text-color);
-        }
-
-        .new__link:hover i {
-            transform: translateX(.25rem);
+          margin-top: 6rem;
         }
 
         .brand__container {
-            grid-template-columns: repeat(2, max-content);
-            justify-content: center;
-            column-gap: 1.25rem;
+          grid-template-columns: repeat(4, max-content);
+        }
+      }
+
+      @media screen and (min-width: 1023px) {
+        .section {
+          padding: 7rem 0 1rem;
+        }
+
+        .section__title {
+          margin-bottom: 4rem;
+        }
+
+        .nav {
+          height: calc(var(--header-height) + 1.5rem);
+        }
+
+        .nav__menu {
+          display: block;
+          margin-left: auto;
+        }
+
+        .nav__list {
+          display: flex;
+        }
+
+        .new__container {
+          width: 954px;
+        }
+      }
+
+      @media screen and (min-width: 1054px) {
+        .container {
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+
+      @media screen and (min-width: 1124px) {
+        .home__container {
+          padding: 10rem 0 3rem;
+          column-gap: 0;
+        }
+
+        .home__images {
+          width: 500px;
+          margin-top: 8rem;
+          transform: translate(-1rem);
+        }
+
+        .home__images img:nth-child(1) {
+          width: 345px;
+          top: -14.5rem;
+        }
+
+        .new__container {
+          grid-template-columns: repeat(3, max-content);
+          padding-bottom: 4.5rem;
+          gap: 4.5rem;
+        }
+
+        .new__img {
+          margin-bottom: 1.25rem;
+        }
+
+        .new__title {
+          font-size: var(--h3-font-size);
+        }
+
+        .brand__container {
+          column-gap: 5.5rem;
         }
 
         .brand__img {
-            width: 120px;
+          width: 140px;
         }
-
-        .brand__img:nth-child(even) {
-            margin-top: 2rem;
-        }
-
-        .footer__copy {
-            padding-top: 6rem;
-            padding-bottom: 6rem;
-            text-align: center;
-            font-size: var(--smaller-font-size);
-        }
-
-        @media screen and (min-width: 767px) {
-            .home__container,
-            .new__container {
-                grid-template-columns: repeat(2, max-content);
-                justify-content: center;
-            }
-
-            .home__images {
-                margin-top: 6rem;
-            }
-
-            .brand__container {
-                grid-template-columns: repeat(4, max-content);
-            }
-        }
-
-        @media screen and (min-width: 1023px) {
-            .section {
-                padding: 7rem 0 1rem;
-            }
-
-            .section__title {
-                margin-bottom: 4rem;
-            }
-
-            .nav {
-                height: calc(var(--header-height) + 1.5rem);
-            }
-
-            .new__container {
-                width: 954px;
-            }
-        }
-
-        @media screen and (min-width: 1054px) {
-            .container {
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-
-        @media screen and (min-width: 1124px) {
-            .home__container {
-                padding: 10rem 0 3rem;
-                column-gap: 0;
-            }
-
-            .home__images {
-                width: 500px;
-                margin-top: 8rem;
-                transform: translate(-1rem);
-            }
-
-            .home__images img:nth-child(1) {
-                width: 345px;
-                top: -14.5rem;
-            }
-
-            .new__container {
-                grid-template-columns: repeat(3, max-content);
-                padding-bottom: 4.5rem;
-                gap: 4.5rem;
-            }
-
-            .new__img {
-                margin-bottom: 1.25rem;
-            }
-
-            .new__title {
-                font-size: var(--h3-font-size);
-            }
-
-            .brand__container {
-                column-gap: 5.5rem;
-            }
-
-            .brand__img {
-                width: 140px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <header class="header" id="header">
+      <nav class="nav container">
+        <div class="nav__menu">
+          <ul class="nav__list">
+            <li class="nav__item">
+              <a href="#home" class="nav__link">
+                <span>Home</span>
+              </a>
+            </li>
+            <li class="nav__item">
+              <a href="#categories" class="nav__link">
+                <span>Categories</span>
+              </a>
+            </li>
+            <li class="nav__item">
+              <a href="#fundamentals" class="nav__link">
+                <span>Fundamentals</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
     <main class="main">
-
-        <section class="home section" id="home">
-            <div class="home__container container grid">
-                <div class="home__data">
-                    <h1 class="home__title">
-                        Physics
-                    </h1>
-                    <br>
-                    <p class="home__description">
-                        Complex physics made simple and engaging.
-                    </p>
-                    <a href="index.html" class="button__link">
-                        Back Home
-                    </a>
-                </div>
-                <div class="home__images">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4509/4509122.png" alt="home image">
-                </div>
-            </div>
-        </section>
-
-        <section class="new section" id="categories">
-            <h2 class="section__title">Categories</h2>
-            <div class="new__container container grid">
-                <article class="new__card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/13807/13807056.png" alt="new image" class="new__img">
-                    <a href="Quantum__Mechanics.html" class="new__link">
-                        <div class="new__data">
-                            <h2 class="new__title">Quantum Mechanics</h2>
-                            <span class="new__subtitle">Read More</span>
-                        </div>
-                    </a>
-                </article>
-                <article class="new__card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4988/4988006.png" alt="new image" class="new__img">
-                    <a href="String__Theory.html" class="new__link">
-                        <div class="new__data">
-                            <h2 class="new__title">String Theory</h2>
-                            <span class="new__subtitle">Read More</span>
-                        </div>
-                    </a>
-                </article>
-                <article class="new__card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2288/2288608.png" alt="new image" class="new__img">
-                    <a href="General__Relativity.html" class="new__link">
-                        <div class="new__data">
-                            <h2 class="new__title">General Relativity</h2>
-                            <span class="new__subtitle">Read More</span>
-                        </div>
-                    </a>
-                </article>
-            </div>
-        </section>
-
-        <section class="new section">
-            <div class="new__container container grid">
-                <article class="new__card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/8220/8220828.png" alt="new image" class="new__img">
-                    <a href="Quantum_Field_Theory.html" class="new__link">
-                        <div class="new__data">
-                            <h2 class="new__title">Quantum Field Theory</h2>
-                            <span class="new__subtitle">Read More</span>
-                        </div>
-                    </a>
-                </article>
-                <article class="new__card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/10495/10495918.png" alt="new image" class="new__img">
-                    <a href="Loop_Quantum_Gravity.html" class="new__link">
-                        <div class="new__data">
-                            <h2 class="new__title">Loop Quantum Gravity</h2>
-                            <span class="new__subtitle">Read More</span>
-                        </div>
-                    </a>
-                </article>
-                <article class="new__card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/8232/8232934.png" alt="new image" class="new__img">
-                    <a href="Supersymetry.html" class="new__link">
-                        <div class="new__data">
-                            <h2 class="new__title">Supersymmetry</h2>
-                            <span class="new__subtitle">Read More</span>
-                        </div>
-                    </a>
-                </article>
-            </div>
-        </section>
-
-        <section class="brand section" id="family">
-            <h2 class="section__title">Fundementals</h2>
-            <div class="brand__container container grid">
-                <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="logo image" class="brand__img">
-                <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="logo image" class="brand__img">
-                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="logo image" class="brand__img">
-                <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="logo image" class="brand__img">
-            </div>
-        </section>
-
+      <section class="home section" id="home">
+        <div class="home__container container grid">
+          <div class="home__data">
+            <h1 class="home__title">Physics</h1>
+            <br>
+            <p class="home__description">Complex physics made simple and engaging.</p>
+            <a href="index.html" class="button__link">Back Home</a>
+          </div>
+          <div class="home__images">
+            <img src="https://cdn-icons-png.flaticon.com/512/4509/4509122.png" alt="home image">
+          </div>
+        </div>
+      </section>
+      <section class="new section" id="categories">
+        <h2 class="section__title">Categories</h2>
+        <div class="new__container container grid">
+          <article class="new__card">
+            <img src="https://cdn-icons-png.flaticon.com/512/13807/13807056.png" alt="new image" class="new__img">
+            <a href="Quantum__Mechanics.html" class="new__link">
+              <div class="new__data">
+                <h2 class="new__title">Quantum Mechanics</h2>
+                <span class="new__subtitle">Read More</span>
+              </div>
+            </a>
+          </article>
+          <article class="new__card">
+            <img src="https://cdn-icons-png.flaticon.com/512/4988/4988006.png" alt="new image" class="new__img">
+            <a href="String__Theory.html" class="new__link">
+              <div class="new__data">
+                <h2 class="new__title">String Theory</h2>
+                <span class="new__subtitle">Read More</span>
+              </div>
+            </a>
+          </article>
+          <article class="new__card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2288/2288608.png" alt="new image" class="new__img">
+            <a href="General__Relativity.html" class="new__link">
+              <div class="new__data">
+                <h2 class="new__title">General Relativity</h2>
+                <span class="new__subtitle">Read More</span>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+      <section class="new section">
+        <div class="new__container container grid">
+          <article class="new__card">
+            <img src="https://cdn-icons-png.flaticon.com/512/8220/8220828.png" alt="new image" class="new__img">
+            <a href="Quantum_Field_Theory.html" class="new__link">
+              <div class="new__data">
+                <h2 class="new__title">Quantum Field Theory</h2>
+                <span class="new__subtitle">Read More</span>
+              </div>
+            </a>
+          </article>
+          <article class="new__card">
+            <img src="https://cdn-icons-png.flaticon.com/512/10495/10495918.png" alt="new image" class="new__img">
+            <a href="Loop_Quantum_Gravity.html" class="new__link">
+              <div class="new__data">
+                <h2 class="new__title">Loop Quantum Gravity</h2>
+                <span class="new__subtitle">Read More</span>
+              </div>
+            </a>
+          </article>
+          <article class="new__card">
+            <img src="https://cdn-icons-png.flaticon.com/512/8232/8232934.png" alt="new image" class="new__img">
+            <a href="Supersymetry.html" class="new__link">
+              <div class="new__data">
+                <h2 class="new__title">Supersymmetry</h2>
+                <span class="new__subtitle">Read More</span>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+      <section class="brand section" id="fundamentals">
+        <h2 class="section__title">Fundamentals</h2>
+        <div class="brand__container container grid">
+          <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="logo image" class="brand__img">
+          <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="logo image" class="brand__img">
+          <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="logo image" class="brand__img">
+          <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="logo image" class="brand__img">
+        </div>
+      </section>
     </main>
     <br>
     <br>
     <br>
-
     <script src="https://unpkg.com/scrollreveal"></script>
-<script>
-    const sr = ScrollReveal({
+    <script>
+      const header = document.getElementById('header');
+      const scrollHeader = () => {
+        if (this.scrollY >= 50) {
+          header.classList.add('scrolled-header');
+        } else {
+          header.classList.remove('scrolled-header');
+        }
+      };
+      window.addEventListener('scroll', scrollHeader);
+
+      const sr = ScrollReveal({
         origin: 'top',
         distance: '60px',
-        duration: 1000, // Reduced from 2500ms to 1000ms
-        delay: 200,    // Reduced from 400ms to 200ms
+        duration: 1000,
+        delay: 200,
         reset: false
-    });
-
-    sr.reveal(`.home__data, .home__images`, {
+      });
+      sr.reveal(`.home__data, .home__images`, {
         opacity: 0,
         blur: '10px',
         scale: 0.9
-    });
-
-    sr.reveal(`.new__card`, {
+      });
+      sr.reveal(`.new__card`, {
         interval: 100,
         opacity: 0,
         blur: '5px',
         scale: 0.95
-    });
-
-    sr.reveal(`.brand__img`, {
+      });
+      sr.reveal(`.brand__img`, {
         interval: 100,
         opacity: 0,
         blur: '3px',
         scale: 0.98
-    });
-</script>
-
-</body>
+      });
+    </script>
+  </body>
 </html>
