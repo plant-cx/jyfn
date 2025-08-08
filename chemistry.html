@@ -5,434 +5,507 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
-    <title>Concepts Journey</title>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>Knowledge Hub</title>
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
 
-      * {
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
+    :root {
+      --main-font: 'Lora', serif;
+      --big-title-size: 2.25rem;
+      --medium-title-size: 1.5rem;
+      --small-title-size: 1.25rem;
+      --normal-text-size: .938rem;
+      --small-text-size: .813rem;
+      --tiny-text-size: .75rem;
+      --font-regular: 400;
+      --font-medium: 500;
+      --font-bold: 600;
+      --main-color: hsl(220, 18%, 99%);
+      --light-color: hsl(220, 18%, 97%);
+      --dark-color: hsl(220, 8%, 10%);
+      --text-color: hsl(220, 4%, 32%);
+      --light-text-color: hsl(220, 4%, 55%);
+      --header-height: 3.5rem;
+    }
+
+    @media screen and (min-width: 1124px) {
+      :root {
+        --big-title-size: 4.5rem;
+        --medium-title-size: 2.25rem;
+        --small-title-size: 1.5rem;
+        --normal-text-size: 1rem;
+        --small-text-size: .875rem;
+        --tiny-text-size: .813rem;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--main-font);
+      font-size: var(--normal-text-size);
+      background-color: var(--main-color);
+      color: var(--text-color);
+      transition: .4s;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--dark-color);
+      font-weight: var(--font-medium);
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .container {
+      max-width: 1024px;
+      margin-right: 1.5rem;
+      margin-left: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .main-section {
+      padding: 4.5rem 0 2rem;
+    }
+
+    .section-title {
+      font-size: var(--medium-title-size);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .main-content {
+      overflow: hidden;
+    }
+
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: transparent;
+      z-index: 100;
+      transition: .4s;
+    }
+    .nav-bar {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-menu {
+      display: flex;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .nav-list {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      column-gap: 3rem;
+    }
+
+    .nav-link {
+      color: var(--text-color);
+      font-weight: var(--font-medium);
+      transition: .3s;
+    }
+
+    .nav-link:hover {
+      color: var(--dark-color);
+    }
+
+    .scrolled-header {
+      background-color: hsla(220, 18%, 99%, .85);
+      box-shadow: 0 1px 4px hsla(220, 4%, 15%, .1);
+      backdrop-filter: blur(8px);
+    }
+
+    .home-section {
+      background-color: hsl(220, 18%, 78%);
+      overflow: hidden;
+      transition: .4s;
+    }
+
+    .home-container {
+      padding: 4rem 0 1rem;
+      row-gap: 8.5rem;
+    }
+
+    .page-title {
+      font-size: var(--big-title-size);
+      font-weight: 400;
+    }
+
+    .page-description {
+      color: var(--dark-color);
+      margin: 1rem 0 2rem;
+    }
+
+    .page-title,
+    .page-description {
+      line-height: 140%;
+    }
+
+    .home-images {
+      position: relative;
+      width: 310px;
+      justify-self: center;
+    }
+
+    .home-images img {
+      position: relative;
+    }
+
+    .home-images img:nth-child(1) {
+      width: 224px;
+      position: absolute;
+      right: -1.5rem;
+      top: -9.5rem;
+    }
+
+    .cards-container {
+      row-gap: 2.5rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .topic-card {
+      justify-self: center;
+    }
+
+    .topic-image {
+      width: 270px;
+      margin-bottom: 1rem;
+    }
+
+    .topic-link {
+      display: flex;
+      align-items: center;
+      color: var(--dark-color);
+    }
+
+    .topic-title {
+      font-size: var(--small-title-size);
+      margin-bottom: .5rem;
+    }
+
+    .logo-grid {
+      grid-template-columns: repeat(2, max-content);
+      justify-content: center;
+      column-gap: 1.25rem;
+    }
+
+    .logo-image {
+      width: 120px;
+    }
+
+    .logo-image:nth-child(even) {
+      margin-top: 2rem;
+    }
+
+    @media screen and (max-width: 340px) {
+      .container {
+        margin-left: 1rem;
+        margin-right: 1rem;
       }
 
-      html {
-        scroll-behavior: smooth;
+      .home-container {
+        padding: 2rem 0 1rem;
+        row-gap: 6rem;
       }
 
-      body {
-        font-family: 'Lora', serif;
-        font-size: 0.945rem;
-        background-color: hsl(205, 15%, 95%);
-        color: hsl(225, 5%, 33%);
+      .page-description {
+        font-size: var(--small-text-size);
       }
 
-      h1,
-      h2,
-      h3 {
-        color: hsl(215, 10%, 12%);
-        font-weight: 510;
+      .home-images {
+        width: 248px;
       }
 
-      ul {
-        list-style: none;
+      .home-images img:nth-child(1) {
+        width: 180px;
+        top: -7rem;
       }
 
-      a {
-        text-decoration: none;
+      .topic-image {
+        width: 230px;
       }
 
-      img {
-        max-width: 100%;
-        height: auto;
+      .logo-grid {
+        grid-template-columns: repeat(2, 100px);
+        row-gap: .5rem;
       }
+    }
 
-      .main-wrapper {
-        max-width: 1030px;
-        margin-right: 1.6rem;
-        margin-left: 1.6rem;
-      }
-
-      .grid-layout {
-        display: grid;
-        gap: 1.6rem;
-      }
-
-      .content-block {
-        padding: 4.6rem 0 2.1rem;
-      }
-
-      .block-title {
-        font-size: 1.6rem;
-        text-align: center;
-        margin-bottom: 3.1rem;
-      }
-
-      .topbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: transparent;
-        z-index: 101;
-        transition: .4s;
-      }
+    @media screen and (max-width: 1022px) {
       .nav-menu {
-        height: 3.6rem;
-        display: flex;
-        align-items: center;
+        display: none;
       }
+    }
 
-      .nav-list {
-        display: flex;
-        flex-grow: 1;
-        justify-content: center;
-        align-items: center;
-        column-gap: 3rem;
-      }
-
-      .nav-link {
-        color: hsl(225, 5%, 33%);
-        font-weight: 510;
-        transition: .3s;
-      }
-
-      .nav-link:hover {
-        color: hsl(215, 10%, 12%);
-      }
-
-      .scrolled-header {
-        background-color: hsla(205, 15%, 95%, .85);
-        box-shadow: 0 1px 4px hsla(215, 10%, 12%, .1);
-        backdrop-filter: blur(8px);
-      }
-
-      .hero-section {
-        background-color: hsl(218, 20%, 78%);
-        overflow: hidden;
-      }
-
-      .hero-layout {
-        padding: 4.1rem 0 1.1rem;
-        row-gap: 8.6rem;
-      }
-
-      .hero-heading {
-        font-size: 2.3rem;
-        font-weight: 410;
-        line-height: 142%;
-      }
-
-      .hero-text {
-        color: hsl(215, 10%, 12%);
-        margin: 1.1rem 0 2.1rem;
-        line-height: 142%;
-      }
-
-      .hero-images {
-        position: relative;
-        width: 315px;
-        justify-self: center;
-      }
-
-      .hero-images img:nth-child(1) {
-        width: 228px;
-        position: absolute;
-        right: -1.6rem;
-        top: -9.6rem;
-      }
-
-      .read-more-link {
-        color: hsl(215, 10%, 12%);
-        font-weight: 510;
-        display: inline-flex;
-        align-items: center;
-        column-gap: .6rem;
-      }
-
-      .category-container {
-        row-gap: 2.6rem;
-        padding-bottom: 1.6rem;
-      }
-
-      .category-item {
-        justify-self: center;
-      }
-
-      .category-img {
-        width: 275px;
-        margin-bottom: 1.1rem;
-      }
-
-      .category-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: hsl(215, 10%, 12%);
-        padding-right: .76rem;
-      }
-
-      .category-title {
-        font-size: 1.3rem;
-        margin-bottom: .6rem;
-      }
-
-      .category-subtitle {
-        font-size: 0.76rem;
-        color: hsl(225, 5%, 33%);
-      }
-
-      .fundamentals-container {
+    @media screen and (min-width: 767px) {
+      .home-container,
+      .cards-container {
         grid-template-columns: repeat(2, max-content);
         justify-content: center;
-        column-gap: 1.3rem;
       }
 
-      .fundamentals-logo {
-        width: 122px;
+      .home-images {
+        margin-top: 6rem;
       }
 
-      .fundamentals-logo:nth-child(even) {
-        margin-top: 2.1rem;
+      .logo-grid {
+        grid-template-columns: repeat(4, max-content);
+      }
+    }
+
+    @media screen and (min-width: 1023px) {
+      .main-section {
+        padding: 7rem 0 1rem;
       }
 
-      .site-info {
-        padding-top: 6.1rem;
-        padding-bottom: 6.1rem;
-        text-align: center;
-        font-size: 0.76rem;
+      .section-title {
+        margin-bottom: 4rem;
       }
 
-      @media screen and (max-width: 1024px) {
-        .nav-list {
-          display: none;
-        }
+      .nav-bar {
+        height: calc(var(--header-height) + 1.5rem);
       }
 
-      @media screen and (min-width: 770px) {
-        .hero-layout,
-        .category-container {
-          grid-template-columns: repeat(2, max-content);
-          justify-content: center;
-        }
-
-        .hero-images {
-          margin-top: 6.1rem;
-        }
-
-        .fundamentals-container {
-          grid-template-columns: repeat(4, max-content);
-        }
+      .nav-menu {
+        display: flex;
+        margin-left: auto;
       }
 
-      @media screen and (min-width: 1025px) {
-        .content-block {
-          padding: 7.1rem 0 1.1rem;
-        }
-
-        .block-title {
-          margin-bottom: 4.1rem;
-        }
-
-        .nav-menu {
-          height: calc(3.6rem + 1.6rem);
-        }
-
-        .nav-list {
-          display: flex;
-          margin-left: auto;
-          column-gap: 3rem;
-        }
-
-        .category-container {
-          width: 960px;
-        }
+      .logo-grid {
+        column-gap: 5.5rem;
       }
 
-      @media screen and (min-width: 1060px) {
-        .main-wrapper {
-          margin-left: auto;
-          margin-right: auto;
-        }
+      .logo-image {
+        width: 140px;
+      }
+    }
+
+    @media screen and (min-width: 1054px) {
+      .container {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @media screen and (min-width: 1124px) {
+      .home-container {
+        padding: 10rem 0 3rem;
+        column-gap: 0;
       }
 
-      @media screen and (min-width: 1130px) {
-        .hero-layout {
-          padding: 10.1rem 0 3.1rem;
-          column-gap: 0;
-        }
-
-        .hero-images {
-          width: 505px;
-          margin-top: 8.1rem;
-          transform: translate(-1.1rem);
-        }
-
-        .hero-images img:nth-child(1) {
-          width: 350px;
-          top: -14.6rem;
-        }
-
-        .category-container {
-          grid-template-columns: repeat(3, max-content);
-          padding-bottom: 4.6rem;
-          gap: 4.6rem;
-        }
-
-        .category-img {
-          margin-bottom: 1.3rem;
-        }
-
-        .category-title {
-          font-size: 1.1rem;
-        }
-
-        .fundamentals-container {
-          column-gap: 5.6rem;
-        }
-
-        .fundamentals-logo {
-          width: 142px;
-        }
+      .home-images {
+        width: 500px;
+        margin-top: 8rem;
+        transform: translate(-1rem);
       }
-    </style>
-  </head>
+
+      .home-images img:nth-child(1) {
+        width: 345px;
+        top: -14.5rem;
+      }
+
+      .cards-container {
+        grid-template-columns: repeat(3, max-content);
+        padding-bottom: 4.5rem;
+        gap: 4.5rem;
+      }
+
+      .topic-image {
+        margin-bottom: 1.25rem;
+      }
+
+      .topic-title {
+        font-size: var(--small-title-size);
+      }
+    }
+
+    @media screen and (min-width: 2048px) {
+      body {
+        zoom: 1.3;
+      }
+    }
+
+    @media screen and (min-width: 3840px) {
+      body {
+        zoom: 2.3;
+      }
+    }
+  </style>
   <body>
-    <header class="topbar" id="topbar">
-      <nav class="nav-menu main-wrapper">
-        <ul class="nav-list">
-          <li>
-            <a href="#home-start" class="nav-link">Home</a>
-          </li>
-          <li>
-            <a href="#SubjectArea" class="nav-link">Subject Areas</a>
-          </li>
-          <li>
-            <a href="#CorePrinciples" class="nav-link">Fundamentals</a>
-          </li>
-        </ul>
+    <header class="header-bar" id="header-bar">
+      <nav class="nav-bar container">
+        <div class="nav-menu">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#home" class="nav-link">
+                <span>Home</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#Categories" class="nav-link">
+                <span>Key Topics</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#Fundamentals" class="nav-link">
+                <span>Fundamentals</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </nav>
     </header>
     <main class="main-content">
-      <section class="hero-section content-block" id="home-start">
-        <div class="hero-layout main-wrapper grid-layout">
-          <div class="hero-data">
-            <h1 class="hero-heading">Chemistry</h1>
+      <section class="home-section main-section" id="home">
+        <div class="home-container container grid">
+          <div class="home-data">
+            <h1 class="page-title">Biology</h1>
             <br>
-            <p class="hero-text">Complex physics made simple and engaging.</p>
-            <a href="index.html" class="read-more-link">Back Homer</a>
+            <p class="page-description">Exploring fundamental concepts in biology and beyond.</p>
           </div>
-          <div class="hero-images">
-            <img src="https://cdn-icons-png.flaticon.com/512/8716/8716846.png" alt="main illustration">
+          <div class="home-images">
+            <img src="https://cdn-icons-png.flaticon.com/512/8716/8716846.png" alt="home image">
           </div>
         </div>
       </section>
-      <section class="new-concepts content-block" id="SubjectArea">
-        <h2 class="block-title">Subject Areas</h2>
-        <div class="category-container main-wrapper grid-layout">
-          <article class="category-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/3055/3055644.png" alt="Quantum Chemistry illustration" class="category-img">
-            <a href="Quantum_Chemistry.html" class="category-link">
-              <div class="category-details">
-                <h2 class="category-title">Quantum Chemistry</h2>
-                <span class="category-subtitle">Dive In</span>
+      <section class="main-section" id="Categories">
+        <h2 class="section-title">Key Topics</h2>
+        <div class="cards-container container grid">
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2201/2201544.png" alt="Neurobiology icon" class="topic-image">
+            <a href="Neurobiology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Neurobiology</h2>
               </div>
             </a>
           </article>
-          <article class="category-item">
-            <img src="https://cdn-icons-png.flaticon.com/256/9385/9385987.png" alt="Organic Chemistry illustration" class="category-img">
-            <a href="Organic_Chemistry.html" class="category-link">
-              <div class="category-details">
-                <h2 class="category-title">Organic Chemistry</h2>
-                <span class="category-subtitle">Dive In</span>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2201/2201470.png" alt="Molecular Genetics icon" class="topic-image">
+            <a href="Molecular_Genetics.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Molecular Genetics</h2>
               </div>
             </a>
           </article>
-          <article class="category-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/11651/11651739.png" alt="Supramolecular Chemistry illustration" class="category-img">
-            <a href="Supermolecular_Chemistry.html" class="category-link">
-              <div class="category-details">
-                <h2 class="category-title">Supramolecular Chemistry</h2>
-                <span class="category-subtitle">Dive In</span>
-              </div>
-            </a>
-          </article>
-        </div>
-      </section>
-      <section class="new-concepts content-block">
-        <div class="category-container main-wrapper grid-layout">
-          <article class="category-item">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSIB6c3qQ6fAOj5J3_HWjGehgZTSnDcUFJKoCfIHtoDoa8XahFhAE4ZmF35-zUPY4xhU0&usqp=CAU" alt="Chemical Kinetics and Dynamics illustration" class="category-img">
-            <a href="Chemical_Kinetics_Dynamics.html" class="category-link">
-              <div class="category-details">
-                <h2 class="category-title">Chemical Kinetics and Dynamics</h2>
-                <span class="category-subtitle">Dive In</span>
-              </div>
-            </a>
-          </article>
-          <article class="category-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/9028/9028611.png" alt="Polymer Chemistry illustration" class="category-img">
-            <a href="Polymer_Chemistry.html" class="category-link">
-              <div class="category-details">
-                <h2 class="category-title">Polymer Chemistry</h2>
-                <span class="category-subtitle">Dive In</span>
-              </div>
-            </a>
-          </article>
-          <article class="category-item">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM90frAQK3suDwW_LoinoO-90uN6sqcABEh4_D9qwcx15Y5ujTD_Lx2EDbmOKzI3p5EFo&usqp=CAU" alt="Photochemistry illustration" class="category-img">
-            <a href="Photochemistry.html" class="category-link">
-              <div class="category-details">
-                <h2 class="category-title">Photochemistry</h2>
-                <span class="category-subtitle">Dive In</span>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2201/2201531.png" alt="Evolutionary Biology icon" class="topic-image">
+            <a href="Evolutionary_Biology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Evolutionary Biology</h2>
               </div>
             </a>
           </article>
         </div>
       </section>
-      <section class="brand-showcase content-block" id="CorePrinciples">
-        <h2 class="block-title">Fundamentals</h2>
-        <div class="fundamentals-container main-wrapper grid-layout">
-          <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="principle logo" class="fundamentals-logo">
-          <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="principle logo" class="fundamentals-logo">
-          <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="principle logo" class="fundamentals-logo">
-          <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="principle logo" class="fundamentals-logo">
+      <section class="main-section" id="new">
+        <div class="cards-container container grid">
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/5369/5369466.png" alt="Immunology icon" class="topic-image">
+            <a href="Imunology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Immunology</h2>
+              </div>
+            </a>
+          </article>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/6502/6502964.png" alt="Biophysics icon" class="topic-image">
+            <a href="Biophysics.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Biophysics</h2>
+              </div>
+            </a>
+          </article>
+          <article class="topic-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/1730/1730586.png" alt="Microbiology icon" class="topic-image">
+            <a href="Microbiology.html" class="topic-link">
+              <div class="topic-data">
+                <h2 class="topic-title">Microbiology</h2>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+      <section class="main-section" id="Fundamentals">
+        <h2 class="section-title">Fundamentals</h2>
+        <div class="logo-grid container grid">
+          <img src="https://cdn-icons-png.flaticon.com/512/7893/7893052.png" alt="Biology concept icon" class="logo-image">
+          <img src="https://cdn-icons-png.flaticon.com/512/3655/3655612.png" alt="Chemistry concept icon" class="logo-image">
+          <img src="https://cdn-icons-png.flaticon.com/512/1892/1892518.png" alt="Physics concept icon" class="logo-image">
+          <img src="https://cdn-icons-png.flaticon.com/512/1753/1753487.png" alt="Mathematics concept icon" class="logo-image">
         </div>
       </section>
     </main>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script>
-      const topbar = document.getElementById('topbar');
+      const headerBar = document.getElementById('header-bar');
       const scrollHeader = () => {
         if (window.scrollY >= 50) {
-          topbar.classList.add('scrolled-header');
+          headerBar.classList.add('scrolled-header');
         } else {
-          topbar.classList.remove('scrolled-header');
+          headerBar.classList.remove('scrolled-header');
         }
       };
       window.addEventListener('scroll', scrollHeader);
-      const revealEffect = ScrollReveal({
+
+      const sr = ScrollReveal({
         origin: 'top',
-        distance: '62px',
-        duration: 1050,
-        delay: 210,
+        distance: '60px',
+        duration: 1000,
+        delay: 200,
         reset: false
       });
-      revealEffect.reveal(`.hero-data, .hero-images`, {
+
+      sr.reveal(`.home-data, .home-images`, {
         opacity: 0,
-        blur: '11px',
-        scale: 0.91
+        blur: '10px',
+        scale: 0.9
       });
-      revealEffect.reveal(`.category-item`, {
-        interval: 105,
+
+      sr.reveal(`.topic-card`, {
+        interval: 100,
         opacity: 0,
-        blur: '6px',
-        scale: 0.96
+        blur: '5px',
+        scale: 0.95
       });
-      revealEffect.reveal(`.fundamentals-logo`, {
-        interval: 105,
+
+      sr.reveal(`.logo-image`, {
+        interval: 100,
         opacity: 0,
-        blur: '4px',
-        scale: 0.99
+        blur: '3px',
+        scale: 0.98
       });
     </script>
   </body>
