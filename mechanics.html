@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,10 +129,10 @@
         }
 
         .nav {
-            height: var(--header-height);
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
+          height: var(--header-height);
+          display: flex;
+          justify-content: center; /* This is the key change */
+          align-items: center;
         }
 
         .nav__logo {
@@ -438,6 +439,12 @@
                 zoom: 2.3;
             }
         }
+        
+        @media screen and (max-width: 1023px) {
+          .nav__list {
+          display: none;
+        }
+}
     </style>
 </head>
 <body>
