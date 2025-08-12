@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
+    <title>Topics Trail</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            background-color: white;
+            color: #5a5a5a;
+            margin-top: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background-color: #34495e;
+        }
+
+        .section {
+            padding: 90px 0 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .home {
+            padding: 60px 0 35px;
+        }
+
+        .home-container {
+            display: grid;
+            gap: 35px;
+        }
+
+        .home-img {
+            width: 220px;
+            justify-self: center;
+        }
+
+        .home-title {
+            font-size: 2.2rem;
+            line-height: 1.4;
+            margin-bottom: 18px;
+        }
+
+        .home-description {
+            margin-bottom: 45px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #34495e;
+            color: white;
+            padding: 18px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .button:hover {
+            background-color: #2c3e50;
+        }
+
+        .about-container {
+            display: grid;
+            gap: 35px;
+        }
+
+        .about-img {
+            width: 300px;
+            justify-self: center;
+        }
+
+        .about-title {
+            margin-bottom: 18px;
+        }
+
+        .about-description {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            line-height: 1.4;
+        }
+
+        .section-title-center {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .steps-bg {
+            background-color: #34495e;
+            padding: 50px 35px 35px;
+            border-radius: 18px;
+        }
+
+        .steps-container {
+            display: grid;
+            gap: 35px;
+            padding-top: 18px;
+        }
+
+        .steps-title {
+            color: white;
+        }
+
+        .steps-card {
+            background-color: white;
+            padding: 42px 50px 35px 25px;
+            border-radius: 18px;
+        }
+
+        .steps-card-number {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+        }
+
+        .steps-card-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .steps-card-description {
+            font-size: 14px;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 {
+            transition-delay: 0.25s;
+        }
+
+        .fade-in-delay-2 {
+            transition-delay: 0.45s;
+        }
+
+        .fade-in-delay-3 {
+            transition-delay: 0.65s;
+        }
+
+        .fade-in-delay-4 {
+            transition-delay: 0.85s;
+        }
+
+        @media screen and (max-width: 599px) {
+            .nav-list {
+                gap: 10px;
+            }
+            
+            .nav-link {
+                font-size: 14px;
+                padding: 6px 10px;
+            }
+        }
+
+        @media screen and (min-width: 600px) {
+            .steps-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media screen and (min-width: 800px) {
+            body {
+                margin: 0;
+            }
+
+            .nav {
+                height: 70px;
+            }
+
+            .home-container {
+                grid-template-columns: repeat(2, 1fr);
+                align-items: center;
+            }
+
+            .about-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .home {
+                padding: 165px 0 85px;
+            }
+
+            .home-img {
+                width: 300px;
+                order: 1;
+            }
+
+            .nav-list {
+                gap: 20px;
+            }
+
+            .nav-link {
+                font-size: 16px;
+                padding: 8px 12px;
+            }
+        }
+
+        @media screen and (min-width: 1000px) {
+            .section {
+                padding: 130px 0 20px;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .section-title-center {
+                font-size: 1.6rem;
+            }
+
+            .home {
+                padding: 215px 0 85px;
+            }
+
+            .home-img {
+                width: 380px;
+            }
+
+            .home-description {
+                padding-right: 115px;
+            }
+
+            .about-img {
+                width: 410px;
+            }
+
+            .steps-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .steps-bg {
+                padding: 60px 42px;
+            }
+
+            .steps-card-title {
+                font-size: 1rem;
+            }
+        }
+
+        @media screen and (min-width: 3.5rem) {
+            .home-title {
+                font-size: 3.8rem;
+            }
+        }
+
+        @media screen and (min-width: 1250px) {
+            .about-container {
+                gap: 115px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const options = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -60px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, options);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(function(element) {
+                observer.observe(element);
+            });
+        });
+    </script>
+
+    <header class="header">
+        <nav class="nav">
+            <ul class="nav-list">
+                <li>
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li>
+                    <a href="#waves" class="nav-link">Sound Waves</a>
+                </li>
+                <li>
+                    <a href="#frequency" class="nav-link">Pitch & Volume</a>
+                </li>
+                <li>
+                    <a href="#behavior" class="nav-link">Wave Behavior</a>
+                </li>
+                <li>
+                    <a href="#recap" class="nav-link">Key Facts</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="home fade-in" id="home">
+            <div class="home-container container grid">
+                <img src="https://thequantumlaend.de/wp-content/uploads/2023/02/Psi3.png" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="home-title">Sound Physics</h1>
+                    <p class="home-description">
+                        Sound is a mechanical wave that travels through matter by causing particles to vibrate back and forth. When you speak, your vocal cords create vibrations in the air molecules around them. These vibrations spread outward in all directions, creating regions of compressed and stretched air that your ears detect as sound. Unlike light, sound cannot travel through empty space because it needs matter to carry the vibrations from place to place.
+                    </p>
+                    <a href="index.html" class="button">Back Home</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section container fade-in" id="waves">
+            <div class="about-container grid">
+                <img src="https://cdn.mos.cms.futurecdn.net/9d3ZQrxrYyGYuiUYW8eAL9.jpg" alt="" class="about-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">How Sound Waves Work</h2>
+                    <p class="about-description">
+                        Sound waves are longitudinal waves, meaning particles vibrate parallel to the direction the wave travels. Imagine pushing and pulling a slinky - the coils bunch up and spread out, creating compressions and rarefactions that travel along its length. In air, molecules get squeezed together (compression) and spread apart (rarefaction) as the wave passes. The speed of sound depends on the medium - it travels about 343 meters per second in air at room temperature, but much faster in water (1500 m/s) and even faster in steel (5000 m/s).
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="home fade-in" id="frequency">
+            <div class="home-container container grid">
+                <img src="https://physics.aps.org/assets/1b965ceb-28c5-47df-a31d-cead33b7e555/e127_2.png" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">Pitch and Volume</h1>
+                    <br>
+                    <p class="home-description">
+                        Pitch is determined by frequency - how many waves pass a point each second, measured in hertz (Hz). Higher frequencies create higher pitched sounds. Humans can hear from about 20 Hz (very low bass) to 20,000 Hz (very high treble). Volume depends on amplitude - how much the air molecules are displaced from their resting position. Larger vibrations create louder sounds. The decibel scale measures volume logarithmically: normal conversation is around 60 dB, while rock concerts can exceed 110 dB, loud enough to cause permanent hearing damage.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section container fade-in" id="behavior">
+            <div class="about-container grid">
+                <img src="https://scitechdaily.com/images/Universe-Evolution-Loop-Quantum-Origins.jpg" alt="" class="about-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">Wave Behavior and Effects</h2>
+                    <p class="about-description">
+                        Sound waves exhibit several important behaviors. Reflection creates echoes when waves bounce off surfaces - this is how bats navigate and how we use sonar. Refraction bends sound waves when they pass through different materials, which is why voices sound different underwater. Interference occurs when waves meet - constructive interference makes sounds louder while destructive interference can cancel sounds out (used in noise-canceling headphones). The Doppler effect changes pitch when the source or listener moves, explaining why ambulance sirens change pitch as they pass by.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section container fade-in" id="recap">
+            <div class="steps-bg">
+                <h2 class="section-title-center steps-title">Key Facts</h2>
+        
+                <div class="steps-container grid">
+                    <div class="steps-card fade-in fade-in-delay-1">
+                        <div class="steps-card-number">01</div>
+                        <h3 class="steps-card-title">What is sound?</h3>
+                        <p class="steps-card-description">
+                            Mechanical waves that travel through matter by causing particles to vibrate back and forth in compressions and rarefactions.
+                        </p>
+                    </div>
+        
+                    <div class="steps-card fade-in fade-in-delay-2">
+                        <div class="steps-card-number">02</div>
+                        <h3 class="steps-card-title">How do waves move?</h3>
+                        <p class="steps-card-description">
+                            Longitudinal waves where particles vibrate parallel to wave direction, traveling faster through denser materials.
+                        </p>
+                    </div>
+        
+                    <div class="steps-card fade-in fade-in-delay-3">
+                        <div class="steps-card-number">03</div>
+                        <h3 class="steps-card-title">What creates pitch and volume?</h3>
+                        <p class="steps-card-description">
+                            Frequency determines pitch (20-20,000 Hz for humans), while amplitude controls volume measured in decibels.
+                        </p>
+                    </div>
+
+                    <div class="steps-card fade-in fade-in-delay-4">
+                        <div class="steps-card-number">04</div>
+                        <h3 class="steps-card-title">How do waves behave?</h3>
+                        <p class="steps-card-description">
+                            Sound reflects (echoes), refracts (bends), interferes (combines), and shows Doppler effect (pitch changes with motion).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
