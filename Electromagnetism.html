@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
-    <title>Topics Trail - Electromagnetism</title>
+    <title>Topics Trail</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
@@ -86,8 +86,7 @@
         }
 
         .nav-link:hover {
-            color: white;
-            background-color: #34495e;
+            opacity: 0.6;
         }
 
         .section {
@@ -172,47 +171,6 @@
             text-align: center;
         }
 
-        .steps-bg {
-            background-color: #34495e;
-            padding: 50px 35px 35px;
-            border-radius: 18px;
-        }
-
-        .steps-container {
-            display: grid;
-            gap: 35px;
-            padding-top: 18px;
-        }
-
-        .steps-title {
-            color: white;
-        }
-
-        .steps-card {
-            background-color: white;
-            padding: 42px 50px 35px 25px;
-            border-radius: 18px;
-        }
-
-        .steps-card-number {
-            display: inline-block;
-            background-color: #2c3e50;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-        }
-
-        .steps-card-title {
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-
-        .steps-card-description {
-            font-size: 14px;
-        }
-
         .fade-in {
             opacity: 0;
             transform: translateY(35px);
@@ -252,8 +210,9 @@
         }
 
         @media screen and (min-width: 600px) {
-            .steps-container {
+            .home-container {
                 grid-template-columns: repeat(2, 1fr);
+                align-items: center;
             }
         }
 
@@ -326,14 +285,6 @@
             .steps-container {
                 grid-template-columns: repeat(2, 1fr);
             }
-
-            .steps-bg {
-                padding: 60px 42px;
-            }
-
-            .steps-card-title {
-                font-size: 1rem;
-            }
         }
 
         @media screen and (min-width: 3.5rem) {
@@ -379,16 +330,13 @@
                     <a href="#home" class="nav-link">Home</a>
                 </li>
                 <li>
-                    <a href="#block1" class="nav-link">Electric Force</a>
+                    <a href="#uncertainty" class="nav-link">Electric Fields</a>
                 </li>
                 <li>
-                    <a href="#block2" class="nav-link">Magnetic Fields</a>
+                    <a href="#superposition" class="nav-link">Magnetic Fields</a>
                 </li>
                 <li>
-                    <a href="#block3" class="nav-link">Unity Revealed</a>
-                </li>
-                <li>
-                    <a href="#recap" class="nav-link">Applications</a>
+                    <a href="#applications" class="nav-link">Maxwell's Laws</a>
                 </li>
             </ul>
         </nav>
@@ -397,94 +345,95 @@
     <main>
         <section class="home fade-in" id="home">
             <div class="home-container container grid">
-                <img src="https://www.physics-in-a-nutshell.com/img/article/electromagnetic-field/electromagnetic-wave.svg" alt="" class="home-img fade-in fade-in-delay-1">
+                <img src="https://thequantumlaend.de/wp-content/uploads/2023/02/Psi3.png" alt="" class="home-img fade-in fade-in-delay-1">
         
                 <div class="fade-in fade-in-delay-2">
                     <h1 class="home-title">Electromagnetism</h1>
                     <p class="home-description">
-                        Every time you flip a light switch, use your phone, or even just walk across carpet and shock someone, you're experiencing electromagnetism in action. It's literally everywhere around us, yet most people don't realize how incredible this force really is. Electromagnetism is responsible for basically everything we interact with daily - from holding atoms together to powering our entire civilization. What's even cooler is that electricity and magnetism, which seem like totally different things, are actually just two sides of the same cosmic coin.
+                        Electromagnetism is one of the four fundamental forces of nature and it's responsible for almost everything you interact with daily. It's the force that holds atoms together, makes magnets stick to your fridge, lets electricity flow through wires, and allows light to travel through space. At its core, electromagnetism describes how electrically charged particles interact with each other through electric and magnetic fields.
                     </p>
                     <a href="index.html" class="button">Back Home</a>
                 </div>
             </div>
         </section>
         
-        <section class="section container fade-in" id="block1">
+        <section class="section container fade-in" id="uncertainty">
             <div class="about-container grid">
-                <img src="https://cdn.kastatic.org/ka-perseus-images/ec5dd55509b2dfcb88d2d5b975c6a4e5eeb9a57b.png" alt="" class="about-img fade-in fade-in-delay-1">
+                <img src="https://cdn.mos.cms.futurecdn.net/9d3ZQrxrYyGYuiUYW8eAL9.jpg" alt="" class="about-img fade-in fade-in-delay-1">
         
                 <div class="fade-in fade-in-delay-2">
-                    <h2 class="section-title about-title">The Electric Force</h2>
+                    <h2 class="section-title about-title">Electric Fields and Forces</h2>
                     <p class="about-description">
-                        Think about the last time you rubbed a balloon on your hair and watched it stick to the wall. That's electric force at work! At its core, electricity is all about charged particles - some have positive charge, others negative. The rule is simple: opposites attract, likes repel. But here's what blew my mind when I first learned this - the electric force is actually way stronger than gravity. Like, ridiculously stronger. The only reason we don't float away is that most things are electrically neutral overall. When you get a static shock, you're literally feeling billions of electrons jumping between you and whatever you touched. It's like nature's way of balancing the books.
+                        Electric fields are created by charged particles and they exert forces on other charged particles nearby. There are two types of electric charge: positive and negative. The basic rule is simple but super important - opposite charges attract each other while like charges repel each other. So a positive charge and a negative charge will pull toward each other, but two positive charges or two negative charges will push each other away.
                     </p>
                 </div>
             </div>
         </section>
-        
-        <section class="home fade-in" id="block2">
+
+        <section class="home fade-in">
             <div class="home-container container grid">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/VFPt_cylindrical_magnet_thumb.svg" alt="" class="home-img fade-in fade-in-delay-1">
+                <img src="https://thequantumlaend.de/wp-content/uploads/2023/02/Psi3.png" alt="" class="home-img fade-in fade-in-delay-1">
         
                 <div class="fade-in fade-in-delay-2">
-                    <h1 class="section-title about-title">The Magnetic Mystery</h1>
+                    <h1 class="section-title about-title">Charges in Action</h1>
                     <br>
                     <p class="home-description">
-                        Magnetism used to seem like complete magic to me. I mean, how does a piece of metal just... attract other metal from a distance? But it turns out magnetism is created by moving electric charges. When electrons spin around atoms or flow through wires, they create tiny magnetic fields. Bunch enough of these together, and you get magnets that can lift cars! The Earth itself is basically a giant magnet, which is why compasses work. Even cooler - when you move a magnet near a wire, it creates electricity, and when you run electricity through a wire, it creates magnetism. They're like dance partners, constantly creating each other.
+                        Protons carry positive charge, electrons carry negative charge, and neutrons have no charge at all. When you rub a balloon on your hair and it sticks to the wall, that's because you've transferred electrons and created an electric field. The strength of an electric field depends on how much charge is creating it and how far away you are from that charge. The closer you get, the stronger the force becomes, following an inverse square law.
                     </p>
                 </div>
             </div>
         </section>
         
-        <section class="section container fade-in" id="block3">
+        <section class="section container fade-in" id="superposition">
             <div class="about-container grid">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/EM-Wave.gif" alt="" class="about-img fade-in fade-in-delay-1">
+                <img src="https://physics.aps.org/assets/1b965ceb-28c5-47df-a31d-cead33b7e555/e127_2.png" alt="" class="about-img fade-in fade-in-delay-1">
         
                 <div class="fade-in fade-in-delay-2">
-                    <h2 class="section-title about-title">The Beautiful Unity</h2>
+                    <h2 class="section-title about-title">Magnetic Fields and Motion</h2>
                     <p class="about-description">
-                        Here's where it gets absolutely mind-blowing. In the 1800s, this genius named James Clerk Maxwell figured out that electricity and magnetism aren't separate forces at all - they're one unified electromagnetic force. When electric and magnetic fields dance together, they create electromagnetic waves that travel at the speed of light. And get this - light itself IS an electromagnetic wave! So are radio waves, X-rays, microwaves, and wifi signals. They're all the same thing, just with different wavelengths. It's like discovering that what you thought were different colors are actually just different notes in the same spectrum. This discovery literally changed everything about how we understand the universe.
+                        Magnetic fields are created by moving electric charges, which means electricity and magnetism are deeply connected. When electrons flow through a wire, they create a magnetic field around that wire. This is how electromagnets work - you can turn magnetism on and off by controlling the electric current. Permanent magnets have magnetic fields because their electrons are all spinning in the same direction, creating a constant field.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="home fade-in">
+            <div class="home-container container grid">
+                <img src="https://cdn.mos.cms.futurecdn.net/9d3ZQrxrYyGYuiUYW8eAL9.jpg" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">Magnetic Poles</h1>
+                    <br>
+                    <p class="home-description">
+                        Every magnet has two poles called north and south, and just like electric charges, opposite poles attract while like poles repel. But here's something cool - you can never have just a north pole or just a south pole by itself. If you break a magnet in half, you don't get separate north and south pieces, you get two smaller magnets each with their own north and south poles. Moving charges in a magnetic field experience a force perpendicular to both their motion and the field direction, which is how electric motors work.
                     </p>
                 </div>
             </div>
         </section>
         
-        <section class="section container fade-in" id="recap">
-            <div class="steps-bg">
-                <h2 class="section-title-center steps-title">Electromagnetic Applications</h2>
+        <section class="section container fade-in" id="applications">
+            <div class="about-container grid">
+                <img src="https://scitechdaily.com/images/Universe-Evolution-Loop-Quantum-Origins.jpg" alt="" class="about-img fade-in fade-in-delay-1">
         
-                <div class="steps-container grid">
-                    <div class="steps-card fade-in fade-in-delay-1">
-                        <div class="steps-card-number">01</div>
-                        <h3 class="steps-card-title">Power Generation</h3>
-                        <p class="steps-card-description">
-                            Electric generators use rotating magnets to create the electricity that powers our entire civilization.
-                        </p>
-                    </div>
-        
-                    <div class="steps-card fade-in fade-in-delay-2">
-                        <div class="steps-card-number">02</div>
-                        <h3 class="steps-card-title">Communication</h3>
-                        <p class="steps-card-description">
-                            Radio, TV, cell phones, and internet all work by sending electromagnetic waves through space.
-                        </p>
-                    </div>
-        
-                    <div class="steps-card fade-in fade-in-delay-3">
-                        <div class="steps-card-number">03</div>
-                        <h3 class="steps-card-title">Medical Technology</h3>
-                        <p class="steps-card-description">
-                            MRI machines, X-rays, and many other medical tools rely on electromagnetic principles to save lives.
-                        </p>
-                    </div>
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">Maxwell's Equations</h2>
+                    <p class="about-description">
+                        James Clerk Maxwell unified electricity and magnetism into four elegant equations that describe all electromagnetic phenomena. The first equation says that electric charges create electric fields that spread outward from positive charges and inward toward negative charges. The second equation states that magnetic monopoles don't exist - magnetic field lines always form closed loops.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-                    <div class="steps-card fade-in fade-in-delay-4">
-                        <div class="steps-card-number">04</div>
-                        <h3 class="steps-card-title">Modern Electronics</h3>
-                        <p class="steps-card-description">
-                            Every computer, phone, and electronic device works because we learned to control electromagnetic forces.
-                        </p>
-                    </div>
+        <section class="home fade-in">
+            <div class="home-container container grid">
+                <img src="https://physics.aps.org/assets/1b965ceb-28c5-47df-a31d-cead33b7e555/e127_2.png" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">Unifying Light and Electromagnetism</h1>
+                    <br>
+                    <p class="home-description">
+                        The third equation, Faraday's Law, explains that a changing magnetic field creates an electric field, which is how generators produce electricity. The fourth equation, Ampere's Law with Maxwell's addition, shows that electric currents and changing electric fields create magnetic fields. Together, these equations revealed something amazing - they predicted that changing electric and magnetic fields could create waves that travel through space at a specific speed, and that speed turned out to be exactly the speed of light. This proved that light itself is an electromagnetic wave, unifying optics with electricity and magnetism into one complete theory.
+                    </p>
                 </div>
             </div>
         </section>
