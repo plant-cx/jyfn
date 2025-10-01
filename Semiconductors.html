@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6969/6969728.png">
+    <title>Topics Trail</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            background-color: white;
+            color: #5a5a5a;
+            margin-top: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            opacity: 0.6;
+        }
+
+        .section {
+            padding: 90px 0 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .home {
+            padding: 60px 0 35px;
+        }
+
+        .home-container {
+            display: grid;
+            gap: 35px;
+        }
+
+        .home-img {
+            width: 220px;
+            justify-self: center;
+        }
+
+        .home-title {
+            font-size: 2.2rem;
+            line-height: 1.4;
+            margin-bottom: 18px;
+        }
+
+        .home-description {
+            margin-bottom: 45px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #34495e;
+            color: white;
+            padding: 18px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .button:hover {
+            background-color: #2c3e50;
+        }
+
+        .about-container {
+            display: grid;
+            gap: 35px;
+        }
+
+        .about-img {
+            width: 300px;
+            justify-self: center;
+        }
+
+        .about-title {
+            margin-bottom: 18px;
+        }
+
+        .about-description {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            line-height: 1.4;
+        }
+
+        .section-title-center {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 {
+            transition-delay: 0.25s;
+        }
+
+        .fade-in-delay-2 {
+            transition-delay: 0.45s;
+        }
+
+        .fade-in-delay-3 {
+            transition-delay: 0.65s;
+        }
+
+        .fade-in-delay-4 {
+            transition-delay: 0.85s;
+        }
+
+        @media screen and (max-width: 599px) {
+            .nav-list {
+                gap: 10px;
+            }
+            
+            .nav-link {
+                font-size: 14px;
+                padding: 6px 10px;
+            }
+        }
+
+        @media screen and (min-width: 600px) {
+            .home-container {
+                grid-template-columns: repeat(2, 1fr);
+                align-items: center;
+            }
+        }
+
+        @media screen and (min-width: 800px) {
+            body {
+                margin: 0;
+            }
+
+            .nav {
+                height: 70px;
+            }
+
+            .home-container {
+                grid-template-columns: repeat(2, 1fr);
+                align-items: center;
+            }
+
+            .about-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .home {
+                padding: 165px 0 85px;
+            }
+
+            .home-img {
+                width: 300px;
+                order: 1;
+            }
+
+            .nav-list {
+                gap: 20px;
+            }
+
+            .nav-link {
+                font-size: 16px;
+                padding: 8px 12px;
+            }
+        }
+
+        @media screen and (min-width: 1000px) {
+            .section {
+                padding: 130px 0 20px;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .section-title-center {
+                font-size: 1.6rem;
+            }
+
+            .home {
+                padding: 215px 0 85px;
+            }
+
+            .home-img {
+                width: 380px;
+            }
+
+            .home-description {
+                padding-right: 115px;
+            }
+
+            .about-img {
+                width: 410px;
+            }
+
+            .steps-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media screen and (min-width: 3.5rem) {
+            .home-title {
+                font-size: 3.8rem;
+            }
+        }
+
+        @media screen and (min-width: 1250px) {
+            .about-container {
+                gap: 115px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const options = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -60px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, options);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(function(element) {
+                observer.observe(element);
+            });
+        });
+    </script>
+
+    <header class="header">
+        <nav class="nav">
+            <ul class="nav-list">
+                <li>
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li>
+                    <a href="#uncertainty" class="nav-link">What They Are</a>
+                </li>
+                <li>
+                    <a href="#superposition" class="nav-link">How They Work</a>
+                </li>
+                <li>
+                    <a href="#applications" class="nav-link">Applications</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="home fade-in" id="home">
+            <div class="home-container container grid">
+                <img src="https://thequantumlaend.de/wp-content/uploads/2023/02/Psi3.png" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="home-title">Semiconductors</h1>
+                    <p class="home-description">
+                        Semiconductors are materials that sit somewhere between conductors and insulators when it comes to conducting electricity. They're the foundation of all modern electronics - every computer chip, smartphone, and basically any digital device relies on them. Without semiconductors we wouldn't have the technology we use everyday.
+                    </p>
+                    <a href="index.html" class="button">Back Home</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section container fade-in" id="uncertainty">
+            <div class="about-container grid">
+                <img src="https://cdn.mos.cms.futurecdn.net/9d3ZQrxrYyGYuiUYW8eAL9.jpg" alt="" class="about-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">Conductors vs Insulators vs Semiconductors</h2>
+                    <p class="about-description">
+                        Conductors like copper let electricity flow through them really easily because they have lots of free electrons. Insulators like rubber dont let electricity flow at all because their electrons are tightly bound. Semiconductors like silicon are in the middle - they dont conduct well naturally but you can control their conductivity which makes them super useful.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="home fade-in">
+            <div class="home-container container grid">
+                <img src="https://thequantumlaend.de/wp-content/uploads/2023/02/Psi3.png" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">Band Gap Energy</h1>
+                    <br>
+                    <p class="home-description">
+                        The physics behind semiconductors involves something called the band gap. In atoms electrons exist in different energy levels or bands. Theres a valence band where electrons normally sit and a conduction band where they need to be to move around and conduct electricity. The energy difference between these bands is the band gap. In conductors this gap is tiny or non-existent. In insulators its huge. In semiconductors its just right - small enough that electrons can jump across with a bit of energy.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section container fade-in" id="superposition">
+            <div class="about-container grid">
+                <img src="https://physics.aps.org/assets/1b965ceb-28c5-47df-a31d-cead33b7e555/e127_2.png" alt="" class="about-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">Doping and Charge Carriers</h2>
+                    <p class="about-description">
+                        Pure silicon isnt very useful on its own. To make it work engineers add tiny amounts of other elements in a process called doping. If you add elements with extra electrons like phosphorus you get n-type semiconductor where the charge carriers are negative electrons. If you add elements with fewer electrons like boron you get p-type where the charge carriers are positive holes - basically spaces where electrons should be.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="home fade-in">
+            <div class="home-container container grid">
+                <img src="https://cdn.mos.cms.futurecdn.net/9d3ZQrxrYyGYuiUYW8eAL9.jpg" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">The PN Junction</h1>
+                    <br>
+                    <p class="home-description">
+                        When you put p-type and n-type semiconductors together you get a PN junction which is the basis for diodes and transistors. At the junction electrons from the n-side diffuse into the p-side and holes go the other way. This creates a depletion region with no charge carriers. The cool thing is this junction only lets current flow one direction - from p to n. This is how diodes work and its essential for converting AC to DC power.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section container fade-in">
+            <div class="about-container grid">
+                <img src="https://physics.aps.org/assets/1b965ceb-28c5-47df-a31d-cead33b7e555/e127_2.png" alt="" class="about-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">Transistors</h2>
+                    <p class="about-description">
+                        Transistors are basically switches or amplifiers made from semiconductors. A typical transistor has three layers - either NPN or PNP. By applying a small voltage to the middle layer you can control a much larger current flowing through the whole thing. This is how computers do calculations - billions of tiny transistors switching on and off incredibly fast to process information.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="home fade-in" id="applications">
+            <div class="home-container container grid">
+                <img src="https://scitechdaily.com/images/Universe-Evolution-Loop-Quantum-Origins.jpg" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">Integrated Circuits</h1>
+                    <br>
+                    <p class="home-description">
+                        Modern computer chips are integrated circuits with billions of transistors packed onto a tiny piece of silicon. The latest processors have transistors that are only a few nanometers across - thats like 50 atoms wide. Engineers use photolithography to etch these incredibly small patterns onto silicon wafers. Moore's Law predicted that the number of transistors on a chip would double every two years and amazingly this held true for decades.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section container fade-in">
+            <div class="about-container grid">
+                <img src="https://cdn.mos.cms.futurecdn.net/9d3ZQrxrYyGYuiUYW8eAL9.jpg" alt="" class="about-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h2 class="section-title about-title">LEDs and Solar Cells</h2>
+                    <p class="about-description">
+                        LEDs are semiconductors that give off light when current flows through them. When electrons jump from the conduction band back down to the valence band they release energy as photons. The color depends on the band gap energy - different semiconductor materials produce different colors. Solar cells work in reverse - photons from sunlight knock electrons into the conduction band creating a current. Its basically the photoelectric effect in action.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="home fade-in">
+            <div class="home-container container grid">
+                <img src="https://physics.aps.org/assets/1b965ceb-28c5-47df-a31d-cead33b7e555/e127_2.png" alt="" class="home-img fade-in fade-in-delay-1">
+        
+                <div class="fade-in fade-in-delay-2">
+                    <h1 class="section-title about-title">Future of Semiconductors</h1>
+                    <br>
+                    <p class="home-description">
+                        As transistors get smaller we're running into quantum effects that make them harder to control. Theres limits to how small you can go before quantum tunneling starts causing problems. Scientists are working on new materials like graphene and carbon nanotubes that might replace silicon. Quantum computers use completely diffrent principles but they still rely on semiconductor technology to control qubits. The semiconductor industry is constantly pushing the boundaries of whats physically possible.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
