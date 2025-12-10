@@ -1,1021 +1,270 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/32/6969/6969728.png" type="image" sizes="64x64">
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Community Chat</title>
-
+    <title>Compose Message</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-
         body {
-
             font-family: sans-serif;
-
             margin: 0;
-
             padding: 0;
-
-            background-color: #3e3831;
-
+            background-color: #3e3831; /* Dark background */
             display: flex;
-
             flex-direction: column;
-
             height: 100vh;
-
             color: #e0d9d0;
-
         }
 
         .header-bg {
-
             background-color: #5a524a;
-
             background-image: linear-gradient(to right, #5a524a, #6d645b);
-
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
             padding: 1rem 1.5rem;
-
         }
-
-
 
         .header-center-content {
-
             flex-grow: 1;
-
             text-align: center;
-
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
         }
-
-        .message-input-bg {
-
-            background-color: #6d645b;
-
-        }
-
+        
+        /* New button/focus styles for the form */
         .send-button-bg {
-
             background-color: #8c7e73;
-
         }
-
-        .send-button-bg:hover {
-
+        .send-button-bg:hover:not(:disabled) {
             background-color: #a39486;
-
         }
-
-
-
-        .message-container {
-
-            display: flex;
-
-            margin-bottom: 0.75rem;
-
-            align-items: flex-start;
-
-            opacity: 0;
-
-            animation: fadeIn 0.5s forwards;
-
+        .message-input-bg {
+            background-color: #6d645b;
         }
-
-        .message-bubble {
-
-            max-width: 75%;
-
-            padding: 0.6rem 0.9rem;
-
-            border-radius: 1rem;
-
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-
-            word-wrap: break-word;
-
-            position: relative;
-
-            display: flex;
-
-            flex-direction: column;
-
-        }
-
-        .sent {
-
-            background-color: #8c7e73;
-
-            color: white;
-
-            align-self: flex-end;
-
-            border-bottom-right-radius: 0.5rem;
-
-        }
-
-        .received {
-
-            background-color: #e0d9d0;
-
-            color: #3e3831;
-
-            align-self: flex-start;
-
-            border-bottom-left-radius: 0.5rem;
-
-        }
-
-        .message-info {
-
-            font-size: 0.7rem;
-
-            opacity: 0.9;
-
-            margin-bottom: 0.15rem;
-
-            font-weight: bold;
-
-        }
-
-        .timestamp {
-
-            font-size: 0.6rem;
-
-            opacity: 0.7;
-
-            margin-top: 0.15rem;
-
-            text-align: right;
-
-            color: rgba(255, 255, 255, 0.8);
-
-        }
-
-        .received .timestamp {
-
-            color: rgba(0, 0, 0, 0.6);
-
-        }
-
-
-
-        .loading-indicator, .error-message, .no-messages-indicator {
-
-            text-align: center;
-
-            padding: 1rem;
-
-            font-size: 0.9rem;
-
-            color: #b0a79d;
-
-        }
-
-        .error-message {
-
-            color: #dc2626;
-
-            background-color: #fee2e2;
-
-            border-radius: 0.3rem;
-
-            margin: 0.5rem;
-
-        }
-
-
-
-        .message-actions {
-
-            position: absolute;
-
-            top: 0.2rem;
-
-            right: 0.2rem;
-
-            display: flex;
-
-            gap: 0.1rem;
-
-            z-index: 10;
-
-        }
-
-        .message-actions button {
-
-            background: none;
-
-            border: none;
-
-            cursor: pointer;
-
-            font-size: 0.7rem;
-
-            color: rgba(255, 255, 255, 0.6);
-
-            padding: 0.1rem;
-
-            border-radius: 0.2rem;
-
-        }
-
-        .received .message-actions button {
-
-            color: rgba(0, 0, 0, 0.4);
-
-        }
-
-        .message-actions button:hover {
-
-            background-color: rgba(0, 0, 0, 0.1);
-
-        }
-
-
-
-        .edit-input {
-
-            width: 90%;
-
-            padding: 0.3rem;
-
-            border: 1px solid #a39486;
-
-            border-radius: 0.3rem;
-
-            margin-top: 0.3rem;
-
-            box-sizing: border-box;
-
-            color: #3e3831;
-
-        }
-
-        .edit-buttons {
-
-            display: flex;
-
-            gap: 0.3rem;
-
-            margin-top: 0.3rem;
-
-            justify-content: flex-end;
-
-        }
-
-        .edit-buttons button {
-
-            padding: 0.3rem 0.6rem;
-
-            border-radius: 0.3rem;
-
-            font-size: 0.7rem;
-
-            cursor: pointer;
-
-            color: white;
-
-            background-color: #22c55e;
-
-        }
-
-        .edit-buttons .cancel-button {
-
-            background-color: #ef4444;
-
-        }
-
-
-
-        @keyframes fadeIn {
-
-            from { opacity: 0; transform: translateY(10px); }
-
-            to { opacity: 1; transform: translateY(0); }
-
-        }
-
     </style>
-
 </head>
 
 <body>
-
     <header class="header-bg text-white shadow-md">
-
         <div>
-
             <a href="index.html" class="text-white text-sm font-semibold hover:text-gray-300 transition-colors duration-200 whitespace-nowrap">Home</a>
-
         </div>
-
-
 
         <div class="header-center-content">
-
-            <img src="https://cdn-icons-png.flaticon.com/32/6969/6969728.png" alt="Chat Logo" class="w-8 h-8 mr-2">
-
-            <h1 class="text-xl font-extrabold tracking-wide whitespace-nowrap">Community Chat</h1>
-
+            <img src="https://cdn-icons-png.flaticon.com/32/6969/6969728.png" alt="Mail Logo" class="w-8 h-8 mr-2">
+            <h1 class="text-xl font-extrabold tracking-wide whitespace-nowrap">Send a Message</h1>
         </div>
-
-
 
         <div class="text-right">
-
             <a href="contribution.html" class="text-xs opacity-90 whitespace-nowrap text-white no-underline hover:underline">Credits</a>
-
         </div>
-
     </header>
 
+    <main class="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center">
+        <div class="w-full max-w-2xl bg-white text-[#3e3831] p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-center text-[#5a524a]">Compose New Message 📧</h2>
+            <form id="email-form" class="space-y-4">
+                <div id="auth-status" class="text-sm text-center text-red-500 mb-4 hidden">Authentication failed. Please check your connection.</div>
 
+                <div>
+                    <label for="recipient-input" class="block text-sm font-medium text-gray-700">Recipient:</label>
+                    <input
+                        type="email"
+                        id="recipient-input"
+                        value="admin@mysite.com"
+                        readonly
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed"
+                    />
+                </div>
 
-    <main id="messages-container" class="flex-1 overflow-y-auto p-3 space-y-3">
+                <div>
+                    <label for="subject-input" class="block text-sm font-medium text-gray-700">Subject:</label>
+                    <input
+                        type="text"
+                        id="subject-input"
+                        placeholder="Enter subject here..."
+                        maxlength="100"
+                        required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:border-[#8c7e73] focus:ring-[#8c7e73]"
+                        disabled
+                    />
+                </div>
 
-        <div id="loading-indicator" class="loading-indicator">Loading messages...</div>
+                <div>
+                    <label for="body-input" class="block text-sm font-medium text-gray-700">Message:</label>
+                    <textarea
+                        id="body-input"
+                        rows="8"
+                        placeholder="Type your message..."
+                        required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:border-[#8c7e73] focus:ring-[#8c7e73]"
+                        disabled
+                    ></textarea>
+                </div>
 
-        <div id="error-message" class="error-message hidden"></div>
-
-        <div id="no-messages-indicator" class="no-messages-indicator hidden">No messages yet!</div>
-
-    </main>
-
-
-
-    <footer class="message-input-bg p-3 shadow-lg flex flex-col items-center">
-
-        <form id="message-form" class="flex space-x-2 w-full">
-
-            <input
-
-                type="text"
-
-                id="message-input"
-
-                placeholder="Type your message..."
-
-                class="flex-1 p-2 border border-[#8c7e73] rounded-full focus:outline-none focus:ring-1 focus:ring-[#a39486] text-[#3e3831] bg-[#e0d9d0]"
-
-                disabled
-
-            />
-
-            <button
-
-                type="submit"
-
-                id="send-button"
-
-                class="send-button-bg text-white px-4 py-2 rounded-full font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-
-                disabled
-
-            >
-
-                Send
-
-            </button>
-
-        </form>
-
-        <div class="flex flex-col items-end w-full mt-2 text-sm">
-
-            <div id="cooldown-timer" class="text-[#b0a79d] hidden"></div>
-
-            <div id="cooldown-message" class="text-red-400 hidden"></div>
-
+                <button
+                    type="submit"
+                    id="send-email-button"
+                    class="w-full send-button-bg text-white px-4 py-2 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled
+                >
+                    Send Message
+                </button>
+                <div id="success-message" class="text-center text-green-600 hidden mt-4 font-semibold">Your message has been sent!</div>
+                <div id="form-error-message" class="text-center text-red-600 hidden mt-4 font-semibold">An error occurred. Please try again.</div>
+            </form>
         </div>
-
+    </main>
+    
+    <footer class="message-input-bg p-3 shadow-lg flex justify-center text-xs text-[#e0d9d0]">
+        <p>Your message will be securely stored and reviewed by the site administrator.</p>
     </footer>
 
-
-
     <script type="module">
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-
-        // This is my special configuration for Firebase
-
+        // === 1. CONFIGURATION ===
         const firebase_configuration_settings = {
-
             apiKey: "AIzaSyCN5LWuSS5V2Js8JhLEm7KCiuYZA-BP0a0",
-
             authDomain: "chat-d312d.firebaseapp.com",
-
             projectId: "chat-d312d",
-
             storageBucket: "chat-d312d.firebasestorage.app",
-
             messagingSenderId: "153824285530",
-
             appId: "1:153824285530:web:d918e824233704842fd963",
-
             measurementId: "G-CJKMEBMWD2"
-
         };
 
-
-
-        // Arrays to create fun usernames
-
         const LIST_OF_ADJECTIVES = ["Happy", "Brave", "Clever", "Swift"];
-
         const LIST_OF_NOUNS = ["Panda", "Tiger", "Star", "Cloud"];
 
-
-
-        // This function creates a random username for a new user
-
+        // === 2. HELPER FUNCTIONS ===
         function create_a_random_username() {
-
             const random_adjective = LIST_OF_ADJECTIVES[Math.floor(Math.random() * LIST_OF_ADJECTIVES.length)];
-
             const random_noun = LIST_OF_NOUNS[Math.floor(Math.random() * LIST_OF_NOUNS.length)];
-
             return `${random_adjective}${random_noun}`;
-
         }
-
-
-
-        // This function gets the username, either an existing one or a new random one
 
         function get_the_users_username() {
-
             let my_username = sessionStorage.getItem('chatUser');
-
             if (!my_username) {
-
                 my_username = create_a_random_username();
-
                 sessionStorage.setItem('chatUser', my_username);
-
             }
-
             return my_username;
-
         }
 
+        function enable_form(enabled) {
+            the_subject_input_field.disabled = !enabled;
+            the_body_input_field.disabled = !enabled;
+            the_send_email_button.disabled = !enabled;
+        }
 
+        function display_message(element, message, type) {
+            the_success_message_display.classList.add('hidden');
+            the_error_message_display.classList.add('hidden');
+            element.textContent = message;
+            element.classList.remove('hidden');
+            
+            // Auto-hide success message after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => element.classList.add('hidden'), 5000);
+            }
+        }
 
-        // Getting all the HTML elements I need to use
-
-        const main_messages_container = document.getElementById('messages-container');
-
-        const the_message_form = document.getElementById('message-form');
-
-        const the_message_input_field = document.getElementById('message-input');
-
-        const the_send_message_button = document.getElementById('send-button');
-
-        const the_loading_spinner_element = document.getElementById('loading-indicator');
-
-        const the_error_message_display = document.getElementById('error-message');
-
-        const the_no_messages_text_element = document.getElementById('no-messages-indicator');
-
-
-
-        const the_cooldown_timer_display = document.getElementById('cooldown-timer');
-
-        const the_cooldown_message_display = document.getElementById('cooldown-message');
-
-
-
-        // I want to set a cooldown duration of 15 minutes in milliseconds
-
-        const THE_COOLDOWN_DURATION_IN_MILLISECONDS = 15 * 60 * 1000;
-
-        let my_cooldown_timer_interval = null;
-
-
-
-        // Variables for the current user
+        // === 3. DOM ELEMENTS & VARIABLES ===
+        const the_email_form = document.getElementById('email-form');
+        const the_recipient_input_field = document.getElementById('recipient-input');
+        const the_subject_input_field = document.getElementById('subject-input');
+        const the_body_input_field = document.getElementById('body-input');
+        const the_send_email_button = document.getElementById('send-email-button');
+        const the_success_message_display = document.getElementById('success-message');
+        const the_error_message_display = document.getElementById('form-error-message');
+        const the_auth_status = document.getElementById('auth-status');
 
         let my_user_id = null;
-
         let my_user_name = get_the_users_username();
 
-
-
         // Initialize Firebase app and services
-
         const my_firebase_app = initializeApp(firebase_configuration_settings);
-
         const my_firebase_auth = getAuth(my_firebase_app);
-
         const my_firestore_db = getFirestore(my_firebase_app);
-
         const my_firestore_messages_collection = collection(my_firestore_db, `apps/${firebase_configuration_settings.projectId}/messages`);
 
-
-
-        // This function shows an error message to the user
-
-        function display_an_error_message(message_text) {
-
-            the_error_message_display.textContent = `Error: ${message_text}`;
-
-            the_error_message_display.classList.remove('hidden');
-
-            the_loading_spinner_element.classList.add('hidden');
-
-        }
-
-
-
-        // This function scrolls the chat to the very bottom
-
-        function scroll_the_chat_to_the_bottom() {
-
-            main_messages_container.scrollTop = main_messages_container.scrollHeight;
-
-        }
-
-
-
-        // This function updates the cooldown timer on the screen
-
-        function update_the_cooldown_display() {
-
-            const last_message_sent_time = localStorage.getItem(`lastMessageTime_${my_user_id}`);
-
-            if (!last_message_sent_time) {
-
-                the_message_input_field.disabled = false;
-
-                the_send_message_button.disabled = false;
-
-                the_cooldown_timer_display.classList.add('hidden');
-
-                the_cooldown_message_display.classList.add('hidden');
-
-                if (my_cooldown_timer_interval) {
-
-                    clearInterval(my_cooldown_timer_interval);
-
-                    my_cooldown_timer_interval = null;
-
-                }
-
-                return;
-
-            }
-
-
-
-            const time_since_last_message = Date.now() - parseInt(last_message_sent_time, 10);
-
-            const remaining_time_left = THE_COOLDOWN_DURATION_IN_MILLISECONDS - time_since_last_message;
-
-
-
-            if (remaining_time_left <= 0) {
-
-                the_message_input_field.disabled = false;
-
-                the_send_message_button.disabled = false;
-
-                the_cooldown_timer_display.classList.add('hidden');
-
-                the_cooldown_message_display.classList.add('hidden');
-
-                if (my_cooldown_timer_interval) {
-
-                    clearInterval(my_cooldown_timer_interval);
-
-                    my_cooldown_timer_interval = null;
-
-                }
-
-            } else {
-
-                the_message_input_field.disabled = true;
-
-                the_send_message_button.disabled = true;
-
-                the_cooldown_timer_display.classList.remove('hidden');
-
-                the_cooldown_message_display.classList.remove('hidden');
-
-
-
-                const minutes_left = Math.floor(remaining_time_left / (60 * 1000));
-
-                const seconds_left = Math.floor((remaining_time_left % (60 * 1000)) / 1000);
-
-                the_cooldown_timer_display.textContent = `Next message in: ${minutes_left}m ${seconds_left}s`;
-
-                the_cooldown_message_display.textContent = "Please wait before sending another message.";
-
-
-
-                if (!my_cooldown_timer_interval) {
-
-                    my_cooldown_timer_interval = setInterval(update_the_cooldown_display, 1000);
-
-                }
-
-            }
-
-        }
-
-
-
-        // This function deletes a message from the database
-
-        async function delete_a_message(message_identification_id) {
-
-            if (!confirm('Really delete this message?')) return;
-
-            try {
-
-                await deleteDoc(doc(my_firestore_db, `apps/${firebase_configuration_settings.projectId}/messages`, message_identification_id));
-
-            } catch (a_deletion_error) {
-
-                display_an_error_message(`Failed to delete: ${a_deletion_error.message}`);
-
-            }
-
-        }
-
-
-
-        // This function lets a user edit their own message
-
-        function edit_a_message(message_identification_id, current_message_text) {
-
-            const message_element_to_edit = document.querySelector(`[data-message-id="${message_identification_id}"]`);
-
-            if (!message_element_to_edit) return;
-
-
-
-            const original_text_element = message_element_to_edit.querySelector('p');
-
-            const message_actions_element = message_element_to_edit.querySelector('.message-actions');
-
-
-
-            original_text_element.style.display = 'none';
-
-            message_actions_element.style.display = 'none';
-
-
-
-            const new_edit_input_field = document.createElement('input');
-
-            new_edit_input_field.type = 'text';
-
-            new_edit_input_field.value = current_message_text;
-
-            new_edit_input_field.classList.add('edit-input');
-
-            original_text_element.parentNode.insertBefore(new_edit_input_field, original_text_element.nextSibling);
-
-            new_edit_input_field.focus();
-
-
-
-            const the_edit_buttons_container = document.createElement('div');
-
-            the_edit_buttons_container.classList.add('edit-buttons');
-
-
-
-            const save_button = document.createElement('button');
-
-            save_button.textContent = 'Save';
-
-            save_button.onclick = async () => {
-
-                const updated_message_text = new_edit_input_field.value.trim();
-
-                if (updated_message_text === '') {
-
-                    display_an_error_message("Message can't be empty.");
-
-                    return;
-
-                }
-
-                try {
-
-                    await updateDoc(doc(my_firestore_db, `apps/${firebase_configuration_settings.projectId}/messages`, message_identification_id), {
-
-                        text: updated_message_text,
-
-                        timestamp: serverTimestamp()
-
-                    });
-
-                } catch (an_update_error) {
-
-                    display_an_error_message(`Failed to update: ${an_update_error.message}`);
-
-                }
-
-            };
-
-
-
-            const cancel_button = document.createElement('button');
-
-            cancel_button.textContent = 'Cancel';
-
-            cancel_button.classList.add('cancel-button');
-
-            cancel_button.onclick = () => {
-
-                original_text_element.style.display = '';
-
-                message_actions_element.style.display = '';
-
-                new_edit_input_field.remove();
-
-                the_edit_buttons_container.remove();
-
-            };
-
-
-
-            the_edit_buttons_container.append(save_button, cancel_button);
-
-            message_element_to_edit.appendChild(the_edit_buttons_container);
-
-        }
-
-
-
-        // This function creates and adds a message bubble to the chat
-
-        function create_and_display_a_message_on_the_screen(message_data) {
-
-            const message_wrapper_div = document.createElement('div');
-
-            message_wrapper_div.classList.add('message-container');
-
-            message_wrapper_div.classList.add(message_data.userId === my_user_id ? 'justify-end' : 'justify-start');
-
-
-
-            const message_bubble_div = document.createElement('div');
-
-            message_bubble_div.classList.add('message-bubble');
-
-            message_bubble_div.classList.add(message_data.userId === my_user_id ? 'sent' : 'received');
-
-            message_bubble_div.setAttribute('data-message-id', message_data.id);
-
-
-
-            const user_info_div = document.createElement('div');
-
-            user_info_div.classList.add('message-info');
-
-            user_info_div.textContent = message_data.userId === my_user_id ? 'You' : `User: ${message_data.username || 'Unknown'}`;
-
-            message_bubble_div.appendChild(user_info_div);
-
-
-
-            const message_text_paragraph = document.createElement('p');
-
-            message_text_paragraph.textContent = message_data.text;
-
-            message_bubble_div.appendChild(message_text_paragraph);
-
-
-
-            const time_stamp_div = document.createElement('div');
-
-            time_stamp_div.classList.add('timestamp');
-
-            if (message_data.timestamp && typeof message_data.timestamp.toDate === 'function') {
-
-                time_stamp_div.textContent = message_data.timestamp.toDate().toLocaleString();
-
-            } else {
-
-                time_stamp_div.textContent = 'Sending...';
-
-            }
-
-            message_bubble_div.appendChild(time_stamp_div);
-
-
-
-            if (message_data.userId === my_user_id) {
-
-                const message_actions_div = document.createElement('div');
-
-                message_actions_div.classList.add('message-actions');
-
-
-
-                const edit_button = document.createElement('button');
-
-                edit_button.textContent = '✏️';
-
-                edit_button.title = 'Edit';
-
-                edit_button.onclick = () => edit_a_message(message_data.id, message_data.text);
-
-
-
-                const delete_button = document.createElement('button');
-
-                delete_button.textContent = '🚫';
-
-                delete_button.title = 'Delete';
-
-                delete_button.onclick = () => delete_a_message(message_data.id);
-
-
-
-                message_actions_div.append(edit_button, delete_button);
-
-                message_bubble_div.appendChild(message_actions_div);
-
-            }
-
-
-
-            message_wrapper_div.appendChild(message_bubble_div);
-
-            main_messages_container.appendChild(message_wrapper_div);
-
-        }
-
-
-
-        // This code runs when the page is fully loaded
-
+        // === 4. INITIALIZATION AND AUTHENTICATION ===
         document.addEventListener('DOMContentLoaded', () => {
-
-            // Check if a user is logged in
-
             onAuthStateChanged(my_firebase_auth, async (authenticated_user) => {
-
                 if (authenticated_user) {
-
-                    // The user is logged in, so get their ID and enable the form
-
+                    // User is logged in (anonymously)
                     my_user_id = authenticated_user.uid;
-
-                    update_the_cooldown_display();
-
-
-
-                    // This listens for new messages from the database
-
-                    onSnapshot(query(my_firestore_messages_collection, orderBy('timestamp')), (message_snapshot) => {
-
-                        the_error_message_display.classList.add('hidden');
-
-                        the_loading_spinner_element.classList.add('hidden');
-
-                        main_messages_container.innerHTML = '';
-
-
-
-                        if (message_snapshot.empty) {
-
-                            the_no_messages_text_element.classList.remove('hidden');
-
-                        } else {
-
-                            the_no_messages_text_element.classList.add('hidden');
-
-                            message_snapshot.forEach((firestore_document) => create_and_display_a_message_on_the_screen({ id: firestore_document.id, ...firestore_document.data() }));
-
-                            scroll_the_chat_to_the_bottom();
-
-                        }
-
-                    }, (a_snapshot_error) => {
-
-                        display_an_error_message(`Failed to load messages: ${a_snapshot_error.message}`);
-
-                    });
-
+                    enable_form(true);
+                    the_auth_status.classList.add('hidden');
                 } else {
-
-                    // The user is not logged in, so log them in anonymously
-
+                    // User is not logged in, attempt anonymous sign-in
                     try {
-
                         await signInAnonymously(my_firebase_auth);
-
+                        // onAuthStateChanged will trigger again with the user object
                     } catch (an_authentication_error) {
-
-                        display_an_error_message(`Authentication failed: ${an_authentication_error.message}`);
-
+                        display_message(the_auth_status, 'Authentication failed. Form disabled.', 'error');
+                        enable_form(false);
                     }
-
                 }
-
             });
 
-
-
-            // This handles when the user submits the message form
-
-            the_message_form.addEventListener('submit', async (the_submit_event) => {
-
+            // === 5. FORM SUBMISSION HANDLER ===
+            the_email_form.addEventListener('submit', async (the_submit_event) => {
                 the_submit_event.preventDefault();
 
-                const the_message_text_to_send = the_message_input_field.value.trim();
-
-
-
-                const last_message_time = localStorage.getItem(`lastMessageTime_${my_user_id}`);
-
-                const time_passed_since_last_message = last_message_time ? Date.now() - parseInt(last_message_time, 10) : THE_COOLDOWN_DURATION_IN_MILLISECONDS;
-
-                if (time_passed_since_last_message < THE_COOLDOWN_DURATION_IN_MILLISECONDS) {
-
-                    display_an_error_message("You are sending messages too fast! Please wait.");
-
-                    update_the_cooldown_display();
-
+                if (!my_user_id) {
+                    display_message(the_error_message_display, "Authentication is still loading. Please wait.", 'error');
                     return;
-
                 }
 
+                enable_form(false); // Disable form during submission
+                the_error_message_display.classList.add('hidden');
+                the_success_message_display.classList.add('hidden');
 
+                const subject = the_subject_input_field.value.trim();
+                const body = the_body_input_field.value.trim();
+                const recipient = the_recipient_input_field.value; 
 
-                if (the_message_text_to_send === '' || !my_user_id) return;
-
-
+                if (subject === '' || body === '') {
+                    display_message(the_error_message_display, "Subject and Message body cannot be empty.", 'error');
+                    enable_form(true);
+                    return;
+                }
 
                 try {
-
+                    // Store the message data in Firestore
                     await addDoc(my_firestore_messages_collection, {
-
-                        text: the_message_text_to_send,
-
+                        subject: subject,
+                        body: body,
+                        recipient: recipient,
                         timestamp: serverTimestamp(),
-
-                        userId: my_user_id,
-
-                        username: my_user_name
-
+                        senderUserId: my_user_id,
+                        senderUsername: my_user_name
                     });
-
-                    the_message_input_field.value = '';
-
-                    the_error_message_display.classList.add('hidden');
-
-                    scroll_the_chat_to_the_bottom();
-
-
-
-                    localStorage.setItem(`lastMessageTime_${my_user_id}`, Date.now().toString());
-
-                    update_the_cooldown_display();
-
+                    
+                    // Success
+                    display_message(the_success_message_display, "Your message has been sent successfully!", 'success');
+                    the_subject_input_field.value = '';
+                    the_body_input_field.value = '';
+                    
                 } catch (a_sending_error) {
-
-                    display_an_error_message(`Failed to send: ${a_sending_error.message}`);
-
+                    // Error
+                    display_message(the_error_message_display, `Failed to send message: ${a_sending_error.message}`, 'error');
+                } finally {
+                    enable_form(true); // Re-enable form
                 }
-
             });
-
         });
-
     </script>
-
 </body>
 
 </html>
